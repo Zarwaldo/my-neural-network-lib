@@ -13,6 +13,7 @@ class my_neural_network_libRecipe(ConanFile):
     description = "A C++ library for building and training neural networks with hardware acceleration."
     topics = ("neural-networks", "machine-learning", "hardware-acceleration")
     build_requires = "cmake/[>=3.15]"
+    requires = "gtest/[>=1.14]"
 
     # Binary configuration
     settings = "os", "compiler", "build_type", "arch"
@@ -20,7 +21,7 @@ class my_neural_network_libRecipe(ConanFile):
     default_options = {"shared": True, "fPIC": True}
 
     # Sources are located in the same place as this recipe, copy them to the recipe
-    exports_sources = "CMakeLists.txt", "src/*"
+    exports_sources = "CMakeLists.txt", "src/*", "test/*"
 
     def config_options(self):
         if self.settings.os == "Windows":
