@@ -1,0 +1,1 @@
+add_neural_network_test(addition_module_test ${CMAKE_CURRENT_SOURCE_DIR}/AdditionModuleTest.cpp nativemodules)
