@@ -14,6 +14,7 @@ target_include_directories(module
 target_link_libraries(module
     PUBLIC
         helpers
+        rtti
         tensor
 )
 
