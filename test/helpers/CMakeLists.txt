@@ -4,4 +4,5 @@ add_neural_network_test(get_from_index_test ${CMAKE_CURRENT_SOURCE_DIR}/GetFromI
 add_neural_network_test(intertwine_packs_test ${CMAKE_CURRENT_SOURCE_DIR}/IntertwinePacksTest.cpp helpers)
 add_neural_network_test(narg_test ${CMAKE_CURRENT_SOURCE_DIR}/NArgTest.cpp helpers)
 add_neural_network_test(range_test ${CMAKE_CURRENT_SOURCE_DIR}/RangeTest.cpp helpers)
+add_neural_network_test(raw_tuple_test ${CMAKE_CURRENT_SOURCE_DIR}/RawTupleTest.cpp helpers)
 add_neural_network_test(ternary_test ${CMAKE_CURRENT_SOURCE_DIR}/TernaryTest.cpp helpers)

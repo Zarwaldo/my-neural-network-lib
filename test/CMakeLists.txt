@@ -6,6 +6,7 @@ macro(add_neural_network_test NAME MAIN_FILE)
     target_link_libraries(${NAME}
         PRIVATE
             GTest::GTest
+            GTest::gmock
             GTest::Main
             ${ARGN}
     )
