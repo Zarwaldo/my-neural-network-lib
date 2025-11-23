@@ -1,3 +1,4 @@
+add_neural_network_test(build_time_list_test ${CMAKE_CURRENT_SOURCE_DIR}/BuildTimeListTest.cpp helpers)
 add_neural_network_test(for_each_test ${CMAKE_CURRENT_SOURCE_DIR}/ForEachTest.cpp helpers)
 add_neural_network_test(get_from_index_test ${CMAKE_CURRENT_SOURCE_DIR}/GetFromIndexTest.cpp helpers)
 add_neural_network_test(intertwine_packs_test ${CMAKE_CURRENT_SOURCE_DIR}/IntertwinePacksTest.cpp helpers)
