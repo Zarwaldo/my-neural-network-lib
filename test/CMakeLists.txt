@@ -17,3 +17,5 @@ macro(add_neural_network_test NAME MAIN_FILE)
 
     add_test(NAME ${NAME} COMMAND ${NAME})
 endmacro()
+
+add_subdirectory(helpers)
