@@ -1,0 +1,2 @@
+add_neural_network_test(plugin_loader_test ${CMAKE_CURRENT_SOURCE_DIR}/PluginLoaderTest.cpp pluginloader)
+add_neural_network_test(plugin_test ${CMAKE_CURRENT_SOURCE_DIR}/PluginTest.cpp pluginloader)

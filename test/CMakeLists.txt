@@ -21,6 +21,7 @@ endmacro()
 
 add_subdirectory(helpers)
 add_subdirectory(module)
+add_subdirectory(pluginloader)
 add_subdirectory(plugins)
 add_subdirectory(rtti)
 add_subdirectory(tensor)
