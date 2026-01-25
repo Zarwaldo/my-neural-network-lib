@@ -1,0 +1,1 @@
+add_neural_network_test(tensor_thread_distributor_test ${CMAKE_CURRENT_SOURCE_DIR}/TensorThreadDistributorTest.cu module)
