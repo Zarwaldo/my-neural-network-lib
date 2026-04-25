@@ -20,3 +20,4 @@ macro(add_neural_network_test NAME MAIN_FILE)
 endmacro()
 
 add_subdirectory(helpers)
+add_subdirectory(rtti)
