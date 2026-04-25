@@ -2,6 +2,7 @@ set(SOURCE_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_subdirectory(helpers)
 add_subdirectory(rtti)
+add_subdirectory(tensor)
 
 set(MY_NEURAL_NETWORK_LIB_SOURCES
     ${SOURCE_ROOT}/MyNeuralNetworkLib.cpp
