@@ -1,0 +1,1 @@
+add_neural_network_test(managed_memory_shared_ptr_test ${CMAKE_CURRENT_SOURCE_DIR}/ManagedMemorySharedPtrTest.cpp tensor)
