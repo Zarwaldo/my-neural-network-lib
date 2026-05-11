@@ -6,7 +6,6 @@ set(MY_NEURAL_NETWORK_LIB_SOURCES
 
 set(MY_NEURAL_NETWORK_LIB_PUBLIC_HEADERS
     MyNeuralNetworkLib.h
-    MyNeuralNetworkLibApi.h
 )
 
 add_library(my-neural-network-lib

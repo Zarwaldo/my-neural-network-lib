@@ -1,5 +1,5 @@
 #pragma once
 
-#include <MyNeuralNetworkLibApi.h>
+#include <api.h>
 
-MY_NEURAL_NETWORK_LIB_API void my_neural_network_lib_print();
+MY_NEURAL_NETWORK_LIB__API void my_neural_network_lib_print();
