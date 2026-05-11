@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 3.15)
-project(my-neural-network-lib CXX)
+project(my-neural-network-lib LANGUAGES CXX CUDA)
 
 enable_testing()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+set(CMAKE_CUDA_ARCHITECTURES
+    50
+    72
+)
 
 add_subdirectory(src)
 add_subdirectory(test)

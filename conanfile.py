@@ -38,6 +38,7 @@ class my_neural_network_libRecipe(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
         tc = CMakeToolchain(self)
+        tc.blocks.remove("vs_runtime")
         tc.generate()
 
     def build(self):
