@@ -1,5 +1,6 @@
 set(NATIVEMODULES_SOURCES
     ${SOURCE_ROOT}/plugins/nativemodules/PluginHeader.cpp
+    ${SOURCE_ROOT}/plugins/nativemodules/AdditionModule.cu
 )
 
 add_library(nativemodules
