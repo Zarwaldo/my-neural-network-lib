@@ -2,6 +2,7 @@
 
 #include <plugins/nativemodules/api.h>
 #include <plugins/nativemodules/AdditionModule.h>
+#include <plugins/nativemodules/PerceptronModule.h>
 
 #include <tensor/TensorIndex.h>
 
@@ -24,6 +25,25 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
     token->modules<double>().subscribe(new Rtti<Module<double>, AdditionModule<double, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&>&>>("AdditionModule<double,3>"));
     token->modules<double>().subscribe(new Rtti<Module<double>, AdditionModule<double, 4>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&>&>>("AdditionModule<double,4>"));
     token->modules<double>().subscribe(new Rtti<Module<double>, AdditionModule<double, 5>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&>&>>("AdditionModule<double,5>"));
+
+    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 1, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<2>&, const TensorIndex<1>&>&>>("PerceptronModule<float,1,1>"));
+    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 2, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&, const TensorIndex<1>&>&>>("PerceptronModule<float,2,1>"));
+    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 3, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<1>&>&>>("PerceptronModule<float,3,1>"));
+    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 1, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&, const TensorIndex<2>&>&>>("PerceptronModule<float,1,2>"));
+    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 2, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<2>&>&>>("PerceptronModule<float,2,2>"));
+    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 3, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&, const TensorIndex<2>&>&>>("PerceptronModule<float,3,2>"));
+    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 1, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<3>&>&>>("PerceptronModule<float,1,3>"));
+    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 2, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&, const TensorIndex<3>&>&>>("PerceptronModule<float,2,3>"));
+    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 3, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<6>&, const TensorIndex<3>&>&>>("PerceptronModule<float,3,3>"));
+    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 1, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<2>&, const TensorIndex<1>&>&>>("PerceptronModule<double,1,1>"));
+    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 2, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&, const TensorIndex<1>&>&>>("PerceptronModule<double,2,1>"));
+    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 3, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<1>&>&>>("PerceptronModule<double,3,1>"));
+    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 1, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&, const TensorIndex<2>&>&>>("PerceptronModule<double,1,2>"));
+    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 2, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<2>&>&>>("PerceptronModule<double,2,2>"));
+    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 3, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&, const TensorIndex<2>&>&>>("PerceptronModule<double,3,2>"));
+    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 1, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<3>&>&>>("PerceptronModule<double,1,3>"));
+    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 2, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&, const TensorIndex<3>&>&>>("PerceptronModule<double,2,3>"));
+    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 3, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<6>&, const TensorIndex<3>&>&>>("PerceptronModule<double,3,3>"));
 }
 
 void
