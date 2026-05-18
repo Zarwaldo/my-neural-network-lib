@@ -6,6 +6,9 @@
 
 #include <CommonMacros.h>
 
+template <typename BaseType>
+class AbstractTemplateRtti;
+
 class MY_NEURAL_NETWORK_LIB__TENSOR__API AbstractTensorIndex
 {
 public:
@@ -37,6 +40,8 @@ public:
     HOST DEVICE virtual const size_t* end() const = 0;
     HOST DEVICE virtual size_t* begin() = 0;
     HOST DEVICE virtual size_t* end() = 0;
+
+    HOST static const AbstractTemplateRtti<AbstractTensorIndex>& templateRtti();
 
     DECLARE_AS_RTTI_BASE_TYPE(AbstractTensorIndex)
 };
