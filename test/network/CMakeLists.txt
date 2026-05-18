@@ -1,0 +1,1 @@
+add_neural_network_test(neural_network_test ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworkTest.cpp network pluginloader nativemodules)
