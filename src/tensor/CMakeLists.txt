@@ -1,4 +1,5 @@
 set(TENSOR_SOURCES
+    ${SOURCE_ROOT}/tensor/AbstractTensorIndex.cu
     ${SOURCE_ROOT}/tensor/ManagedMemorySharedPtr.cu
 )
 
