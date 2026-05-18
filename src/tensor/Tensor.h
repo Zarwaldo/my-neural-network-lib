@@ -26,6 +26,8 @@ public:
     HOST virtual inline const ValueType& operator[](const AbstractTensorIndex& index) const = 0;
     HOST virtual inline ValueType& operator[](const AbstractTensorIndex& index) = 0;
 
+    HOST static const AbstractTemplateRtti<AbstractTensor<ValueType>>& templateRtti();
+
     DECLARE_AS_RTTI_BASE_TYPE(AbstractTensor<ValueType>)
 };
 

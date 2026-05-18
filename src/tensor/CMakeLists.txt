@@ -1,6 +1,7 @@
 set(TENSOR_SOURCES
     ${SOURCE_ROOT}/tensor/AbstractTensorIndex.cu
     ${SOURCE_ROOT}/tensor/ManagedMemorySharedPtr.cu
+    ${SOURCE_ROOT}/tensor/TensorRttiHolders.cpp
 )
 
 add_library(tensor
