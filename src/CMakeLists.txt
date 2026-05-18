@@ -5,6 +5,7 @@ add_subdirectory(module)
 add_subdirectory(plugincore)
 add_subdirectory(pluginloader)
 add_subdirectory(plugins)
+add_subdirectory(network)
 add_subdirectory(rtti)
 add_subdirectory(tensor)
 
