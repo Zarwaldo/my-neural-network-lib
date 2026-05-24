@@ -12,7 +12,7 @@ Flow::addVertex(const void* ptr)
 {
     if (doesVertexExist(ptr))
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("Flow::addVertex: Vertex already exists.");
     }
 
     m_edges[ptr] = {};
@@ -24,18 +24,18 @@ Flow::addEdge(const void* src, const void* dst)
     std::map<const void*, std::vector<const void*>>::iterator it;
     if (!doesVertexExist(src, &it))
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("Flow::addEdge: Source vertex does not exist.");
     }
 
     if (!doesVertexExist(dst))
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("Flow::addEdge: Destination vertex does not exist.");
     }
 
     std::vector<const void*>& destinations = it->second;
     if (std::find(destinations.begin(), destinations.end(), dst) != destinations.end())
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("Flow::addEdge: Edge already exists.");
     }
 
     destinations.push_back(dst);
@@ -46,12 +46,12 @@ Flow::setVertexAsSource(const void* ptr)
 {
     if (!doesVertexExist(ptr))
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("Flow::setVertexAsSource: Vertex does not exist.");
     }
 
     if (std::find(m_sourceVertices.begin(), m_sourceVertices.end(), ptr) != m_sourceVertices.end())
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("Flow::setVertexAsSource: Vertex is already a source vertex.");
     }
 
     m_sourceVertices.push_back(ptr);

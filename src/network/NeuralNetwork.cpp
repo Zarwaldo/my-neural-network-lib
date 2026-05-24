@@ -154,13 +154,13 @@ NeuralNetwork<ValueType>::addTensor(const AbstractTensorIndex& size)
     const AbstractRtti<AbstractTensorIndex>* tensorIndexRtti = AbstractTensorIndex::templateRtti().instantiate(Initializer<size_t>(std::move(size_t{finalDimension})));
     if (tensorIndexRtti == nullptr)
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("NeuralNetwork::addTensor: Got no TensorIndex<" + std::to_string(finalDimension) + "> RTTI.");
     }
 
     const AbstractRtti<AbstractTensor<ValueType>>* tensorRtti = AbstractTensor<ValueType>::templateRtti().instantiate(Initializer<size_t>(std::move(size_t{finalDimension})));
     if (tensorRtti == nullptr)
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("NeuralNetwork::addTensor: Got no Tensor<ValueType, " + std::to_string(finalDimension) + "> RTTI.");
     }
 
     AbstractTensorIndex* finalTensorSize = static_cast<AbstractTensorIndex&>(TensorIndex<1>({ m_pimpl->m_thickness })) * size;
@@ -179,14 +179,14 @@ NeuralNetwork<ValueType>::addTensorMap(AbstractTensorMap<ValueType>* tensorMap)
 {
     if (tensorMap == nullptr)
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("NeuralNetwork::addTensorMap: Input tensor map is null.");
     }
 
     for (const AbstractTensor<ValueType>& tensor : *tensorMap)
     {
         if (std::find(m_pimpl->m_tensors.begin(), m_pimpl->m_tensors.end(), &tensor) == m_pimpl->m_tensors.end())
         {
-            throw std::runtime_error("");
+            throw std::runtime_error("NeuralNetwork::addTensorMap: One of the provided tensors does not belong to the network.");
         }
     }
 
@@ -201,12 +201,12 @@ NeuralNetwork<ValueType>::addModule(const AbstractRtti<Module<ValueType>>& modul
 {
     if (std::find(m_pimpl->m_tensorMaps.begin(), m_pimpl->m_tensorMaps.end(), &inputMap) == m_pimpl->m_tensorMaps.end())
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("NeuralNetwork::addModule: Input tensor map does not belong to the network.");
     }
 
     if (std::find(m_pimpl->m_tensorMaps.begin(), m_pimpl->m_tensorMaps.end(), &outputMap) == m_pimpl->m_tensorMaps.end())
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("NeuralNetwork::addModule: Output tensor map does not belong to the network.");
     }
 
     Module<ValueType>* module = moduleRtti.createInstance(std::move(modulesCtorParams));
@@ -226,7 +226,7 @@ NeuralNetwork<ValueType>::setInput(AbstractTensorMap<ValueType>& map)
 {
     if (std::find(m_pimpl->m_tensorMaps.begin(), m_pimpl->m_tensorMaps.end(), &map) == m_pimpl->m_tensorMaps.end())
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("NeuralNetwork::setInput: The provided tensor map does not belong to the network.");
     }
 
     m_pimpl->m_inputMap = &map;
@@ -239,7 +239,7 @@ NeuralNetwork<ValueType>::setOutput(AbstractTensorMap<ValueType>& map)
 {
     if (std::find(m_pimpl->m_tensorMaps.begin(), m_pimpl->m_tensorMaps.end(), &map) == m_pimpl->m_tensorMaps.end())
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("NeuralNetwork::setOutput: The provided tensor map does not belong to the network.");
     }
 
     m_pimpl->m_outputMap = &map;
@@ -287,12 +287,12 @@ NeuralNetwork<ValueType>::execute(InputProvider<ValueType>& inputProvider, Outpu
 {
     if (!canExecute())
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("NeuralNetwork::execute: The network cannot yet be executed.");
     }
 
     if (!inputProvider.hasMoreThan(m_pimpl->m_thickness))
     {
-        throw std::runtime_error("");
+        throw std::runtime_error("NeuralNetwork::execute: There must be at least " + std::to_string(m_pimpl->m_thickness) + " inputs in the input provider.");
     }
 
     inputProvider.getNewInput(*m_pimpl->m_inputMap);
