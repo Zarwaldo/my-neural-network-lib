@@ -11,7 +11,7 @@ template <auto FuncPtr>
 struct BuildTimeFunctionPointer
 {};
 
-template <typename BaseType, typename Type, typename... ConstructorArgumentLists>
+template <typename BaseType, typename Type, typename... CtorArgumentLists>
 class Rtti
 {};
 
@@ -31,8 +31,8 @@ private:
     const std::string m_typeName;
 };
 
-template <typename BaseType, typename Type, typename... FirstConstructorParameterTypes, typename... NextConstructorArgumentLists>
-class Rtti<BaseType, Type, BuildTimeList::TypeList<FirstConstructorParameterTypes...>, NextConstructorArgumentLists...> : public Rtti<BaseType, Type, NextConstructorArgumentLists...>
+template <typename BaseType, typename Type, typename... FirstCtorParameterTypes, typename... NextCtorArgumentLists>
+class Rtti<BaseType, Type, BuildTimeList::TypeList<FirstCtorParameterTypes...>, NextCtorArgumentLists...> : public Rtti<BaseType, Type, NextCtorArgumentLists...>
 {
 public:
     inline Rtti(const std::string& typeName);
@@ -42,8 +42,8 @@ public:
     virtual inline BaseType* createInstance(AbstractInitializer&& initializer) const;
 };
 
-template <typename BaseType, typename Type, typename... FirstConstructorParameterTypes, Type* (*CreateFuncPtr)(FirstConstructorParameterTypes...), typename... NextConstructorArgumentLists>
-class Rtti<BaseType, Type, BuildTimeFunctionPointer<CreateFuncPtr>, NextConstructorArgumentLists...> : public Rtti<BaseType, Type, NextConstructorArgumentLists...>
+template <typename BaseType, typename Type, typename... FirstCtorParameterTypes, Type* (*CreateFuncPtr)(FirstCtorParameterTypes...), typename... NextCtorArgumentLists>
+class Rtti<BaseType, Type, BuildTimeFunctionPointer<CreateFuncPtr>, NextCtorArgumentLists...> : public Rtti<BaseType, Type, NextCtorArgumentLists...>
 {
 public:
     inline Rtti(const std::string& typeName);

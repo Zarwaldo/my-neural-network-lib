@@ -33,50 +33,50 @@ Rtti<BaseType, Type>::getTypeName() const
     return m_typeName;
 }
 
-template <typename BaseType, typename Type, typename... FirstConstructorParameterTypes, typename... NextConstructorArgumentLists>
-Rtti<BaseType, Type, BuildTimeList::TypeList<FirstConstructorParameterTypes...>, NextConstructorArgumentLists...>::Rtti(const std::string& typeName)
-    : Rtti<BaseType, Type, NextConstructorArgumentLists...>(typeName)
+template <typename BaseType, typename Type, typename... FirstCtorParameterTypes, typename... NextCtorArgumentLists>
+Rtti<BaseType, Type, BuildTimeList::TypeList<FirstCtorParameterTypes...>, NextCtorArgumentLists...>::Rtti(const std::string& typeName)
+    : Rtti<BaseType, Type, NextCtorArgumentLists...>(typeName)
 {}
 
-template <typename BaseType, typename Type, typename... FirstConstructorParameterTypes, typename... NextConstructorArgumentLists>
-Rtti<BaseType, Type, BuildTimeList::TypeList<FirstConstructorParameterTypes...>, NextConstructorArgumentLists...>::~Rtti()
+template <typename BaseType, typename Type, typename... FirstCtorParameterTypes, typename... NextCtorArgumentLists>
+Rtti<BaseType, Type, BuildTimeList::TypeList<FirstCtorParameterTypes...>, NextCtorArgumentLists...>::~Rtti()
 {}
 
-template <typename BaseType, typename Type, typename... FirstConstructorParameterTypes, typename... NextConstructorArgumentLists>
+template <typename BaseType, typename Type, typename... FirstCtorParameterTypes, typename... NextCtorArgumentLists>
 BaseType*
-Rtti<BaseType, Type, BuildTimeList::TypeList<FirstConstructorParameterTypes...>, NextConstructorArgumentLists...>::createInstance(AbstractInitializer&& initializer) const
+Rtti<BaseType, Type, BuildTimeList::TypeList<FirstCtorParameterTypes...>, NextCtorArgumentLists...>::createInstance(AbstractInitializer&& initializer) const
 {
-    if (Initializer<FirstConstructorParameterTypes...>* concreteInitializer = dynamic_cast<Initializer<FirstConstructorParameterTypes...>*>(&initializer))
+    if (Initializer<FirstCtorParameterTypes...>* concreteInitializer = dynamic_cast<Initializer<FirstCtorParameterTypes...>*>(&initializer))
     {
-        return concreteInitializer->apply([](FirstConstructorParameterTypes... params) {
+        return concreteInitializer->apply([](FirstCtorParameterTypes... params) {
             return new Type(params...);
         });
     }
 
-    return Rtti<BaseType, Type, NextConstructorArgumentLists...>::createInstance(std::move(initializer));
+    return Rtti<BaseType, Type, NextCtorArgumentLists...>::createInstance(std::move(initializer));
 }
 
-template <typename BaseType, typename Type, typename... FirstConstructorParameterTypes, Type* (*CreateFuncPtr)(FirstConstructorParameterTypes...), typename... NextConstructorArgumentLists>
-Rtti<BaseType, Type, BuildTimeFunctionPointer<CreateFuncPtr>, NextConstructorArgumentLists...>::Rtti(const std::string& typeName)
-    : Rtti<BaseType, Type, NextConstructorArgumentLists...>(typeName)
+template <typename BaseType, typename Type, typename... FirstCtorParameterTypes, Type* (*CreateFuncPtr)(FirstCtorParameterTypes...), typename... NextCtorArgumentLists>
+Rtti<BaseType, Type, BuildTimeFunctionPointer<CreateFuncPtr>, NextCtorArgumentLists...>::Rtti(const std::string& typeName)
+    : Rtti<BaseType, Type, NextCtorArgumentLists...>(typeName)
 {}
 
-template <typename BaseType, typename Type, typename... FirstConstructorParameterTypes, Type* (*CreateFuncPtr)(FirstConstructorParameterTypes...), typename... NextConstructorArgumentLists>
-Rtti<BaseType, Type, BuildTimeFunctionPointer<CreateFuncPtr>, NextConstructorArgumentLists...>::~Rtti()
+template <typename BaseType, typename Type, typename... FirstCtorParameterTypes, Type* (*CreateFuncPtr)(FirstCtorParameterTypes...), typename... NextCtorArgumentLists>
+Rtti<BaseType, Type, BuildTimeFunctionPointer<CreateFuncPtr>, NextCtorArgumentLists...>::~Rtti()
 {}
 
-template <typename BaseType, typename Type, typename... FirstConstructorParameterTypes, Type* (*CreateFuncPtr)(FirstConstructorParameterTypes...), typename... NextConstructorArgumentLists>
+template <typename BaseType, typename Type, typename... FirstCtorParameterTypes, Type* (*CreateFuncPtr)(FirstCtorParameterTypes...), typename... NextCtorArgumentLists>
 BaseType*
-Rtti<BaseType, Type, BuildTimeFunctionPointer<CreateFuncPtr>, NextConstructorArgumentLists...>::createInstance(AbstractInitializer&& initializer) const
+Rtti<BaseType, Type, BuildTimeFunctionPointer<CreateFuncPtr>, NextCtorArgumentLists...>::createInstance(AbstractInitializer&& initializer) const
 {
-    if (Initializer<FirstConstructorParameterTypes...>* concreteInitializer = dynamic_cast<Initializer<FirstConstructorParameterTypes...>*>(&initializer))
+    if (Initializer<FirstCtorParameterTypes...>* concreteInitializer = dynamic_cast<Initializer<FirstCtorParameterTypes...>*>(&initializer))
     {
-        return concreteInitializer->apply([](FirstConstructorParameterTypes... params) {
+        return concreteInitializer->apply([](FirstCtorParameterTypes... params) {
             return (*CreateFuncPtr)(params...);
         });
     }
 
-    return Rtti<BaseType, Type, NextConstructorArgumentLists...>::createInstance(std::move(initializer));
+    return Rtti<BaseType, Type, NextCtorArgumentLists...>::createInstance(std::move(initializer));
 }
 
 #define IMPLEMENT_RTTI(ConcreteClass, AbstractClass, TemplateParamTypesPack, TemplateParamNamesPack)                                                             \

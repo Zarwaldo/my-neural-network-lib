@@ -6,7 +6,7 @@
 
 #include <helpers/BuildTimeList.h>
 
-template <typename BaseType, template <auto...> typename Template, typename TemplateArgsToConstructorParamsMap>
+template <typename BaseType, template <auto...> typename Template, typename TemplateArgsToCtorParamsMap>
 class TemplateRtti
 {};
 
@@ -26,8 +26,8 @@ private:
     const std::string m_typeName;
 };
 
-template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstConstructorParamTypes, typename... NextMapEntries>
-class TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstConstructorParamTypes...>>, NextMapEntries...>> : public TemplateRtti<BaseType, Template, BuildTimeList::Map<NextMapEntries...>>
+template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstCtorParamTypes, typename... NextMapEntries>
+class TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstCtorParamTypes...>>, NextMapEntries...>> : public TemplateRtti<BaseType, Template, BuildTimeList::Map<NextMapEntries...>>
 {
 public:
     inline TemplateRtti(const std::string& typeName);
@@ -39,7 +39,7 @@ public:
 private:
     static inline std::string buildTypeName(const std::string& templateTypeName);
 
-    const Rtti<BaseType, Template<FirstTemplateArgs...>, FirstConstructorParamTypes...> m_rtti;
+    const Rtti<BaseType, Template<FirstTemplateArgs...>, FirstCtorParamTypes...> m_rtti;
 };
 
 #include <rtti/TemplateRtti.impl.h>

@@ -29,20 +29,20 @@ TemplateRtti<BaseType, Template, BuildTimeList::Map<>>::instantiate(AbstractInit
     return nullptr;
 }
 
-template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstConstructorParamTypes, typename... NextMapEntries>
-TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstConstructorParamTypes...>>, NextMapEntries...>>::TemplateRtti(const std::string& templateTypeName)
+template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstCtorParamTypes, typename... NextMapEntries>
+TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstCtorParamTypes...>>, NextMapEntries...>>::TemplateRtti(const std::string& templateTypeName)
     : TemplateRtti<BaseType, Template, BuildTimeList::Map<NextMapEntries...>>(templateTypeName)
     , m_rtti(buildTypeName(templateTypeName))
 {}
 
-template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstConstructorParamTypes, typename... NextMapEntries>
-TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstConstructorParamTypes...>>, NextMapEntries...>>::~TemplateRtti()
+template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstCtorParamTypes, typename... NextMapEntries>
+TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstCtorParamTypes...>>, NextMapEntries...>>::~TemplateRtti()
 {
 }
 
-template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstConstructorParamTypes, typename... NextMapEntries>
+template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstCtorParamTypes, typename... NextMapEntries>
 const AbstractRtti<BaseType>*
-TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstConstructorParamTypes...>>, NextMapEntries...>>::instantiate(AbstractInitializer&& initializer) const
+TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstCtorParamTypes...>>, NextMapEntries...>>::instantiate(AbstractInitializer&& initializer) const
 {
     if (Initializer<decltype(FirstTemplateArgs)...>* concreteInitializer = dynamic_cast<Initializer<decltype(FirstTemplateArgs)...>*>(&initializer))
     {
@@ -55,9 +55,9 @@ TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<Buil
     return TemplateRtti<BaseType, Template, BuildTimeList::Map<NextMapEntries...>>::instantiate(std::move(initializer));
 }
 
-template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstConstructorParamTypes, typename... NextMapEntries>
+template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstCtorParamTypes, typename... NextMapEntries>
 std::string
-TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstConstructorParamTypes...>>, NextMapEntries...>>::buildTypeName(const std::string& templateTypeName)
+TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstCtorParamTypes...>>, NextMapEntries...>>::buildTypeName(const std::string& templateTypeName)
 {
     const std::string argsStrings[] = { std::to_string(FirstTemplateArgs)... };
 
