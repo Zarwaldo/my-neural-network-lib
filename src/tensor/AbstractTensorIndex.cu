@@ -38,6 +38,14 @@ AbstractTensorIndex::operator*(const AbstractTensorIndex& other) const
 class TensorIndexRttiHolderInitializer
 {
 public:
+    template <size_t Dimension>
+    using TensorIndexCtorParamTypes = TypeList<
+        TypeList<>,
+        TypeList<const size_t*>,
+        TypeList<const std::initializer_list<size_t>&>,
+        TypeList<const RawTensorIndex<Dimension>&>
+    >;
+
     TensorIndexRttiHolderInitializer()
         : tensorIndexRttiHolder(new RttiHolder<AbstractTensorIndex>())
         , tensorIndexRttiHolderToken(new RttiHolderToken<AbstractTensorIndex>(tensorIndexRttiHolder->edit()))
@@ -47,51 +55,11 @@ public:
                 AbstractTensorIndex,
                 TensorIndex,
                 Map<
-                    MapEntry<
-                        Tuple<size_t{1}>,
-                        TypeList<
-                            TypeList<>,
-                            TypeList<const size_t*>,
-                            TypeList<const std::initializer_list<size_t>&>,
-                            TypeList<const RawTensorIndex<1>&>
-                        >
-                    >,
-                    MapEntry<
-                        Tuple<size_t{2}>,
-                        TypeList<
-                            TypeList<>,
-                            TypeList<const size_t*>,
-                            TypeList<const std::initializer_list<size_t>&>,
-                            TypeList<const RawTensorIndex<2>&>
-                        >
-                    >,
-                    MapEntry<
-                        Tuple<size_t{3}>,
-                        TypeList<
-                            TypeList<>,
-                            TypeList<const size_t*>,
-                            TypeList<const std::initializer_list<size_t>&>,
-                            TypeList<const RawTensorIndex<3>&>
-                        >
-                    >,
-                    MapEntry<
-                        Tuple<size_t{4}>,
-                        TypeList<
-                            TypeList<>,
-                            TypeList<const size_t*>,
-                            TypeList<const std::initializer_list<size_t>&>,
-                            TypeList<const RawTensorIndex<4>&>
-                        >
-                    >,
-                    MapEntry<
-                        Tuple<size_t{5}>,
-                        TypeList<
-                            TypeList<>,
-                            TypeList<const size_t*>,
-                            TypeList<const std::initializer_list<size_t>&>,
-                            TypeList<const RawTensorIndex<5>&>
-                        >
-                    >
+                    MapEntry<Tuple<size_t{1}>, TensorIndexCtorParamTypes<1>>,
+                    MapEntry<Tuple<size_t{2}>, TensorIndexCtorParamTypes<2>>,
+                    MapEntry<Tuple<size_t{3}>, TensorIndexCtorParamTypes<3>>,
+                    MapEntry<Tuple<size_t{4}>, TensorIndexCtorParamTypes<4>>,
+                    MapEntry<Tuple<size_t{5}>, TensorIndexCtorParamTypes<5>>
                 >
             >("TensorIndex")
         );
