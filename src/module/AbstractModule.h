@@ -27,7 +27,7 @@ class TensorIndex;
     typename OutputTensorDimensionsList
 
 template <ABSTRACT_MODULE_TEMPLATE_PARAMS>
-class AbstractModulePrivate;
+class AbstractModulePimpl;
 
 template <ABSTRACT_MODULE_TEMPLATE_PARAMS>
 class AbstractModule
@@ -92,5 +92,5 @@ protected:
     HOST virtual void* getParameterBackpropagationMemory() const;
 
 private:
-    AbstractModulePrivate<ABSTRACT_MODULE_SPECIALIZATION_ARGS>* m_p;
+    AbstractModulePimpl<ABSTRACT_MODULE_SPECIALIZATION_ARGS>* m_p;
 };

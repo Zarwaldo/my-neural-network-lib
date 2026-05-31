@@ -25,11 +25,11 @@ struct AllocateTensorsFromSizes
 };
 
 template <ABSTRACT_MODULE_TEMPLATE_PARAMS>
-class AbstractModulePrivate
+class AbstractModulePimpl
 {};
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
-class AbstractModulePrivate<ABSTRACT_MODULE_SPECIALIZATION_ARGS>
+class AbstractModulePimpl<ABSTRACT_MODULE_SPECIALIZATION_ARGS>
 {
 public:
     static constexpr size_t NbInputTensors = sizeof...(InputTensorDimensions);
@@ -43,7 +43,7 @@ public:
     using ParameterTensorMapType = TensorMap<ValueType, ParameterKeyEnum>;
     using OutputTensorMapType = TensorMap<ValueType, OutputKeyEnum>;
 
-    HOST AbstractModulePrivate(const RawTuple<const TensorIndex<ParameterTensorDimensions>&...>& parameterTensorsSizes)
+    HOST AbstractModulePimpl(const RawTuple<const TensorIndex<ParameterTensorDimensions>&...>& parameterTensorsSizes)
         : m_parameterTensors(parameterTensorsSizes.template hostMap<AllocateTensorsFromSizes<ValueType>::MapFunction>())
         , m_inputMap(nullptr)
         , m_parameterMap(
@@ -95,7 +95,7 @@ public:
             + sizeofInputRawTensors;
     }
 
-    HOST ~AbstractModulePrivate()
+    HOST ~AbstractModulePimpl()
     {
         cudaFree(m_managedMemory);
 
@@ -119,7 +119,7 @@ public:
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::AbstractModule(const RawTuple<const TensorIndex<ParameterTensorDimensions>&...>& parameterTensorsSizes)
-    : m_p(new AbstractModulePrivate<ABSTRACT_MODULE_SPECIALIZATION_ARGS>(parameterTensorsSizes))
+    : m_p(new AbstractModulePimpl<ABSTRACT_MODULE_SPECIALIZATION_ARGS>(parameterTensorsSizes))
 {}
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
