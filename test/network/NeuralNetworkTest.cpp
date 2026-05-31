@@ -7,13 +7,12 @@
 
 #include <helpers/RawTuple.h>
 
-#include <module/MainTensorMapKeyEnums.h>
-
 #include <plugincore/ResourcesContainer.h>
 
 #include <pluginloader/PluginLoader.h>
 
 #include <plugins/nativemodules/AdditionModule.h>
+#include <plugins/nativemodules/TensorMapKeyEnums.h>
 
 #include <tensor/TensorIndex.h>
 #include <tensor/TensorMap.h>

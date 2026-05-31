@@ -1,5 +1,4 @@
 set(MODULE_SOURCES
-    ${SOURCE_ROOT}/module/MainTensorMapKeyEnums.cpp
     ${SOURCE_ROOT}/module/Module.cpp
 )
 

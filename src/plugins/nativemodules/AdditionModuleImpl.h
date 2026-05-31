@@ -2,7 +2,7 @@
 
 #include <module/ModuleMacros.h>
 
-#include <module/MainTensorMapKeyEnums.h>
+#include <plugins/nativemodules/TensorMapKeyEnums.h>
 
 DECLARE_MODULE(
     AdditionModuleImpl,

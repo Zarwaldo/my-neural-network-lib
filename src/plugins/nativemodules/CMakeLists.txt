@@ -4,6 +4,7 @@ set(NATIVEMODULES_SOURCES
     ${SOURCE_ROOT}/plugins/nativemodules/AdditionModuleImpl.cu
     ${SOURCE_ROOT}/plugins/nativemodules/PerceptronModule.cpp
     ${SOURCE_ROOT}/plugins/nativemodules/PerceptronModuleImpl.cu
+    ${SOURCE_ROOT}/plugins/nativemodules/TensorMapKeyEnums.cpp
 )
 
 add_library(nativemodules
