@@ -2,6 +2,8 @@
 
 #include <plugins/nativemodules/PerceptronModule.h>
 
+#include <module/MainTensorMapKeyEnums.h>
+
 #include <tensor/TensorMap.h>
 
 class PerceptronModuleShould : public ::testing::Test
@@ -71,7 +73,7 @@ TEST_F(PerceptronModuleShould, sumUpRowsOfTheInputTensorAddingRowIndex) {
     module.setInputTensorMap(inputMap);
     module.setOutputTensorMap(outputMap);
 
-    TensorMap<float, PerceptronParamsKeyEnum>& parameterMap = static_cast<TensorMap<float, PerceptronParamsKeyEnum>&>(module.getParameterTensorMap());
+    TensorMap<float, PerceptronParamsKeyEnum>& parameterMap = static_cast<TensorMap<float, PerceptronParamsKeyEnum>&>(module.getParameterAbstractTensorMap());
     initializeWeightsTensor(parameterMap.get(WEIGHTS));
     initializeBiasesTensor(parameterMap.get(BIASES));
 
@@ -107,7 +109,7 @@ TEST_F(PerceptronModuleShould, computeBackpropagation) {
     module.setInputTensorMap(inputMap);
     module.setOutputTensorMap(outputMap);
 
-    TensorMap<float, PerceptronParamsKeyEnum>& parameterMap = dynamic_cast<TensorMap<float, PerceptronParamsKeyEnum>&>(module.getParameterTensorMap());
+    TensorMap<float, PerceptronParamsKeyEnum>& parameterMap = dynamic_cast<TensorMap<float, PerceptronParamsKeyEnum>&>(module.getParameterAbstractTensorMap());
     initializeWeightsTensor(parameterMap.get(WEIGHTS));
     initializeBiasesTensor(parameterMap.get(BIASES));
 

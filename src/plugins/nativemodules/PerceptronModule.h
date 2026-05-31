@@ -1,17 +1,19 @@
 #pragma once
 
-#include <module/MainTensorMapKeyEnums.h>
-#include <module/ModuleMacros.h>
+#include <module/ModuleWrapper.h>
 
-DECLARE_MODULE(
+#include <helpers/RawTuple.h>
+
+#include <tensor/TensorIndex.h>
+
+template <typename ValueType, size_t InputDimension, size_t OutputDimension>
+class PerceptronModuleImpl;
+
+DECLARE_MODULE_WRAPPER(
     PerceptronModule,
     ValueType,
-    TensorSingleton,
-    PerceptronParamsKeyEnum,
-    TensorSingleton,
-    PACK(InputDimension + 1),
-    PACK(InputDimension + OutputDimension, OutputDimension),
-    PACK(OutputDimension + 1),
+    PerceptronModuleImpl,
+    PACK(RawTuple<const TensorIndex<InputDimension + OutputDimension>&, const TensorIndex<OutputDimension>&>),
     PACK(typename, size_t, size_t),
     PACK(ValueType, InputDimension, OutputDimension)
 )

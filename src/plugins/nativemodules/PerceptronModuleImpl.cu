@@ -1,6 +1,4 @@
-#include <plugins/nativemodules/PerceptronModule.h>
-
-#include <plugins/nativemodules/api.h>
+#include <plugins/nativemodules/PerceptronModuleImpl.h>
 
 #include <module/api.h>
 #include <module/ModuleMacros.impl.cuh>
@@ -8,7 +6,7 @@
 #include <CommonMacros.h>
 
 IMPLEMENT_MODULE(
-    PerceptronModule,
+    PerceptronModuleImpl,
     ValueType,
     TensorSingleton,
     PerceptronParamsKeyEnum,
@@ -23,7 +21,7 @@ IMPLEMENT_MODULE(
 template <typename ValueType, size_t InputDimension, size_t OutputDimension>
 HOST
 bool
-PerceptronModule<ValueType, InputDimension, OutputDimension>::areSizesCorrect(const RawTuple<const TensorIndex<InputDimension + 1>&>& inputTensorsSizes, const RawTuple<const TensorIndex<InputDimension + OutputDimension>&, const TensorIndex<OutputDimension>&>& parameterTensorsSizes, const RawTuple<const TensorIndex<OutputDimension + 1>&>& outputTensorsSizes)
+PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::areSizesCorrect(const RawTuple<const TensorIndex<InputDimension + 1>&>& inputTensorsSizes, const RawTuple<const TensorIndex<InputDimension + OutputDimension>&, const TensorIndex<OutputDimension>&>& parameterTensorsSizes, const RawTuple<const TensorIndex<OutputDimension + 1>&>& outputTensorsSizes)
 {
     const TensorIndex<InputDimension + 1>& inputTensorSize = inputTensorsSizes.template get<0>();
     const TensorIndex<InputDimension + OutputDimension>& weightsTensorSize = parameterTensorsSizes.template get<0>();
@@ -35,7 +33,7 @@ PerceptronModule<ValueType, InputDimension, OutputDimension>::areSizesCorrect(co
 template <typename ValueType, size_t InputDimension, size_t OutputDimension>
 DEVICE
 void
-PerceptronModule<ValueType, InputDimension, OutputDimension>::computationKernel__SINGLE_TENSOR(RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
+PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::computationKernel__SINGLE_TENSOR(RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
 {
     ValueType result;
     RawTensorIndex<InputDimension + OutputDimension> weightIndex;
@@ -71,7 +69,7 @@ PerceptronModule<ValueType, InputDimension, OutputDimension>::computationKernel_
 template <typename ValueType, size_t InputDimension, size_t OutputDimension>
 DEVICE
 void
-PerceptronModule<ValueType, InputDimension, OutputDimension>::inputBackpropagationKernel__SINGLE_TENSOR(RawTensor<ValueType, InputDimension + 1>* costPartDerivWRTInput, const RawTensor<ValueType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
+PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::inputBackpropagationKernel__SINGLE_TENSOR(RawTensor<ValueType, InputDimension + 1>* costPartDerivWRTInput, const RawTensor<ValueType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
 {
     ValueType result;
     RawTensorIndex<InputDimension + OutputDimension> weightIndex;
@@ -105,7 +103,7 @@ PerceptronModule<ValueType, InputDimension, OutputDimension>::inputBackpropagati
 template <typename ValueType, size_t InputDimension, size_t OutputDimension>
 DEVICE
 void
-PerceptronModule<ValueType, InputDimension, OutputDimension>::parameterBackpropagationKernel__WEIGHTS(RawTensor<ValueType, InputDimension + OutputDimension>* costPartDerivWRTWeights, const RawTensor<ValueType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
+PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::parameterBackpropagationKernel__WEIGHTS(RawTensor<ValueType, InputDimension + OutputDimension>* costPartDerivWRTWeights, const RawTensor<ValueType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
 {
     ValueType result;
     RawTensorIndex<InputDimension + 1> inputIndex;
@@ -133,7 +131,7 @@ PerceptronModule<ValueType, InputDimension, OutputDimension>::parameterBackpropa
 template <typename ValueType, size_t InputDimension, size_t OutputDimension>
 DEVICE
 void
-PerceptronModule<ValueType, InputDimension, OutputDimension>::parameterBackpropagationKernel__BIASES(RawTensor<ValueType, OutputDimension>* costPartDerivWRTBiases, const RawTensor<ValueType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
+PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::parameterBackpropagationKernel__BIASES(RawTensor<ValueType, OutputDimension>* costPartDerivWRTBiases, const RawTensor<ValueType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
 {
     ValueType result;
     RawTensorIndex<OutputDimension + 1> outputIndex;
@@ -156,23 +154,23 @@ PerceptronModule<ValueType, InputDimension, OutputDimension>::parameterBackpropa
 }
 
 extern template class MY_NEURAL_NETWORK_LIB__MODULE__API Module<float>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<float, 1, 1>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<float, 2, 1>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<float, 3, 1>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<float, 1, 2>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<float, 2, 2>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<float, 3, 2>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<float, 1, 3>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<float, 2, 3>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<float, 3, 3>;
+template class PerceptronModuleImpl<float, 1, 1>;
+template class PerceptronModuleImpl<float, 2, 1>;
+template class PerceptronModuleImpl<float, 3, 1>;
+template class PerceptronModuleImpl<float, 1, 2>;
+template class PerceptronModuleImpl<float, 2, 2>;
+template class PerceptronModuleImpl<float, 3, 2>;
+template class PerceptronModuleImpl<float, 1, 3>;
+template class PerceptronModuleImpl<float, 2, 3>;
+template class PerceptronModuleImpl<float, 3, 3>;
 
 extern template class MY_NEURAL_NETWORK_LIB__MODULE__API Module<double>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<double, 1, 1>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<double, 2, 1>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<double, 3, 1>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<double, 1, 2>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<double, 2, 2>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<double, 3, 2>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<double, 1, 3>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<double, 2, 3>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API PerceptronModule<double, 3, 3>;
+template class PerceptronModuleImpl<double, 1, 1>;
+template class PerceptronModuleImpl<double, 2, 1>;
+template class PerceptronModuleImpl<double, 3, 1>;
+template class PerceptronModuleImpl<double, 1, 2>;
+template class PerceptronModuleImpl<double, 2, 2>;
+template class PerceptronModuleImpl<double, 3, 2>;
+template class PerceptronModuleImpl<double, 1, 3>;
+template class PerceptronModuleImpl<double, 2, 3>;
+template class PerceptronModuleImpl<double, 3, 3>;
