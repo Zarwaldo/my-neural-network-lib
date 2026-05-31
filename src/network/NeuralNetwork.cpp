@@ -12,6 +12,7 @@
 #include <rtti/AbstractRtti.h>
 #include <rtti/AbstractTemplateRtti.h>
 #include <rtti/RttiHolder.h>
+#include <rtti/TypenameArgId.h>
 
 #include <tensor/Tensor.h>
 #include <tensor/TensorMap.h>
@@ -151,14 +152,14 @@ NeuralNetwork<ValueType>::addTensor(const AbstractTensorIndex& size)
 {
     const size_t finalDimension = 1 + size.dim(); // Thickness and dimensions required by user.
 
-    const AbstractRtti<AbstractTensor<ValueType>>* tensorRtti = AbstractTensor<ValueType>::templateRtti().instantiate(Initializer<size_t>(std::move(size_t{finalDimension})));
+    const AbstractRtti<TensorBase>* tensorRtti = TensorBase::templateRtti().instantiate(Initializer<TypenameArgId, size_t>(std::move(TypenameArgId{TypenameArgIdOf<ValueType>}), std::move(size_t{finalDimension})));
     if (tensorRtti == nullptr)
     {
         throw std::runtime_error("NeuralNetwork::addTensor: Got no Tensor<ValueType, " + std::to_string(finalDimension) + "> RTTI.");
     }
 
-    AbstractTensorIndex* finalTensorSize = static_cast<AbstractTensorIndex&>(TensorIndex<1>({ m_pimpl->m_thickness })) * size;
-    AbstractTensor<ValueType>* tensor = tensorRtti->createInstance(Initializer<const AbstractTensorIndex&>(*finalTensorSize));
+    AbstractTensorIndex* finalTensorSize = static_cast<AbstractTensorIndex&>(TensorIndex<1>{ m_pimpl->m_thickness }) * size;
+    AbstractTensor<ValueType>* tensor = static_cast<AbstractTensor<ValueType>*>(tensorRtti->createInstance(Initializer<const AbstractTensorIndex&>(*finalTensorSize)));
     delete finalTensorSize;
 
     safeAdd(tensor, m_pimpl->m_tensors);

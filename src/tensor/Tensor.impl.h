@@ -2,22 +2,12 @@
 
 #include <tensor/Tensor.h>
 
-#include <tensor/TensorRttiHolders.h>
-
 #include <stdexcept>
 
 template <typename ValueType>
 HOST
 AbstractTensor<ValueType>::~AbstractTensor()
 {}
-
-template <typename ValueType>
-HOST
-const AbstractTemplateRtti<AbstractTensor<ValueType>>&
-AbstractTensor<ValueType>::templateRtti()
-{
-    return TensorRttis::tensorTemplateRtti<ValueType>();
-}
 
 template <typename ValueType, size_t Dimension>
 HOST DEVICE
@@ -442,4 +432,4 @@ Tensor<ValueType, Dimension>::end() const
     return m_rawTensor.end();
 }
 
-IMPLEMENT_RTTI(Tensor, AbstractTensor<ValueType>, PACK(typename, size_t), PACK(ValueType, Dimension))
+IMPLEMENT_RTTI(Tensor, TensorBase, PACK(typename, size_t), PACK(ValueType, Dimension))

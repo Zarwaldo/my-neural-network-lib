@@ -1,14 +1,14 @@
 #pragma once
 
-#include <CommonMacros.h>
+#include <tensor/TensorBase.h>
 
-#include <rtti/Rtti.h>
+#include <CommonMacros.h>
 
 #include <tensor/TensorIndex.h>
 #include <tensor/ManagedMemorySharedPtr.h>
 
 template <typename ValueType>
-class AbstractTensor
+class AbstractTensor : public TensorBase
 {
 public:
     HOST virtual inline ~AbstractTensor();
@@ -25,10 +25,6 @@ public:
 
     HOST virtual inline const ValueType& operator[](const AbstractTensorIndex& index) const = 0;
     HOST virtual inline ValueType& operator[](const AbstractTensorIndex& index) = 0;
-
-    HOST static const AbstractTemplateRtti<AbstractTensor<ValueType>>& templateRtti();
-
-    DECLARE_AS_RTTI_BASE_TYPE(AbstractTensor<ValueType>)
 };
 
 template <typename ValueType, size_t Dimension>
@@ -144,7 +140,7 @@ private:
     RawTensor<ValueType, Dimension> m_rawTensor;
     TensorIndex<Dimension> m_sizes;
 
-    DECLARE_RTTI(AbstractTensor<ValueType>)
+    DECLARE_RTTI(TensorBase)
 };
 
 #include <tensor/Tensor.impl.h>
