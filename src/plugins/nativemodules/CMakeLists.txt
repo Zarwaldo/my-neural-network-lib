@@ -1,6 +1,7 @@
 set(NATIVEMODULES_SOURCES
     ${SOURCE_ROOT}/plugins/nativemodules/PluginHeader.cpp
-    ${SOURCE_ROOT}/plugins/nativemodules/AdditionModule.cu
+    ${SOURCE_ROOT}/plugins/nativemodules/AdditionModule.cpp
+    ${SOURCE_ROOT}/plugins/nativemodules/AdditionModuleImpl.cu
     ${SOURCE_ROOT}/plugins/nativemodules/PerceptronModule.cu
 )
 

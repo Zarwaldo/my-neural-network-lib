@@ -2,6 +2,8 @@
 
 #include <plugins/nativemodules/AdditionModule.h>
 
+#include <module/MainTensorMapKeyEnums.h>
+
 #include <tensor/TensorMap.h>
 
 class AdditionModuleShould : public ::testing::Test
@@ -60,7 +62,7 @@ TEST_F(AdditionModuleShould, addAnInputTensorAndItsParameterTensor) {
     AdditionModule<float, 4> module(parameterTensorsSizes);
     module.setInputTensorMap(inputMap);
     module.setOutputTensorMap(outputMap);
-    TensorMap<float, TensorSingleton>& parameterMap = dynamic_cast<TensorMap<float, TensorSingleton>&>(module.getParameterTensorMap());
+    TensorMap<float, TensorSingleton>& parameterMap = dynamic_cast<TensorMap<float, TensorSingleton>&>(module.getParameterAbstractTensorMap());
     AbstractTensor<float>& parameterTensor = parameterMap.get(SINGLE_TENSOR);
     initializeParameterTensor(parameterTensor);
 
@@ -82,7 +84,7 @@ TEST_F(AdditionModuleShould, computeBackpropagation) {
     AdditionModule<float, 4> module(parameterTensorsSizes);
     module.setInputTensorMap(inputMap);
     module.setOutputTensorMap(outputMap);
-    TensorMap<float, TensorSingleton>& parameterMap = dynamic_cast<TensorMap<float, TensorSingleton>&>(module.getParameterTensorMap());
+    TensorMap<float, TensorSingleton>& parameterMap = dynamic_cast<TensorMap<float, TensorSingleton>&>(module.getParameterAbstractTensorMap());
     initializeParameterTensor(parameterMap.get(SINGLE_TENSOR));
     module.compute();
 

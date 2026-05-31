@@ -1,17 +1,19 @@
 #pragma once
 
-#include <module/MainTensorMapKeyEnums.h>
-#include <module/ModuleMacros.h>
+#include <module/ModuleWrapper.h>
 
-DECLARE_MODULE(
+#include <helpers/RawTuple.h>
+
+#include <tensor/TensorIndex.h>
+
+template <typename ValueType, size_t Dimension>
+class AdditionModuleImpl;
+
+DECLARE_MODULE_WRAPPER(
     AdditionModule,
     ValueType,
-    TensorSingleton,
-    TensorSingleton,
-    TensorSingleton,
-    PACK(Dimension + 1),
-    PACK(Dimension),
-    PACK(Dimension + 1),
+    AdditionModuleImpl,
+    PACK(RawTuple<const TensorIndex<Dimension>&>),
     PACK(typename, size_t),
     PACK(ValueType, Dimension)
 )
