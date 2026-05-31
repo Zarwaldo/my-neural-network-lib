@@ -151,12 +151,6 @@ NeuralNetwork<ValueType>::addTensor(const AbstractTensorIndex& size)
 {
     const size_t finalDimension = 1 + size.dim(); // Thickness and dimensions required by user.
 
-    const AbstractRtti<AbstractTensorIndex>* tensorIndexRtti = AbstractTensorIndex::templateRtti().instantiate(Initializer<size_t>(std::move(size_t{finalDimension})));
-    if (tensorIndexRtti == nullptr)
-    {
-        throw std::runtime_error("NeuralNetwork::addTensor: Got no TensorIndex<" + std::to_string(finalDimension) + "> RTTI.");
-    }
-
     const AbstractRtti<AbstractTensor<ValueType>>* tensorRtti = AbstractTensor<ValueType>::templateRtti().instantiate(Initializer<size_t>(std::move(size_t{finalDimension})));
     if (tensorRtti == nullptr)
     {
