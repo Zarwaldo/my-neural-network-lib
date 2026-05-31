@@ -7,31 +7,6 @@
 DEFINE_TENSOR_MAP_KEY_ENUM(KeyEnum, )
 IMPLEMENT_TENSOR_MAP_KEY_ENUM(KeyEnum)
 
-class IsTensorMapKeyEnumShould : public ::testing::Test
-{};
-
-TEST_F(IsTensorMapKeyEnumShould, returnTrueOnKeyEnumTypes)
-{
-    // Given a KeyEnum type
-
-    // When calling IsTensorMapKeyEnum on it
-    const bool result = IsTensorMapKeyEnum<KeyEnum>::value;
-
-    // Then the result is true
-    EXPECT_TRUE(result);
-}
-
-TEST_F(IsTensorMapKeyEnumShould, returnFalseOnNonKeyEnumTypes)
-{
-    // Given a non-KeyEnum type
-
-    // When calling IsTensorMapKeyEnum on it
-    const bool result = IsTensorMapKeyEnum<int>::value;
-
-    // Then the result is false
-    EXPECT_FALSE(result);
-}
-
 class KeyEnumShould : public ::testing::Test
 {};
 

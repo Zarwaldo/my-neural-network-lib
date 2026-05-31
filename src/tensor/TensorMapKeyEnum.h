@@ -3,12 +3,6 @@
 #include <helpers/Macros.h>
 #include <helpers/RawTuple.h>
 
-template <typename Type>
-struct IsTensorMapKeyEnum
-{
-    static constexpr bool value = false;
-};
-
 #define __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName) __##EnumClassName##InternalEnum
 #define __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_MAX_VALUE(EnumClassName) __##EnumClassName##MaximumValue
 
@@ -62,13 +56,6 @@ struct IsTensorMapKeyEnum
         __TENSOR_MAP_KEY_ENUM__ITERATOR_NAME(EnumClassName) end() const;                                                                                             \
     };
 
-#define __TENSOR_MAP_KEY_ENUM__DEFINE_KEY_ENUM_TRAIT(EnumClassName) \
-    template <>                                                     \
-    struct IsTensorMapKeyEnum<EnumClassName>                        \
-    {                                                               \
-        static constexpr bool value = true;                         \
-    };
-
 #define DEFINE_TENSOR_MAP_KEY_ENUM(EnumClassName, DECLSPEC)                                                                   \
     __TENSOR_MAP_KEY_ENUM__DEFINE_INTERNAL_ENUM(EnumClassName)                                                                \
     __TENSOR_MAP_KEY_ENUM__DEFINE_ITERATOR(EnumClassName, DECLSPEC)                                                           \
@@ -94,8 +81,6 @@ struct IsTensorMapKeyEnum
                                                                                                                               \
     private:                                                                                                                  \
         __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName) m_value;                                                     \
-    };                                                                                                                        \
-                                                                                                                              \
-    __TENSOR_MAP_KEY_ENUM__DEFINE_KEY_ENUM_TRAIT(EnumClassName)
+    };
 
 #include <tensor/TensorMapKeyEnum.impl.h>
