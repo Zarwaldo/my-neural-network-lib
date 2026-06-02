@@ -1,5 +1,7 @@
 #pragma once
 
+#include <tensor/AbstractTensorMapKeyEnum.h>
+
 #include <helpers/Macros.h>
 #include <helpers/RawTuple.h>
 
@@ -61,16 +63,17 @@
     __TENSOR_MAP_KEY_ENUM__DEFINE_ITERATOR(EnumClassName, DECLSPEC)                                                           \
     __TENSOR_MAP_KEY_ENUM__DEFINE_ITERATOR_PROVIDER(EnumClassName, DECLSPEC)                                                  \
                                                                                                                               \
-    class DECLSPEC EnumClassName                                                                                              \
+    class DECLSPEC EnumClassName : public AbstractTensorMapKeyEnum                                                            \
     {                                                                                                                         \
     public:                                                                                                                   \
-        EnumClassName(const __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName)& value);                                 \
-        EnumClassName(const size_t& value);                                                                                   \
+        HOST EnumClassName(const __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName)& value);                            \
+        HOST EnumClassName(const size_t& value);                                                                              \
+        HOST virtual ~EnumClassName() override;                                                                               \
                                                                                                                               \
-        operator __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName)() const;                                            \
-        operator size_t() const;                                                                                              \
-        bool operator==(const EnumClassName& other) const;                                                                    \
-        bool operator!=(const EnumClassName& other) const;                                                                    \
+        HOST operator __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName)() const;                                       \
+        HOST virtual operator size_t() const override;                                                                        \
+        HOST virtual bool operator==(const AbstractTensorMapKeyEnum& other) const override;                                   \
+        HOST virtual bool operator!=(const AbstractTensorMapKeyEnum& other) const override;                                   \
                                                                                                                               \
         using Iterator = __TENSOR_MAP_KEY_ENUM__ITERATOR_NAME(EnumClassName);                                                 \
         using IteratorProvider = __TENSOR_MAP_KEY_ENUM__ITERATOR_PROVIDER_NAME(EnumClassName);                                \

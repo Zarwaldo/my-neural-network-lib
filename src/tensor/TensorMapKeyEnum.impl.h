@@ -63,6 +63,9 @@
         : EnumClassName(static_cast<__TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName)>(value))                \
     {}                                                                                                               \
                                                                                                                      \
+    EnumClassName::~EnumClassName()                                                                                  \
+    {}                                                                                                               \
+                                                                                                                     \
     EnumClassName::operator __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName)() const                         \
     {                                                                                                                \
         return m_value;                                                                                              \
@@ -74,13 +77,17 @@
     }                                                                                                                \
                                                                                                                      \
     bool                                                                                                             \
-    EnumClassName::operator==(const EnumClassName& other) const                                                      \
+    EnumClassName::operator==(const AbstractTensorMapKeyEnum& other) const                                           \
     {                                                                                                                \
-        return m_value == other.m_value;                                                                             \
+        const EnumClassName* otherPtr = dynamic_cast<const EnumClassName*>(&other);                                  \
+        if (otherPtr == nullptr)                                                                                     \
+            return false;                                                                                            \
+                                                                                                                     \
+        return m_value == otherPtr->m_value;                                                                         \
     }                                                                                                                \
                                                                                                                      \
     bool                                                                                                             \
-    EnumClassName::operator!=(const EnumClassName& other) const                                                      \
+    EnumClassName::operator!=(const AbstractTensorMapKeyEnum& other) const                                           \
     {                                                                                                                \
         return !(*this == other);                                                                                    \
     }                                                                                                                \

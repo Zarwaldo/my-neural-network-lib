@@ -1,5 +1,6 @@
 set(TENSOR_SOURCES
     ${SOURCE_ROOT}/tensor/AbstractTensorIndex.cu
+    ${SOURCE_ROOT}/tensor/AbstractTensorMapKeyEnum.cpp
     ${SOURCE_ROOT}/tensor/ManagedMemorySharedPtr.cu
     ${SOURCE_ROOT}/tensor/TensorBase.cpp
 )
