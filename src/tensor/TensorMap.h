@@ -1,7 +1,5 @@
 #pragma once
 
-#include <MyNeuralNetworkLib.h>
-
 #include <tensor/TensorMapKeyEnum.h>
 
 #include <initializer_list>
