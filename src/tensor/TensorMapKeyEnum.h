@@ -84,6 +84,8 @@
                                                                                                                               \
     private:                                                                                                                  \
         __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName) m_value;                                                     \
+                                                                                                                              \
+        DECLARE_RTTI(AbstractTensorMapKeyEnum)                                                                                \
     };
 
 #include <tensor/TensorMapKeyEnum.impl.h>

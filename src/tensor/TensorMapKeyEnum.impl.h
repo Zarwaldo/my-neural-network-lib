@@ -113,4 +113,6 @@
                 TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_VALUES(EnumClassName)                                             \
             )                                                                                                        \
         );                                                                                                           \
-    }
+    }                                                                                                                \
+                                                                                                                     \
+    IMPLEMENT_RTTI(EnumClassName, AbstractTensorMapKeyEnum, PACK(), PACK())
