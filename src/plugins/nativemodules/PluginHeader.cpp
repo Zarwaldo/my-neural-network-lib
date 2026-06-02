@@ -3,10 +3,60 @@
 #include <plugins/nativemodules/api.h>
 #include <plugins/nativemodules/AdditionModule.h>
 #include <plugins/nativemodules/PerceptronModule.h>
+#include <plugins/nativemodules/TensorMapKeyEnums.h>
+
+#include <rtti/RttiHolder.impl.h>
+#include <rtti/TemplateRtti.h>
+#include <rtti/TypenameArgId.h>
 
 #include <tensor/TensorIndex.h>
+#include <tensor/TensorMap.h>
+
+using namespace BuildTimeList;
 
 PLUGINCORE__INCLUDE_PLUGIN_HEADER(MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API)
+
+template <typename ValueType>
+struct TemplateProvider
+{
+    template <size_t Dimension>
+    using AdditionModuleTemplate = AdditionModule<ValueType, Dimension>;
+
+    template <size_t InputDimension, size_t OutputDimension>
+    using PerceptronModuleTemplate = PerceptronModule<ValueType, InputDimension, OutputDimension>;
+
+    template <TypenameArgId KeyEnumId>
+    using TensorMapTemplate = TensorMap<ValueType, TypeFromTypenameArgId<KeyEnumId>>;
+};
+
+template <size_t Dimension>
+using AdditionModuleEntry = MapEntry<
+    Tuple<size_t{Dimension}>,
+    TypeList<
+        TypeList<
+            const RawTuple<const TensorIndex<Dimension>&>&
+        >
+    >
+>;
+
+template <size_t InputDimension, size_t OutputDimension>
+using PerceptronModuleEntry = MapEntry<
+    Tuple<size_t{InputDimension}, size_t{OutputDimension}>,
+    TypeList<
+        TypeList<
+            const RawTuple<const TensorIndex<InputDimension + OutputDimension>&, const TensorIndex<OutputDimension>&>&
+        >
+    >
+>;
+
+template <typename ValueType, typename KeyEnum>
+using TensorMapEntry = MapEntry<
+    Tuple<TypenameArgIdOf<KeyEnum>>,
+    TypeList<
+        TypeList<AbstractTensor<ValueType>* const [KeyEnum::NbValues]>,
+        TypeList<const std::initializer_list<AbstractTensor<ValueType>*>&>
+    >
+>;
 
 static ResourcesContainerToken* token = nullptr;
 
@@ -15,35 +65,92 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
 {
     token = new ResourcesContainerToken(resourcesContainer->edit());
 
-    token->modules<float>().subscribe(new Rtti<Module<float>, AdditionModule<float, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<1>&>&>>("AdditionModule<float,1>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, AdditionModule<float, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<2>&>&>>("AdditionModule<float,2>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, AdditionModule<float, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&>&>>("AdditionModule<float,3>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, AdditionModule<float, 4>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&>&>>("AdditionModule<float,4>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, AdditionModule<float, 5>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&>&>>("AdditionModule<float,5>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, AdditionModule<double, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<1>&>&>>("AdditionModule<double,1>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, AdditionModule<double, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<2>&>&>>("AdditionModule<double,2>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, AdditionModule<double, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&>&>>("AdditionModule<double,3>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, AdditionModule<double, 4>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&>&>>("AdditionModule<double,4>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, AdditionModule<double, 5>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&>&>>("AdditionModule<double,5>"));
+    token->modules<float>().subscribe(
+        new TemplateRtti<
+            Module<float>,
+            TemplateProvider<float>::AdditionModuleTemplate,
+            Map<
+                AdditionModuleEntry<1>,
+                AdditionModuleEntry<2>,
+                AdditionModuleEntry<3>,
+                AdditionModuleEntry<4>,
+                AdditionModuleEntry<5>
+            >
+        >("AdditionModule<float>")
+    );
+    token->modules<double>().subscribe(
+        new TemplateRtti<
+            Module<double>,
+            TemplateProvider<double>::AdditionModuleTemplate,
+            Map<
+                AdditionModuleEntry<1>,
+                AdditionModuleEntry<2>,
+                AdditionModuleEntry<3>,
+                AdditionModuleEntry<4>,
+                AdditionModuleEntry<5>
+            >
+        >("AdditionModule<double>")
+    );
 
-    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 1, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<2>&, const TensorIndex<1>&>&>>("PerceptronModule<float,1,1>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 2, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&, const TensorIndex<1>&>&>>("PerceptronModule<float,2,1>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 3, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<1>&>&>>("PerceptronModule<float,3,1>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 1, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&, const TensorIndex<2>&>&>>("PerceptronModule<float,1,2>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 2, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<2>&>&>>("PerceptronModule<float,2,2>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 3, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&, const TensorIndex<2>&>&>>("PerceptronModule<float,3,2>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 1, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<3>&>&>>("PerceptronModule<float,1,3>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 2, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&, const TensorIndex<3>&>&>>("PerceptronModule<float,2,3>"));
-    token->modules<float>().subscribe(new Rtti<Module<float>, PerceptronModule<float, 3, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<6>&, const TensorIndex<3>&>&>>("PerceptronModule<float,3,3>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 1, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<2>&, const TensorIndex<1>&>&>>("PerceptronModule<double,1,1>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 2, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&, const TensorIndex<1>&>&>>("PerceptronModule<double,2,1>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 3, 1>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<1>&>&>>("PerceptronModule<double,3,1>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 1, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<3>&, const TensorIndex<2>&>&>>("PerceptronModule<double,1,2>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 2, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<2>&>&>>("PerceptronModule<double,2,2>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 3, 2>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&, const TensorIndex<2>&>&>>("PerceptronModule<double,3,2>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 1, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<4>&, const TensorIndex<3>&>&>>("PerceptronModule<double,1,3>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 2, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<5>&, const TensorIndex<3>&>&>>("PerceptronModule<double,2,3>"));
-    token->modules<double>().subscribe(new Rtti<Module<double>, PerceptronModule<double, 3, 3>, BuildTimeList::TypeList<const RawTuple<const TensorIndex<6>&, const TensorIndex<3>&>&>>("PerceptronModule<double,3,3>"));
+    token->modules<float>().subscribe(
+        new TemplateRtti<
+            Module<float>,
+            TemplateProvider<float>::PerceptronModuleTemplate,
+            Map<
+                PerceptronModuleEntry<1, 1>,
+                PerceptronModuleEntry<1, 2>,
+                PerceptronModuleEntry<1, 3>,
+                PerceptronModuleEntry<2, 1>,
+                PerceptronModuleEntry<2, 2>,
+                PerceptronModuleEntry<2, 3>,
+                PerceptronModuleEntry<3, 1>,
+                PerceptronModuleEntry<3, 2>,
+                PerceptronModuleEntry<3, 3>
+            >
+        >("PerceptronModule<float>")
+    );
+    token->modules<double>().subscribe(
+        new TemplateRtti<
+            Module<double>,
+            TemplateProvider<double>::PerceptronModuleTemplate,
+            Map<
+                PerceptronModuleEntry<1, 1>,
+                PerceptronModuleEntry<1, 2>,
+                PerceptronModuleEntry<1, 3>,
+                PerceptronModuleEntry<2, 1>,
+                PerceptronModuleEntry<2, 2>,
+                PerceptronModuleEntry<2, 3>,
+                PerceptronModuleEntry<3, 1>,
+                PerceptronModuleEntry<3, 2>,
+                PerceptronModuleEntry<3, 3>
+            >
+        >("PerceptronModule<double>")
+    );
+
+    token->tensorMaps<float>().subscribe(
+        new TemplateRtti<
+            AbstractTensorMap<float>,
+            TemplateProvider<float>::TensorMapTemplate,
+            Map<
+                TensorMapEntry<float, TensorSingleton>,
+                TensorMapEntry<float, PerceptronParamsKeyEnum>
+            >
+        >("TensorMap<float>")
+    );
+
+    token->tensorMaps<double>().subscribe(
+        new TemplateRtti<
+            AbstractTensorMap<double>,
+            TemplateProvider<double>::TensorMapTemplate,
+            Map<
+                TensorMapEntry<double, TensorSingleton>,
+                TensorMapEntry<double, PerceptronParamsKeyEnum>
+            >
+        >("TensorMap<double>")
+    );
+
+    token->tensorMapKeyEnums().subscribe(new Rtti<AbstractTensorMapKeyEnum, TensorSingleton, TypeList<const size_t&>>("TensorSingleton"));
+    token->tensorMapKeyEnums().subscribe(new Rtti<AbstractTensorMapKeyEnum, PerceptronParamsKeyEnum, TypeList<const size_t&>>("PerceptronParamsKeyEnum"));
 }
 
 void
