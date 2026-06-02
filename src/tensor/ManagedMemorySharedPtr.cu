@@ -159,6 +159,6 @@ ManagedMemorySharedPtr<Type>::unref()
         cudaFree(m_ptr);
 }
 
-template class MY_NEURAL_NETWORK_LIB__TENSOR__API ManagedMemorySharedPtr<bool>;
-template class MY_NEURAL_NETWORK_LIB__TENSOR__API ManagedMemorySharedPtr<float>;
-template class MY_NEURAL_NETWORK_LIB__TENSOR__API ManagedMemorySharedPtr<double>;
+template class MY_NEURAL_NETWORK_LIB__TENSOR__CUDA_API ManagedMemorySharedPtr<bool>;
+template class MY_NEURAL_NETWORK_LIB__TENSOR__CUDA_API ManagedMemorySharedPtr<float>;
+template class MY_NEURAL_NETWORK_LIB__TENSOR__CUDA_API ManagedMemorySharedPtr<double>;

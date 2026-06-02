@@ -9,7 +9,7 @@
 template <typename BaseType>
 class AbstractTemplateRtti;
 
-class MY_NEURAL_NETWORK_LIB__TENSOR__API AbstractTensorIndex
+class MY_NEURAL_NETWORK_LIB__TENSOR__CUDA_API AbstractTensorIndex
 {
 public:
     HOST DEVICE virtual ~AbstractTensorIndex();
