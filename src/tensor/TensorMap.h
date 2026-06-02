@@ -2,6 +2,8 @@
 
 #include <tensor/TensorMapKeyEnum.h>
 
+#include <rtti/Rtti.h>
+
 #include <initializer_list>
 
 template <typename ValueType>
@@ -45,6 +47,8 @@ public:
 
     IteratorConst end() const;
     Iterator end();
+
+    DECLARE_AS_RTTI_BASE_TYPE(AbstractTensorMap<ValueType>)
 };
 
 template <typename ValueType, typename KeyEnum>
@@ -66,6 +70,8 @@ public:
 
 private:
     AbstractTensor<ValueType>* m_tensors[KeyEnum::NbValues];
+
+    DECLARE_RTTI(AbstractTensorMap<ValueType>)
 };
 
 #include <tensor/TensorMap.impl.h>

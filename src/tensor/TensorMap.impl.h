@@ -166,3 +166,5 @@ TensorMap<ValueType, KeyEnum>::get(KeyEnum key)
 {
     return const_cast<AbstractTensor<ValueType>&>(static_cast<const TensorMap<ValueType, KeyEnum>*>(this)->get(key));
 }
+
+IMPLEMENT_RTTI(TensorMap, AbstractTensorMap<ValueType>, PACK(typename, typename), PACK(ValueType, KeyEnum))
