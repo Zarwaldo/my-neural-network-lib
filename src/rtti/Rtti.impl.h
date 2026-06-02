@@ -4,6 +4,7 @@
 
 #include <rtti/Initializer.h>
 
+#include <stdexcept>
 #include <string>
 
 template <typename BaseType, typename Type>
