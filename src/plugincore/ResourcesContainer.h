@@ -6,6 +6,8 @@
 
 #include <rtti/RttiHolder.h>
 
+#include <tensor/AbstractTensorMapKeyEnum.h>
+
 #include <CommonMacros.h>
 
 class ResourcesContainer;
@@ -18,8 +20,16 @@ public:
 
     ~ResourcesContainerToken();
 
+    ResourcesContainerToken& operator=(const ResourcesContainerToken& other) = delete;
+    ResourcesContainerToken& operator=(ResourcesContainerToken&& other);
+
     template <typename ValueType>
     RttiHolderToken<Module<ValueType>>& modules();
+
+    template <typename ValueType>
+    RttiHolderToken<AbstractTensorMap<ValueType>>& tensorMaps();
+
+    RttiHolderToken<AbstractTensorMapKeyEnum>& tensorMapKeyEnums();
 
 private:
     ResourcesContainerToken(ResourcesContainer& owner);
@@ -27,6 +37,9 @@ private:
     ResourcesContainer* m_owner;
     RttiHolderToken<Module<float>> m_floatModuleToken;
     RttiHolderToken<Module<double>> m_doubleModuleToken;
+    RttiHolderToken<AbstractTensorMap<float>> m_floatTensorMapToken;
+    RttiHolderToken<AbstractTensorMap<double>> m_doubleTensorMapToken;
+    RttiHolderToken<AbstractTensorMapKeyEnum> m_tensorMapKeyEnumToken;
 
     friend class ResourcesContainer;
 };
@@ -46,11 +59,19 @@ public:
     template <typename ValueType>
     const RttiHolder<Module<ValueType>>& modules() const;
 
+    template <typename ValueType>
+    const RttiHolder<AbstractTensorMap<ValueType>>& tensorMaps() const;
+
+    const RttiHolder<AbstractTensorMapKeyEnum>& tensorMapKeyEnums() const;
+
     ResourcesContainerToken edit();
 
 private:
     RttiHolder<Module<float>> m_floatModules;
     RttiHolder<Module<double>> m_doubleModules;
+    RttiHolder<AbstractTensorMap<float>> m_floatTensorMaps;
+    RttiHolder<AbstractTensorMap<double>> m_doubleTensorMaps;
+    RttiHolder<AbstractTensorMapKeyEnum> m_tensorMapKeyEnums;
 
     friend class ResourcesContainerToken;
 };
