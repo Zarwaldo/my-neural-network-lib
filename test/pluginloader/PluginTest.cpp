@@ -115,13 +115,13 @@ TEST_F(PluginShould, provideRttisInTheDefaultCase) {
     Plugin plugin = Plugin(L"nativemodules", libPath, resourcesContainer);
 
     // When fetching an rtti from its resources
-    const AbstractRtti<Module<float>>* result = resourcesContainer.modules<float>().getRttiByName("AdditionModule<float,1>");
+    const AbstractTemplateRtti<Module<float>>* result = resourcesContainer.modules<float>().getTemplateRttiByName("AdditionModule<float>");
 
     // Then the returned rtti should be non-null
     EXPECT_NE(result, nullptr);
 }
 
-TEST_F(PluginShould, provideRttisWhenUnoaded) {
+TEST_F(PluginShould, provideRttisWhenUnloaded) {
     // Given an unloaded plugin
     ResourcesContainer resourcesContainer;
     const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
@@ -129,7 +129,7 @@ TEST_F(PluginShould, provideRttisWhenUnoaded) {
     plugin.unload();
 
     // When fetching an rtti from its resources
-    const AbstractRtti<Module<float>>* result = resourcesContainer.modules<float>().getRttiByName("AdditionModule<float,1>");
+    const AbstractTemplateRtti<Module<float>>* result = resourcesContainer.modules<float>().getTemplateRttiByName("AdditionModule<float>");
 
     // Then the returned rtti should be null
     EXPECT_EQ(result, nullptr);
@@ -144,7 +144,7 @@ TEST_F(PluginShould, provideRttisWhenReloaded) {
     plugin.load();
 
     // When fetching an rtti from its resources
-    const AbstractRtti<Module<float>>* result = resourcesContainer.modules<float>().getRttiByName("AdditionModule<float,1>");
+    const AbstractTemplateRtti<Module<float>>* result = resourcesContainer.modules<float>().getTemplateRttiByName("AdditionModule<float>");
 
     // Then the returned rtti should be non-null
     EXPECT_NE(result, nullptr);
