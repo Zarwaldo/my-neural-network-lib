@@ -60,7 +60,13 @@ public:
     using OutputTensorMapType = TensorMap<ValueType, OutputKeyEnum>;
 
     HOST AbstractModule(const RawTuple<const TensorIndex<ParameterTensorDimensions>&...>& parameterTensorsSizes);
+    HOST AbstractModule(const AbstractModule& other) = delete;
+    HOST AbstractModule(AbstractModule&& other);
+
     HOST virtual ~AbstractModule();
+
+    HOST AbstractModule& operator=(const AbstractModule& other) = delete;
+    HOST AbstractModule& operator=(AbstractModule&& other);
 
     HOST virtual AbstractTensorMap<ValueType>* getInputAbstractTensorMap() const override;
     HOST virtual InputTensorMapType* getInputTensorMap() const;

@@ -124,9 +124,26 @@ AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::AbstractModule(const RawTup
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
+AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::AbstractModule(AbstractModule&& other)
+    : m_p(other.m_p)
+{
+    other.m_p = nullptr;
+}
+
+template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
+HOST
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::~AbstractModule()
 {
     delete m_p;
+}
+
+template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
+HOST
+AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>&
+AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::operator=(AbstractModule&& other)
+{
+    std::swap(m_p, other.m_p);
+    return *this;
 }
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>

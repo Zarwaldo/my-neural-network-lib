@@ -7,10 +7,12 @@ class ModuleWrapper : public Module<ValueType>
 {
 public:
     HOST explicit ModuleWrapper(const CtorParamType& param);
+    HOST ModuleWrapper(const ModuleWrapper& other) = delete;
     HOST ModuleWrapper(ModuleWrapper&& other);
 
     HOST ~ModuleWrapper();
     
+    HOST ModuleWrapper& operator=(const ModuleWrapper& other) = delete;
     HOST ModuleWrapper& operator=(ModuleWrapper&& other);
 
     HOST virtual AbstractTensorMap<ValueType>* getInputAbstractTensorMap() const override;
