@@ -31,7 +31,7 @@ public:
     class MY_NEURAL_NETWORK_LIB__PLUGINLOADER__API Iterator
     {
     public:
-        Iterator(const PluginLoader& owner, const size_t& index);
+        Iterator(const PluginLoader& owner, size_t index);
 
         Iterator& operator++();
         Plugin& operator*() const;

@@ -67,7 +67,7 @@
     {                                                                                                                         \
     public:                                                                                                                   \
         HOST EnumClassName(const __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName)& value);                            \
-        HOST EnumClassName(const size_t& value);                                                                              \
+        HOST EnumClassName(size_t value);                                                                                     \
         HOST virtual ~EnumClassName() override;                                                                               \
                                                                                                                               \
         HOST operator __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName)() const;                                       \

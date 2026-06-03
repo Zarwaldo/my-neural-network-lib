@@ -149,8 +149,8 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
         >("TensorMap<double>")
     );
 
-    token->tensorMapKeyEnums().subscribe(new Rtti<AbstractTensorMapKeyEnum, TensorSingleton, TypeList<const size_t&>>("TensorSingleton"));
-    token->tensorMapKeyEnums().subscribe(new Rtti<AbstractTensorMapKeyEnum, PerceptronParamsKeyEnum, TypeList<const size_t&>>("PerceptronParamsKeyEnum"));
+    token->tensorMapKeyEnums().subscribe(new Rtti<AbstractTensorMapKeyEnum, TensorSingleton, TypeList<size_t>>("TensorSingleton"));
+    token->tensorMapKeyEnums().subscribe(new Rtti<AbstractTensorMapKeyEnum, PerceptronParamsKeyEnum, TypeList<size_t>>("PerceptronParamsKeyEnum"));
 }
 
 void

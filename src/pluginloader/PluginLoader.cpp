@@ -75,7 +75,7 @@ PluginLoader::loadPluginsFromExecutableDir()
     loadPluginsFromDirPath(getExecutableDir());
 }
 
-PluginLoader::Iterator::Iterator(const PluginLoader& owner, const size_t& index)
+PluginLoader::Iterator::Iterator(const PluginLoader& owner, size_t index)
     : m_owner(&owner)
     , m_index(index)
 {}
