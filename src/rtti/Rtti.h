@@ -25,6 +25,8 @@ public:
 
     virtual inline BaseType* createInstance(AbstractInitializer&& initializer) const override;
 
+    virtual inline TypenameArgId getTypenameArgId() const override;
+
     virtual inline const std::string& getTypeName() const override;
 
 private:

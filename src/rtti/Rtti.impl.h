@@ -28,6 +28,13 @@ Rtti<BaseType, Type>::createInstance(AbstractInitializer&& initializer) const
 }
 
 template <typename BaseType, typename Type>
+TypenameArgId
+Rtti<BaseType, Type>::getTypenameArgId() const
+{
+    return TypenameArgIdOf<Type>;
+}
+
+template <typename BaseType, typename Type>
 const std::string&
 Rtti<BaseType, Type>::getTypeName() const
 {
