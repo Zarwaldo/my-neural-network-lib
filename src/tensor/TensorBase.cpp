@@ -29,8 +29,14 @@ namespace
     }
 }
 
-template <TypenameArgId ValueType, size_t Dimension>
-using TypenameCompliantTensorTemplate = Tensor<TypeFromTypenameArgId<ValueType>, Dimension>;
+template <TypenameArgId ValueTypeId, size_t Dimension>
+using TypenameCompliantTensorTemplate = Tensor<TypeFromTypenameArgId<ValueTypeId>, Dimension>;
+
+template <typename ValueType, size_t Dimension>
+using TensorEntry = MapEntry<
+    Tuple<TypenameArgIdOf<ValueType>, size_t{Dimension}>,
+    TypeList<BuildTimeFunctionPointer<createTensor<ValueType, Dimension>>>
+>;
 
 class TensorRttiHolderInitializer
 {
@@ -44,46 +50,16 @@ public:
                 TensorBase,
                 TypenameCompliantTensorTemplate,
                 Map<
-                    MapEntry<
-                        Tuple<TypenameArgIdOf<float>, size_t{1}>,
-                        TypeList<BuildTimeFunctionPointer<createTensor<float, 1>>>
-                    >,
-                    MapEntry<
-                        Tuple<TypenameArgIdOf<float>, size_t{2}>,
-                        TypeList<BuildTimeFunctionPointer<createTensor<float, 2>>>
-                    >,
-                    MapEntry<
-                        Tuple<TypenameArgIdOf<float>, size_t{3}>,
-                        TypeList<BuildTimeFunctionPointer<createTensor<float, 3>>>
-                    >,
-                    MapEntry<
-                        Tuple<TypenameArgIdOf<float>, size_t{4}>,
-                        TypeList<BuildTimeFunctionPointer<createTensor<float, 4>>>
-                    >,
-                    MapEntry<
-                        Tuple<TypenameArgIdOf<float>, size_t{5}>,
-                        TypeList<BuildTimeFunctionPointer<createTensor<float, 5>>>
-                    >,
-                    MapEntry<
-                        Tuple<TypenameArgIdOf<double>, size_t{1}>,
-                        TypeList<BuildTimeFunctionPointer<createTensor<double, 1>>>
-                    >,
-                    MapEntry<
-                        Tuple<TypenameArgIdOf<double>, size_t{2}>,
-                        TypeList<BuildTimeFunctionPointer<createTensor<double, 2>>>
-                    >,
-                    MapEntry<
-                        Tuple<TypenameArgIdOf<double>, size_t{3}>,
-                        TypeList<BuildTimeFunctionPointer<createTensor<double, 3>>>
-                    >,
-                    MapEntry<
-                        Tuple<TypenameArgIdOf<double>, size_t{4}>,
-                        TypeList<BuildTimeFunctionPointer<createTensor<double, 4>>>
-                    >,
-                    MapEntry<
-                        Tuple<TypenameArgIdOf<double>, size_t{5}>,
-                        TypeList<BuildTimeFunctionPointer<createTensor<double, 5>>>
-                    >
+                    TensorEntry<float, 1>,
+                    TensorEntry<float, 2>,
+                    TensorEntry<float, 3>,
+                    TensorEntry<float, 4>,
+                    TensorEntry<float, 5>,
+                    TensorEntry<double, 1>,
+                    TensorEntry<double, 2>,
+                    TensorEntry<double, 3>,
+                    TensorEntry<double, 4>,
+                    TensorEntry<double, 5>
                 >
             >("Tensor")
         );
