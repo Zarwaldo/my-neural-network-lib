@@ -16,14 +16,14 @@
 #define TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NB_VALUES(EnumClassName) NARG(TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_VALUES(EnumClassName))
 #define TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_GET_VALUE_NAME(EnumClassName, index) GET_FROM_INDEX(index, TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_VALUES(EnumClassName))
 
-#define __TENSOR_MAP_KEY_ENUM__DEFINE_INTERNAL_ENUM(EnumClassName)    \
+#define __TENSOR_MAP_KEY_ENUM__DECLARE_INTERNAL_ENUM(EnumClassName)   \
     enum __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName)     \
     {                                                                 \
         TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_VALUES(EnumClassName),     \
         __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_MAX_VALUE(EnumClassName) \
     };
 
-#define __TENSOR_MAP_KEY_ENUM__DEFINE_ITERATOR(EnumClassName, DECLSPEC)                                                      \
+#define __TENSOR_MAP_KEY_ENUM__DECLARE_ITERATOR(EnumClassName, DECLSPEC)                                                     \
     class EnumClassName;                                                                                                     \
     enum __TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName);                                                           \
                                                                                                                              \
@@ -41,7 +41,7 @@
         size_t m_index;                                                                                                      \
     };
 
-#define __TENSOR_MAP_KEY_ENUM__DEFINE_ITERATOR_PROVIDER(EnumClassName, DECLSPEC)                                                                                     \
+#define __TENSOR_MAP_KEY_ENUM__DECLARE_ITERATOR_PROVIDER(EnumClassName, DECLSPEC)                                                                                    \
     class __TENSOR_MAP_KEY_ENUM__ITERATOR_NAME(EnumClassName);                                                                                                       \
                                                                                                                                                                      \
     class DECLSPEC __TENSOR_MAP_KEY_ENUM__ITERATOR_PROVIDER_NAME(EnumClassName)                                                                                      \
@@ -58,10 +58,10 @@
         __TENSOR_MAP_KEY_ENUM__ITERATOR_NAME(EnumClassName) end() const;                                                                                             \
     };
 
-#define DEFINE_TENSOR_MAP_KEY_ENUM(EnumClassName, DECLSPEC)                                                                   \
-    __TENSOR_MAP_KEY_ENUM__DEFINE_INTERNAL_ENUM(EnumClassName)                                                                \
-    __TENSOR_MAP_KEY_ENUM__DEFINE_ITERATOR(EnumClassName, DECLSPEC)                                                           \
-    __TENSOR_MAP_KEY_ENUM__DEFINE_ITERATOR_PROVIDER(EnumClassName, DECLSPEC)                                                  \
+#define DECLARE_TENSOR_MAP_KEY_ENUM(EnumClassName, DECLSPEC)                                                                  \
+    __TENSOR_MAP_KEY_ENUM__DECLARE_INTERNAL_ENUM(EnumClassName)                                                               \
+    __TENSOR_MAP_KEY_ENUM__DECLARE_ITERATOR(EnumClassName, DECLSPEC)                                                          \
+    __TENSOR_MAP_KEY_ENUM__DECLARE_ITERATOR_PROVIDER(EnumClassName, DECLSPEC)                                                 \
                                                                                                                               \
     class DECLSPEC EnumClassName : public AbstractTensorMapKeyEnum                                                            \
     {                                                                                                                         \

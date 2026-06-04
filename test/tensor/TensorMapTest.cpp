@@ -22,7 +22,7 @@ protected:
 };
 
 #define TENSOR_MAP_KEY_ENUM__VALUES_OF_KeyEnum FIRST_TENSOR, SECOND_TENSOR
-DEFINE_TENSOR_MAP_KEY_ENUM(KeyEnum, )
+DECLARE_TENSOR_MAP_KEY_ENUM(KeyEnum, )
 IMPLEMENT_TENSOR_MAP_KEY_ENUM(KeyEnum)
 
 TEST_F(TensorMapShould, getItsFirstTensorBeingBuiltFromInitializerList)
