@@ -226,72 +226,8 @@ AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::setOutputTensorMap(Abstract
     m_p->m_outputMap = dynamic_cast<TensorMap<ValueType, OutputKeyEnum>*>(map);
 }
 
-template <typename KeyEnum, typename ValueType, size_t... Dimensions>
-class GetTensorSizesFromTensorMap
-{};
-
-template <typename KeyEnum, typename ValueType>
-class GetTensorSizesFromTensorMap<KeyEnum, ValueType>
-{
-private:
-    HOST
-    static
-    RawTuple<>
-    impl(const TensorMap<ValueType, KeyEnum>& map)
-    {
-        return makeRawTuple();
-    }
-
-public:
-    HOST
-    static
-    RawTuple<>
-    get(const TensorMap<ValueType, KeyEnum>& map)
-    {
-        return impl(map);
-    }
-
-    template <typename KeyEnum, typename ValueType, size_t... Dimensions>
-    friend class GetTensorSizesFromTensorMap;
-};
-
-template <typename KeyEnum, typename ValueType, size_t FirstDimension, size_t... NextDimensions>
-class GetTensorSizesFromTensorMap<KeyEnum, ValueType, FirstDimension, NextDimensions...>
-{
-private:
-    template <typename Type, size_t Dimension>
-    using RepeatType = Type;
-
-    HOST
-    static
-    RawTuple<const TensorIndex<FirstDimension>&, const TensorIndex<NextDimensions>&...>
-    impl(const TensorMap<ValueType, KeyEnum>& map, KeyEnum firstKey, RepeatType<KeyEnum, NextDimensions>... nextKeys)
-    {
-        RawTuple<const TensorIndex<NextDimensions>&...> nextResultsTuple = GetTensorSizesFromTensorMap<KeyEnum, ValueType, NextDimensions...>::impl(map, nextKeys...);
-        return nextResultsTuple.hostApply([&map, firstKey](const TensorIndex<NextDimensions>&... nextResults) {
-            const Tensor<ValueType, FirstDimension>& firstTensor = static_cast<const Tensor<ValueType, FirstDimension>&>(map.get(firstKey));
-            const TensorIndex<FirstDimension> firstSize = firstTensor.sizes();
-            return makeRawTuple(
-                firstSize,
-                nextResults...
-            );
-        });
-    }
-
-public:
-    HOST
-    static
-    RawTuple<const TensorIndex<FirstDimension>&, const TensorIndex<NextDimensions>&...>
-    get(const TensorMap<ValueType, KeyEnum>& map)
-    {
-        return KeyEnum::getValuesTuple().hostApply([map](const KeyEnum& firstKey, const RepeatType<KeyEnum, NextDimensions>&... nextKeys) {
-            return impl(map, firstKey, nextKeys...);
-        });
-    }
-
-    template <typename KeyEnum, typename ValueType, size_t... Dimensions>
-    friend class GetTensorSizesFromTensorMap;
-};
+template <typename KeyEnum, size_t Dimension>
+using GetKeyEnum = KeyEnum;
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
@@ -304,7 +240,9 @@ AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getInputTensorSizes() const
         throw std::runtime_error("AbstractModule: input map not set");
     }
 
-    return GetTensorSizesFromTensorMap<InputKeyEnum, ValueType, InputTensorDimensions...>::get(*inputMap);
+    return InputKeyEnum::getValuesTuple().hostApply([inputMap](GetKeyEnum<InputKeyEnum, InputTensorDimensions>... keys) {
+        return makeRawTuple<const TensorIndex<InputTensorDimensions>&...>(inputMap->get(keys).sizes()...);
+    });
 }
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
@@ -314,7 +252,9 @@ AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getParameterTensorSizes() c
 {
     const TensorMap<ValueType, ParameterKeyEnum>& parameterMap = getParameterTensorMap();
 
-    return GetTensorSizesFromTensorMap<ParameterKeyEnum, ValueType, ParameterTensorDimensions...>::get(parameterMap);
+    return ParameterKeyEnum::getValuesTuple().hostApply([&parameterMap](GetKeyEnum<ParameterKeyEnum, ParameterTensorDimensions>... keys) {
+        return makeRawTuple<const TensorIndex<ParameterTensorDimensions>&...>(parameterMap.get(keys).sizes()...);
+    });
 }
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
@@ -328,7 +268,9 @@ AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getOutputTensorSizes() cons
         throw std::runtime_error("AbstractModule: output map not set");
     }
 
-    return GetTensorSizesFromTensorMap<OutputKeyEnum, ValueType, OutputTensorDimensions...>::get(*outputMap);
+    return OutputKeyEnum::getValuesTuple().hostApply([outputMap](GetKeyEnum<OutputKeyEnum, OutputTensorDimensions>... keys) {
+        return makeRawTuple<const TensorIndex<OutputTensorDimensions>&...>(outputMap->get(keys).sizes()...);
+    });
 }
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
