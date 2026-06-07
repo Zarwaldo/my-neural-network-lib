@@ -234,6 +234,193 @@ protected:
     SampleOutputReceiver* outputReceiver;
 };
 
+TEST_F(NeuralNetworkShould, beEmptyByDefault) {
+    // Given an empty neural network.
+    NeuralNetwork<float> network(3);
+
+    // When doing nothing.
+
+    // Then the content of the network should be empty.
+    std::vector<AbstractTensor<float>*> expectedTensors = {};
+    EXPECT_EQ(network.getTensors(), expectedTensors);
+    std::vector<AbstractTensorMap<float>*> expectedTensorMaps = {};
+    EXPECT_EQ(network.getTensorMaps(), expectedTensorMaps);
+    std::vector<Module<float>*> expectedModules = {};
+    EXPECT_EQ(network.getModules(), expectedModules);
+}
+
+TEST_F(NeuralNetworkShould, addTensors) {
+    // Given an empty neural network.
+    NeuralNetwork<float> network(3);
+
+    // When adding two tensors.
+    AbstractTensor<float>& firstTensor = network.addTensor(TensorIndex<2>{4, 4});
+    AbstractTensor<float>& secondTensor = network.addTensor(TensorIndex<2>{5, 5});
+
+    // Then the created tensors shuld have the asked size,
+    // with one extra dimension equal to the thickness of the network
+    // in the first dimension.
+    const TensorIndex<3> expectedFirstTensorSize = {3, 4, 4};
+    EXPECT_EQ(firstTensor.sizes(), expectedFirstTensorSize);
+    const TensorIndex<3> expectedSecondTensorSize = {3, 5, 5};
+    EXPECT_EQ(secondTensor.sizes(), expectedSecondTensorSize);
+    // And the network should have two tensors.
+    const std::vector<AbstractTensor<float>*> expectedTensors = {&firstTensor, &secondTensor};
+    EXPECT_EQ(network.getTensors(), expectedTensors);
+    const std::vector<AbstractTensorMap<float>*> expectedTensorMaps = {};
+    EXPECT_EQ(network.getTensorMaps(), expectedTensorMaps);
+    const std::vector<Module<float>*> expectedModules = {};
+    EXPECT_EQ(network.getModules(), expectedModules);
+}
+
+TEST_F(NeuralNetworkShould, addTensorMaps) {
+    // Given a neural network with two tensors.
+    NeuralNetwork<float> network(3);
+    AbstractTensor<float>& firstTensor = network.addTensor(TensorIndex<2>{4, 4});
+    AbstractTensor<float>& secondTensor = network.addTensor(TensorIndex<2>{5, 5});
+
+    // When adding two tensor maps.
+    AbstractTensorMap<float>& firstTensorMap = network.addTensorMap(new TensorMap<float, TensorSingleton>{&firstTensor});
+    AbstractTensorMap<float>& secondTensorMap = network.addTensorMap(new TensorMap<float, TensorSingleton>{&secondTensor});
+
+    // Then the created tensor maps should contain exactly their respective tensors
+    ASSERT_EQ(firstTensorMap.nbTensors(), 1);
+    EXPECT_EQ(&firstTensorMap.get(0), &firstTensor);
+    ASSERT_EQ(secondTensorMap.nbTensors(), 1);
+    EXPECT_EQ(&secondTensorMap.get(0), &secondTensor);
+    // And the network should have two tensors and two tensor maps.
+    const std::vector<AbstractTensor<float>*> expectedTensors = {&firstTensor, &secondTensor};
+    EXPECT_EQ(network.getTensors(), expectedTensors);
+    const std::vector<AbstractTensorMap<float>*> expectedTensorMaps = {&firstTensorMap, &secondTensorMap};
+    EXPECT_EQ(network.getTensorMaps(), expectedTensorMaps);
+    const std::vector<Module<float>*> expectedModules = {};
+    EXPECT_EQ(network.getModules(), expectedModules);
+}
+
+TEST_F(NeuralNetworkShould, addModules) {
+    // Given a neural network with two tensors and two tensor maps.
+    NeuralNetwork<float> network(3);
+    AbstractTensor<float>& firstTensor = network.addTensor(TensorIndex<1>{5});
+    AbstractTensor<float>& secondTensor = network.addTensor(TensorIndex<1>{5});
+    AbstractTensorMap<float>& firstTensorMap = network.addTensorMap(new TensorMap<float, TensorSingleton>{&firstTensor});
+    AbstractTensorMap<float>& secondTensorMap = network.addTensorMap(new TensorMap<float, TensorSingleton>{&secondTensor});
+
+    // When adding a module.
+    const AbstractRtti<Module<float>>* additionModuleRtti = AdditionModule<float, 1>::getRtti();
+    const SampleParamTensorFiller firstParamTensorFiller(1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
+    Module<float>& module = network.addModule(*additionModuleRtti, Initializer<const RawTuple<const TensorIndex<1>&>&>(makeRawTuple(TensorIndex<1>{5})), firstTensorMap, secondTensorMap, firstParamTensorFiller);
+
+    // Then the created module should be connexted to the right tensor maps
+    // And its parameter tensor map is well initialized
+    EXPECT_EQ(module.getInputAbstractTensorMap(), &firstTensorMap);
+
+    const AbstractTensorMap<float>& parameterTensorMap = module.getParameterAbstractTensorMap();
+    ASSERT_EQ(parameterTensorMap.nbTensors(), 1);
+    const AbstractTensor<float>& parameterTensor = parameterTensorMap.get(0);
+    ASSERT_EQ(parameterTensor.dim(), 1);
+    ASSERT_EQ(parameterTensor.sizes(), TensorIndex<1>{5});
+    EXPECT_EQ(parameterTensor[TensorIndex<1>{0}], 1.0f);
+    EXPECT_EQ(parameterTensor[TensorIndex<1>{1}], 2.0f);
+    EXPECT_EQ(parameterTensor[TensorIndex<1>{2}], 3.0f);
+    EXPECT_EQ(parameterTensor[TensorIndex<1>{3}], 4.0f);
+    EXPECT_EQ(parameterTensor[TensorIndex<1>{4}], 5.0f);
+
+    EXPECT_EQ(module.getOutputAbstractTensorMap(), &secondTensorMap);
+
+    // And the network should have two tensors, two tensor maps and a module.
+    const std::vector<AbstractTensor<float>*> expectedTensors = {&firstTensor, &secondTensor};
+    EXPECT_EQ(network.getTensors(), expectedTensors);
+    const std::vector<AbstractTensorMap<float>*> expectedTensorMaps = {&firstTensorMap, &secondTensorMap};
+    EXPECT_EQ(network.getTensorMaps(), expectedTensorMaps);
+    const std::vector<Module<float>*> expectedModules = {&module};
+    EXPECT_EQ(network.getModules(), expectedModules);
+}
+
+TEST_F(NeuralNetworkShould, forbidRemovingUsedTensors) {
+    // Given a neural network with a tensor and a tensor map.
+    NeuralNetwork<float> network(3);
+    AbstractTensor<float>& tensor = network.addTensor(TensorIndex<1>{5});
+    AbstractTensorMap<float>& tensorMap = network.addTensorMap(new TensorMap<float, TensorSingleton>{&tensor});
+
+    // When removing a used tensor.
+    // Then an exception is thrown.
+    EXPECT_THROW({ network.removeTensor(tensor); }, std::runtime_error);
+}
+
+TEST_F(NeuralNetworkShould, removingUnusedTensors) {
+    // Given a neural network with an unused tensor.
+    NeuralNetwork<float> network(3);
+    AbstractTensor<float>& tensor = network.addTensor(TensorIndex<1>{5});
+
+    // When removing the unused tensor.
+    network.removeTensor(tensor);
+
+    // Then the neural network is empty.
+    const std::vector<AbstractTensor<float>*> expectedTensors = {};
+    EXPECT_EQ(network.getTensors(), expectedTensors);
+    const std::vector<AbstractTensorMap<float>*> expectedTensorMaps = {};
+    EXPECT_EQ(network.getTensorMaps(), expectedTensorMaps);
+    const std::vector<Module<float>*> expectedModules = {};
+    EXPECT_EQ(network.getModules(), expectedModules);
+}
+
+TEST_F(NeuralNetworkShould, forbidRemovingUsedTensorMaps) {
+    // Given a neural network with two tensors, two tensor maps and a module.
+    NeuralNetwork<float> network(3);
+    AbstractTensor<float>& firstTensor = network.addTensor(TensorIndex<1>{5});
+    AbstractTensor<float>& secondTensor = network.addTensor(TensorIndex<1>{5});
+    AbstractTensorMap<float>& firstTensorMap = network.addTensorMap(new TensorMap<float, TensorSingleton>{&firstTensor});
+    AbstractTensorMap<float>& secondTensorMap = network.addTensorMap(new TensorMap<float, TensorSingleton>{&secondTensor});
+    const AbstractRtti<Module<float>>* additionModuleRtti = AdditionModule<float, 1>::getRtti();
+    const SampleParamTensorFiller firstParamTensorFiller(1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
+    Module<float>& module = network.addModule(*additionModuleRtti, Initializer<const RawTuple<const TensorIndex<1>&>&>(makeRawTuple(TensorIndex<1>{5})), firstTensorMap, secondTensorMap, firstParamTensorFiller);
+
+    // When removing a used tensor map.
+    // Then an exception is thrown.
+    EXPECT_THROW({ network.removeTensorMap(firstTensorMap); }, std::runtime_error);
+}
+
+TEST_F(NeuralNetworkShould, removingUnusedTensorMaps) {
+    // Given a neural network with a tensor and a tensor map.
+    NeuralNetwork<float> network(3);
+    AbstractTensor<float>& tensor = network.addTensor(TensorIndex<1>{5});
+    AbstractTensorMap<float>& tensorMap = network.addTensorMap(new TensorMap<float, TensorSingleton>{&tensor});
+
+    // When removing the unused tensor map.
+    network.removeTensorMap(tensorMap);
+
+    // Then the neural network only has one tensor.
+    const std::vector<AbstractTensor<float>*> expectedTensors = {&tensor};
+    EXPECT_EQ(network.getTensors(), expectedTensors);
+    const std::vector<AbstractTensorMap<float>*> expectedTensorMaps = {};
+    EXPECT_EQ(network.getTensorMaps(), expectedTensorMaps);
+    const std::vector<Module<float>*> expectedModules = {};
+    EXPECT_EQ(network.getModules(), expectedModules);
+}
+
+TEST_F(NeuralNetworkShould, removeModules) {
+    // Given a neural network with two tensors, two tensor maps and a module.
+    NeuralNetwork<float> network(3);
+    AbstractTensor<float>& firstTensor = network.addTensor(TensorIndex<1>{5});
+    AbstractTensor<float>& secondTensor = network.addTensor(TensorIndex<1>{5});
+    AbstractTensorMap<float>& firstTensorMap = network.addTensorMap(new TensorMap<float, TensorSingleton>{&firstTensor});
+    AbstractTensorMap<float>& secondTensorMap = network.addTensorMap(new TensorMap<float, TensorSingleton>{&secondTensor});
+    const AbstractRtti<Module<float>>* additionModuleRtti = AdditionModule<float, 1>::getRtti();
+    const SampleParamTensorFiller firstParamTensorFiller(1.0f, 2.0f, 3.0f, 4.0f, 5.0f);
+    Module<float>& module = network.addModule(*additionModuleRtti, Initializer<const RawTuple<const TensorIndex<1>&>&>(makeRawTuple(TensorIndex<1>{5})), firstTensorMap, secondTensorMap, firstParamTensorFiller);
+
+    // When removing the module.
+    network.removeModule(module);
+
+    // Then the network should have two tensors, two tensor maps only.
+    const std::vector<AbstractTensor<float>*> expectedTensors = {&firstTensor, &secondTensor};
+    EXPECT_EQ(network.getTensors(), expectedTensors);
+    const std::vector<AbstractTensorMap<float>*> expectedTensorMaps = {&firstTensorMap, &secondTensorMap};
+    EXPECT_EQ(network.getTensorMaps(), expectedTensorMaps);
+    const std::vector<Module<float>*> expectedModules = {};
+    EXPECT_EQ(network.getModules(), expectedModules);
+}
+
 TEST_F(NeuralNetworkShould, notBeExecutableIfModulesAreMissing) {
     // Given a neural network missing a module.
     const NeuralNetwork<float> network = buildSampleNetwork(3, false, true, true);

@@ -3,6 +3,7 @@
 #include <CommonMacros.h>
 
 #include <memory>
+#include <vector>
 
 class AbstractInitializer;
 template <typename BaseType>
@@ -43,8 +44,21 @@ public:
     AbstractTensorMap<ValueType>& addTensorMap(AbstractTensorMap<ValueType>* tensorMap);
     Module<ValueType>& addModule(const AbstractRtti<Module<ValueType>>& moduleRtti, AbstractInitializer&& modulesCtorParams, AbstractTensorMap<ValueType>& inputMap, AbstractTensorMap<ValueType>& outputMap, const ParamTensorFiller<ValueType>& paramTensorFiller);
 
+    void removeTensor(const AbstractTensor<ValueType>& tensor);
+    void removeTensorMap(const AbstractTensorMap<ValueType>& tensorMap);
+    void removeModule(const Module<ValueType>& module);
+
     void setInput(AbstractTensorMap<ValueType>* map);
     void setOutput(AbstractTensorMap<ValueType>* map);
+
+    const std::vector<AbstractTensor<ValueType>*>& getTensors() const;
+    const std::vector<AbstractTensorMap<ValueType>*>& getTensorMaps() const;
+    const std::vector<Module<ValueType>*>& getModules() const;
+
+    const AbstractTensorMap<ValueType>* getInput() const;
+    AbstractTensorMap<ValueType>* getInput();
+    const AbstractTensorMap<ValueType>* getOutput() const;
+    AbstractTensorMap<ValueType>* getOutput();
 
     bool canExecute() const;
     void execute(InputProvider<ValueType>& inputProvider, OutputReceiver<ValueType>& outputReceiver) const;

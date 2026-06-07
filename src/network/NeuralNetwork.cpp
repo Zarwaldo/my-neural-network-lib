@@ -217,6 +217,67 @@ NeuralNetwork<ValueType>::addModule(const AbstractRtti<Module<ValueType>>& modul
 
 template <typename ValueType>
 void
+NeuralNetwork<ValueType>::removeTensor(const AbstractTensor<ValueType>& tensor)
+{
+    const std::vector<AbstractTensor<ValueType>*>::iterator tensorIt = std::find(m_pimpl->m_tensors.begin(), m_pimpl->m_tensors.end(), &tensor);
+    if (tensorIt == m_pimpl->m_tensors.end())
+    {
+        throw std::runtime_error("NeuralNetwork::removeTensor: The passed tensor does not belong to the network.");
+    }
+
+    for (AbstractTensorMap<ValueType>* tensorMap : m_pimpl->m_tensorMaps)
+    {
+        for (const AbstractTensor<ValueType>& iteratedTensor : *tensorMap)
+        {
+            if (&iteratedTensor == &tensor)
+                throw std::runtime_error("NeuralNetwork::removeTensor: The passed tensor is used by a tensor map.");
+        }
+    }
+
+    m_pimpl->m_tensors.erase(tensorIt);
+}
+
+template <typename ValueType>
+void
+NeuralNetwork<ValueType>::removeTensorMap(const AbstractTensorMap<ValueType>& tensorMap)
+{
+    const std::vector<AbstractTensorMap<ValueType>*>::iterator tensorMapIt = std::find(m_pimpl->m_tensorMaps.begin(), m_pimpl->m_tensorMaps.end(), &tensorMap);
+    if (tensorMapIt == m_pimpl->m_tensorMaps.end())
+    {
+        throw std::runtime_error("NeuralNetwork::removeTensorMap: The passed tensor map does not belong to the network.");
+    }
+
+    if (&tensorMap == getInput())
+        throw std::runtime_error("NeuralNetwork::removeTensorMap: The passed tensor map is used as input of the network.");
+    if (&tensorMap == getOutput())
+        throw std::runtime_error("NeuralNetwork::removeTensorMap: The passed tensor map is used as output of the network.");
+
+    for (const Module<ValueType>* module : m_pimpl->m_modules)
+    {
+        if (&tensorMap == module->getInputAbstractTensorMap())
+            throw std::runtime_error("NeuralNetwork::removeTensorMap: The passed tensor map is used as input of a module.");
+        if (&tensorMap == module->getOutputAbstractTensorMap())
+            throw std::runtime_error("NeuralNetwork::removeTensorMap: The passed tensor map is used as output of a module.");
+    }
+
+    m_pimpl->m_tensorMaps.erase(tensorMapIt);
+}
+
+template <typename ValueType>
+void
+NeuralNetwork<ValueType>::removeModule(const Module<ValueType>& module)
+{
+    const std::vector<Module<ValueType>*>::iterator moduleIt = std::find(m_pimpl->m_modules.begin(), m_pimpl->m_modules.end(), &module);
+    if (moduleIt == m_pimpl->m_modules.end())
+    {
+        throw std::runtime_error("NeuralNetwork::removeModule: The passed module does not belong to the network.");
+    }
+
+    m_pimpl->m_modules.erase(moduleIt);
+}
+
+template <typename ValueType>
+void
 NeuralNetwork<ValueType>::setInput(AbstractTensorMap<ValueType>* map)
 {
     if (map && std::find(m_pimpl->m_tensorMaps.begin(), m_pimpl->m_tensorMaps.end(), map) == m_pimpl->m_tensorMaps.end())
@@ -239,6 +300,55 @@ NeuralNetwork<ValueType>::setOutput(AbstractTensorMap<ValueType>* map)
 
     m_pimpl->m_outputMap = map;
     m_pimpl->m_canExecuteCache.reset();
+}
+
+template <typename ValueType>
+const std::vector<AbstractTensor<ValueType>*>&
+NeuralNetwork<ValueType>::getTensors() const
+{
+    return m_pimpl->m_tensors;
+}
+
+template <typename ValueType>
+const std::vector<AbstractTensorMap<ValueType>*>&
+NeuralNetwork<ValueType>::getTensorMaps() const
+{
+    return m_pimpl->m_tensorMaps;
+}
+
+template <typename ValueType>
+const std::vector<Module<ValueType>*>&
+NeuralNetwork<ValueType>::getModules() const
+{
+    return m_pimpl->m_modules;
+}
+
+template <typename ValueType>
+const AbstractTensorMap<ValueType>*
+NeuralNetwork<ValueType>::getInput() const
+{
+    return m_pimpl->m_inputMap;
+}
+
+template <typename ValueType>
+AbstractTensorMap<ValueType>*
+NeuralNetwork<ValueType>::getInput()
+{
+    return const_cast<AbstractTensorMap<ValueType>*>(static_cast<const NeuralNetwork<ValueType>*>(this)->getInput());
+}
+
+template <typename ValueType>
+const AbstractTensorMap<ValueType>*
+NeuralNetwork<ValueType>::getOutput() const
+{
+    return m_pimpl->m_outputMap;
+}
+
+template <typename ValueType>
+AbstractTensorMap<ValueType>*
+NeuralNetwork<ValueType>::getOutput()
+{
+    return const_cast<AbstractTensorMap<ValueType>*>(static_cast<const NeuralNetwork<ValueType>*>(this)->getOutput());
 }
 
 template <typename ValueType>
