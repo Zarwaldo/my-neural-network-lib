@@ -217,12 +217,12 @@ protected:
 
         if (setInputMap)
         {
-            network.setInput(inputTensorMap);
+            network.setInput(&inputTensorMap);
         }
 
         if (setOutputMap)
         {
-            network.setOutput(outputTensorMap);
+            network.setOutput(&outputTensorMap);
         }
 
         return network;

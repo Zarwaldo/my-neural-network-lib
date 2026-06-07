@@ -43,8 +43,8 @@ public:
     AbstractTensorMap<ValueType>& addTensorMap(AbstractTensorMap<ValueType>* tensorMap);
     Module<ValueType>& addModule(const AbstractRtti<Module<ValueType>>& moduleRtti, AbstractInitializer&& modulesCtorParams, AbstractTensorMap<ValueType>& inputMap, AbstractTensorMap<ValueType>& outputMap, const ParamTensorFiller<ValueType>& paramTensorFiller);
 
-    void setInput(AbstractTensorMap<ValueType>& map);
-    void setOutput(AbstractTensorMap<ValueType>& map);
+    void setInput(AbstractTensorMap<ValueType>* map);
+    void setOutput(AbstractTensorMap<ValueType>* map);
 
     bool canExecute() const;
     void execute(InputProvider<ValueType>& inputProvider, OutputReceiver<ValueType>& outputReceiver) const;

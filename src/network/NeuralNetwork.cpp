@@ -217,27 +217,27 @@ NeuralNetwork<ValueType>::addModule(const AbstractRtti<Module<ValueType>>& modul
 
 template <typename ValueType>
 void
-NeuralNetwork<ValueType>::setInput(AbstractTensorMap<ValueType>& map)
+NeuralNetwork<ValueType>::setInput(AbstractTensorMap<ValueType>* map)
 {
-    if (std::find(m_pimpl->m_tensorMaps.begin(), m_pimpl->m_tensorMaps.end(), &map) == m_pimpl->m_tensorMaps.end())
+    if (map && std::find(m_pimpl->m_tensorMaps.begin(), m_pimpl->m_tensorMaps.end(), map) == m_pimpl->m_tensorMaps.end())
     {
         throw std::runtime_error("NeuralNetwork::setInput: The provided tensor map does not belong to the network.");
     }
 
-    m_pimpl->m_inputMap = &map;
+    m_pimpl->m_inputMap = map;
     m_pimpl->m_canExecuteCache.reset();
 }
 
 template <typename ValueType>
 void
-NeuralNetwork<ValueType>::setOutput(AbstractTensorMap<ValueType>& map)
+NeuralNetwork<ValueType>::setOutput(AbstractTensorMap<ValueType>* map)
 {
-    if (std::find(m_pimpl->m_tensorMaps.begin(), m_pimpl->m_tensorMaps.end(), &map) == m_pimpl->m_tensorMaps.end())
+    if (map && std::find(m_pimpl->m_tensorMaps.begin(), m_pimpl->m_tensorMaps.end(), map) == m_pimpl->m_tensorMaps.end())
     {
         throw std::runtime_error("NeuralNetwork::setOutput: The provided tensor map does not belong to the network.");
     }
 
-    m_pimpl->m_outputMap = &map;
+    m_pimpl->m_outputMap = map;
     m_pimpl->m_canExecuteCache.reset();
 }
 
