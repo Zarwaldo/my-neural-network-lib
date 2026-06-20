@@ -31,10 +31,12 @@ public:
     HOST DEVICE virtual bool operator>(const AbstractTensorIndex& other) const = 0;
     HOST DEVICE virtual bool operator<=(const AbstractTensorIndex& other) const = 0;
     HOST DEVICE virtual bool operator<(const AbstractTensorIndex& other) const = 0;
-    HOST virtual AbstractTensorIndex* operator*(const AbstractTensorIndex& other) const;
+    HOST AbstractTensorIndex* operator*(const AbstractTensorIndex& other) const;
 
     HOST DEVICE virtual const size_t& operator[](const size_t index) const = 0;
     HOST DEVICE virtual size_t& operator[](const size_t index) = 0;
+
+    HOST AbstractTensorIndex* range(long long int from, long long int to) const;
 
     HOST DEVICE virtual const size_t* begin() const = 0;
     HOST DEVICE virtual const size_t* end() const = 0;

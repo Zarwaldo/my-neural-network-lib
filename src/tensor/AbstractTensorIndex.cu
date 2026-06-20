@@ -30,7 +30,42 @@ AbstractTensorIndex::operator*(const AbstractTensorIndex& other) const
     for (size_t d = dim(); d < resultsDimension; ++d)
         (*result)[d] = other[d - dim()];
 
-    result->setValid(true);
+    result->setValid(isValid() && other.isValid());
+
+    return result;
+}
+
+HOST
+AbstractTensorIndex*
+AbstractTensorIndex::range(long long int from, long long int to) const
+{
+    if (from < 0 || from >= dim() || to < 0 || to >= dim())
+    {
+        from = from % static_cast<long long int>(dim());
+        if (from < 0)
+            from += dim();
+
+        to = to % static_cast<long long int>(dim());
+        if (to < 0)
+            to += dim();
+    }
+
+    if (to < from)
+        throw std::runtime_error("AbstractTensorIndex::range: Incorrect range from " + std::to_string(from) + " to " + std::to_string(to) + ".");
+
+    const size_t dim = to - from + 1;
+    const AbstractRtti<AbstractTensorIndex>* tensorIndexRtti = templateRtti().instantiate(Initializer<size_t>(std::move(size_t{dim})));
+
+    if (!isValid())
+        return tensorIndexRtti->createInstance(Initializer<>());
+
+    size_t* array = new size_t[dim];
+    for (size_t index = 0; index < dim; ++index)
+        array[index] = (*this)[from + index];
+
+    AbstractTensorIndex* result = tensorIndexRtti->createInstance(Initializer<const size_t*>(static_cast<const size_t*>(array)));
+
+    delete[] array;
 
     return result;
 }

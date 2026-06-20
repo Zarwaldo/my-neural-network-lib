@@ -1,3 +1,4 @@
+add_neural_network_test(abstract_tensor_index_test ${CMAKE_CURRENT_SOURCE_DIR}/AbstractTensorIndexTest.cpp tensor)
 add_neural_network_test(managed_memory_shared_ptr_test ${CMAKE_CURRENT_SOURCE_DIR}/ManagedMemorySharedPtrTest.cpp tensor)
 add_neural_network_test(tensor_index_test ${CMAKE_CURRENT_SOURCE_DIR}/TensorIndexTest.cpp tensor)
 add_neural_network_test(tensor_test ${CMAKE_CURRENT_SOURCE_DIR}/TensorTest.cpp tensor)
