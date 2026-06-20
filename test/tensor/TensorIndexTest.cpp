@@ -888,6 +888,7 @@ TEST_F(TensorIndexShould, createARangeOfItsValues)
     const TensorIndex<3> result = index.range<1, 3>();
 
     // Then the result should contain the values from this range
+    ASSERT_TRUE(result.isValid());
     EXPECT_EQ(result[0], index[1]);
     EXPECT_EQ(result[1], index[2]);
     EXPECT_EQ(result[2], index[3]);
@@ -902,10 +903,23 @@ TEST_F(TensorIndexShould, createARangeOfItsValuesInTheOverflowingCase)
     const TensorIndex<4> result = index.range<1, -1>();
 
     // Then the result should contain the values from this range
+    ASSERT_TRUE(result.isValid());
     EXPECT_EQ(result[0], index[1]);
     EXPECT_EQ(result[1], index[2]);
     EXPECT_EQ(result[2], index[3]);
     EXPECT_EQ(result[3], index[4]);
+}
+
+TEST_F(TensorIndexShould, createAnInvalidRangeIfInvalid)
+{
+    // Given an invalid index
+    const TensorIndex<5> index;
+
+    // When taking a range of its values
+    const TensorIndex<4> result = index.range<1, -1>();
+
+    // Then the result should be invalid
+    EXPECT_FALSE(result.isValid());
 }
 
 TEST_F(TensorIndexShould, iterateOnItsCoordinates)
