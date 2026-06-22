@@ -148,14 +148,14 @@ NeuralNetwork<ValueType>::operator=(NeuralNetwork<ValueType>&& other)
 
 template <typename ValueType>
 AbstractTensor<ValueType>&
-NeuralNetwork<ValueType>::addTensor(const AbstractTensorIndex& size)
+NeuralNetwork<ValueType>::addTensor(const AbstractTensorIndex& size, bool addThicknessDimension)
 {
     if (!size.isValid())
     {
         throw std::runtime_error("NeuralNetwork::addTensor: The passed size is invalid.");
     }
 
-    const size_t finalDimension = 1 + size.dim(); // Thickness and dimensions required by user.
+    const size_t finalDimension = (addThicknessDimension ? 1 : 0) + size.dim(); // Thickness and dimensions required by user.
 
     const AbstractRtti<TensorBase>* tensorRtti = TensorBase::templateRtti().instantiate(Initializer<TypenameArgId, size_t>(std::move(TypenameArgId{TypenameArgIdOf<ValueType>}), std::move(size_t{finalDimension})));
     if (tensorRtti == nullptr)
@@ -163,7 +163,20 @@ NeuralNetwork<ValueType>::addTensor(const AbstractTensorIndex& size)
         throw std::runtime_error("NeuralNetwork::addTensor: Got no Tensor<ValueType, " + std::to_string(finalDimension) + "> RTTI.");
     }
 
-    AbstractTensorIndex* finalTensorSize = static_cast<AbstractTensorIndex&>(TensorIndex<1>{ m_pimpl->m_thickness }) * size;
+    const AbstractTensorIndex* finalTensorSize;
+    if (addThicknessDimension)
+    {
+        finalTensorSize = static_cast<AbstractTensorIndex&>(TensorIndex<1>{ m_pimpl->m_thickness }) * size;
+    }
+    else
+    {
+        const AbstractRtti<AbstractTensorIndex>* tensorIndexRtti = AbstractTensorIndex::templateRtti().instantiate(Initializer<size_t>(size.dim()));
+        if (tensorIndexRtti == nullptr)
+        {
+            throw std::runtime_error("NeuralNetwork::addTensor: Got no TensorIndex<" + std::to_string(size.dim()) + "> RTTI.");
+        }
+        finalTensorSize = tensorIndexRtti->createInstance(Initializer<const AbstractTensorIndex&>(size));
+    }
     AbstractTensor<ValueType>* tensor = static_cast<AbstractTensor<ValueType>*>(tensorRtti->createInstance(Initializer<const AbstractTensorIndex&>(*finalTensorSize)));
     delete finalTensorSize;
 

@@ -40,7 +40,7 @@ public:
     NeuralNetwork<ValueType>& operator=(const NeuralNetwork<ValueType>& other) = delete;
     NeuralNetwork<ValueType>& operator=(NeuralNetwork<ValueType>&& other);
 
-    AbstractTensor<ValueType>& addTensor(const AbstractTensorIndex& size);
+    AbstractTensor<ValueType>& addTensor(const AbstractTensorIndex& size, bool addThicknessDimension = true);
     AbstractTensorMap<ValueType>& addTensorMap(AbstractTensorMap<ValueType>* tensorMap);
     Module<ValueType>& addModule(const AbstractRtti<Module<ValueType>>& moduleRtti, AbstractInitializer&& modulesCtorParams, AbstractTensorMap<ValueType>& inputMap, AbstractTensorMap<ValueType>& outputMap, const ParamTensorFiller<ValueType>& paramTensorFiller);
 
