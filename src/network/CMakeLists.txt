@@ -1,6 +1,7 @@
 set(NETWORK_SOURCES
     ${SOURCE_ROOT}/network/Flow.cpp
     ${SOURCE_ROOT}/network/NeuralNetwork.cpp
+    ${SOURCE_ROOT}/network/NullInputProvider.cpp
     ${SOURCE_ROOT}/network/TrainingNeuralNetwork.cpp
 )
 
