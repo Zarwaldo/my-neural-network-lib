@@ -239,6 +239,8 @@ NeuralNetwork<ValueType>::removeTensor(const AbstractTensor<ValueType>& tensor)
         }
     }
 
+    delete &tensor;
+
     m_pimpl->m_tensors.erase(tensorIt);
 }
 
@@ -265,6 +267,8 @@ NeuralNetwork<ValueType>::removeTensorMap(const AbstractTensorMap<ValueType>& te
             throw std::runtime_error("NeuralNetwork::removeTensorMap: The passed tensor map is used as output of a module.");
     }
 
+    delete &tensorMap;
+
     m_pimpl->m_tensorMaps.erase(tensorMapIt);
 }
 
@@ -277,6 +281,8 @@ NeuralNetwork<ValueType>::removeModule(const Module<ValueType>& module)
     {
         throw std::runtime_error("NeuralNetwork::removeModule: The passed module does not belong to the network.");
     }
+
+    delete &module;
 
     m_pimpl->m_modules.erase(moduleIt);
 }
