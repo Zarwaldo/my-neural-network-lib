@@ -64,6 +64,8 @@ public:
     void execute(InputProvider<ValueType>& inputProvider, OutputReceiver<ValueType>& outputReceiver) const;
     void executeAll(InputProvider<ValueType>& inputProvider, OutputReceiver<ValueType>& outputReceiver) const;
 
+    size_t thickness() const;
+
 private:
     NeuralNetworkPimpl<ValueType>* m_pimpl;
 };
