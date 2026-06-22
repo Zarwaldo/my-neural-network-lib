@@ -35,7 +35,7 @@ public:
     NeuralNetwork(const NeuralNetwork& other) = delete;
     NeuralNetwork(NeuralNetwork&& other);
 
-    ~NeuralNetwork();
+    virtual ~NeuralNetwork();
 
     NeuralNetwork<ValueType>& operator=(const NeuralNetwork<ValueType>& other) = delete;
     NeuralNetwork<ValueType>& operator=(NeuralNetwork<ValueType>&& other);
@@ -48,8 +48,8 @@ public:
     void removeTensorMap(const AbstractTensorMap<ValueType>& tensorMap);
     void removeModule(const Module<ValueType>& module);
 
-    void setInput(AbstractTensorMap<ValueType>* map);
-    void setOutput(AbstractTensorMap<ValueType>* map);
+    virtual void setInput(AbstractTensorMap<ValueType>* map);
+    virtual void setOutput(AbstractTensorMap<ValueType>* map);
 
     const std::vector<AbstractTensor<ValueType>*>& getTensors() const;
     const std::vector<AbstractTensorMap<ValueType>*>& getTensorMaps() const;
