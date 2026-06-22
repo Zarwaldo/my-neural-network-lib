@@ -3,6 +3,9 @@
 #include <rtti/Rtti.h>
 
 template <typename ValueType>
+class AbstractTensorMap;
+
+template <typename ValueType>
 class OutputReceiver
 {
 public:
