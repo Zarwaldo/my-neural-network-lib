@@ -78,6 +78,7 @@ public:
         TypeList<>,
         TypeList<const size_t*>,
         TypeList<const std::initializer_list<size_t>&>,
+        TypeList<const AbstractTensorIndex&>,
         TypeList<const RawTensorIndex<Dimension>&>
     >;
 
