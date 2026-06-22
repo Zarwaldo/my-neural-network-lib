@@ -42,11 +42,11 @@ public:
     __TENSOR_MAP__ITERATOR_DECLARATION(IteratorConst, const)
     __TENSOR_MAP__ITERATOR_DECLARATION(Iterator, )
 
-    IteratorConst begin() const;
-    Iterator begin();
+    HOST IteratorConst begin() const;
+    HOST Iterator begin();
 
-    IteratorConst end() const;
-    Iterator end();
+    HOST IteratorConst end() const;
+    HOST Iterator end();
 
     DECLARE_AS_RTTI_BASE_TYPE(AbstractTensorMap<ValueType>)
 };
