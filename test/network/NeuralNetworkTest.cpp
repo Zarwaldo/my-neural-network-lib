@@ -7,8 +7,6 @@
 
 #include <helpers/RawTuple.h>
 
-#include <plugincore/ResourcesContainer.h>
-
 #include <pluginloader/PluginLoader.h>
 
 #include <plugins/nativemodules/AdditionModule.h>
