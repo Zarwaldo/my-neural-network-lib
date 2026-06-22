@@ -12,6 +12,8 @@ template <typename ValueType>
 class AbstractTensor;
 class AbstractTensorIndex;
 template <typename ValueType>
+class AbstractTensorMap;
+template <typename ValueType>
 class InputProvider;
 template <typename ValueType>
 class Module;
@@ -21,8 +23,6 @@ template <typename ValueType>
 class ParamTensorFiller;
 template <typename BaseType>
 class RttiHolder;
-template <typename ValueType>
-class AbstractTensorMap;
 
 template <typename ValueType>
 class NeuralNetworkPimpl;
