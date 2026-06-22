@@ -12,12 +12,15 @@ RawTensorIndex<Dimension>::RawTensorIndex()
 
 template <size_t Dimension>
 HOST DEVICE
-RawTensorIndex<Dimension>::RawTensorIndex(const size_t values[Dimension])
+RawTensorIndex<Dimension>::RawTensorIndex(const size_t values[Max<Dimension, 1>])
     : m_isValid(true)
 {
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        m_values[i] = values[i];
+        for (size_t i = 0; i < Dimension; ++i)
+        {
+            m_values[i] = values[i];
+        }
     }
 }
 
@@ -37,9 +40,12 @@ HOST DEVICE
 RawTensorIndex<Dimension>::RawTensorIndex(const RawTensorIndex<Dimension>& other)
     : m_isValid(other.m_isValid)
 {
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        m_values[i] = other.m_values[i];
+        for (size_t i = 0; i < Dimension; ++i)
+        {
+            m_values[i] = other.m_values[i];
+        }
     }
 }
 
@@ -78,9 +84,12 @@ RawTensorIndex<Dimension>&
 RawTensorIndex<Dimension>::operator=(const RawTensorIndex<Dimension>& other)
 {
     m_isValid = static_cast<const RawTensorIndex<Dimension>&>(other).m_isValid;
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        m_values[i] = static_cast<const RawTensorIndex<Dimension>&>(other).m_values[i];
+        for (size_t i = 0; i < Dimension; ++i)
+        {
+            m_values[i] = other.m_values[i];
+        }
     }
     return *this;
 }
@@ -96,9 +105,12 @@ RawTensorIndex<Dimension>::operator+(const RawTensorIndex<Dimension>& other) con
     }
 
     size_t result[Dimension];
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        result[i] = m_values[i] + static_cast<const RawTensorIndex<Dimension>&>(other).m_values[i];
+        for (size_t i = 0; i < Dimension; ++i)
+        {
+            result[i] = m_values[i] + other.m_values[i];
+        }
     }
 
     return RawTensorIndex<Dimension>(result);
@@ -115,9 +127,12 @@ RawTensorIndex<Dimension>::operator+=(const RawTensorIndex<Dimension>& other)
         return *this;
     }
 
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        m_values[i] += static_cast<const RawTensorIndex<Dimension>&>(other).m_values[i];
+        for (size_t i = 0; i < Dimension; ++i)
+        {
+            m_values[i] += other.m_values[i];
+        }
     }
 
     return *this;
@@ -139,9 +154,12 @@ RawTensorIndex<Dimension>::operator-(const RawTensorIndex<Dimension>& other) con
     }
 
     size_t result[Dimension];
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        result[i] = m_values[i] - static_cast<const RawTensorIndex<Dimension>&>(other).m_values[i];
+        for (size_t i = 0; i < Dimension; ++i)
+        {
+            result[i] = m_values[i] - other.m_values[i];
+        }
     }
 
     return RawTensorIndex<Dimension>(result);
@@ -164,9 +182,12 @@ RawTensorIndex<Dimension>::operator-=(const RawTensorIndex<Dimension>& other)
         return *this;
     }
 
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        m_values[i] -= static_cast<const RawTensorIndex<Dimension>&>(other).m_values[i];
+        for (size_t i = 0; i < Dimension; ++i)
+        {
+            m_values[i] -= other.m_values[i];
+        }
     }
 
     return *this;
@@ -180,11 +201,21 @@ RawTensorIndex<Dimension>::operator*(const RawTensorIndex<OtherDimension>& other
 {
     RawTensorIndex<Dimension + OtherDimension> result;
 
-    for (size_t i = 0; i < Dimension; ++i)
-        result[i] = (*this)[i];
+    if constexpr (Dimension > 0)
+    {
+        for (size_t i = 0; i < Dimension; ++i)
+        {
+            result[i] = (*this)[i];
+        }
+    }
 
-    for (size_t i = 0; i < OtherDimension; ++i)
-        result[Dimension + i] = other[i];
+    if constexpr (OtherDimension > 0)
+    {
+        for (size_t i = 0; i < OtherDimension; ++i)
+        {
+            result[Dimension + i] = other[i];
+        }
+    }
 
     result.setValid(isValid() && other.isValid());
 
@@ -202,9 +233,12 @@ RawTensorIndex<Dimension>::dot(const RawTensorIndex<Dimension>& other) const
     }
 
     size_t result = 0;
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        result += m_values[i] * static_cast<const RawTensorIndex<Dimension>&>(other).m_values[i];
+        for (size_t i = 0; i < Dimension; ++i)
+        {
+            result += m_values[i] * other.m_values[i];
+        }
     }
 
     return result;
@@ -221,9 +255,12 @@ RawTensorIndex<Dimension>::nbInferiorIndices() const
     }
 
     size_t result = 1;
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        result *= m_values[i];
+        for (size_t i = 0; i < Dimension; ++i)
+        {
+            result *= m_values[i];
+        }
     }
     return result;
 }
@@ -243,11 +280,14 @@ RawTensorIndex<Dimension>::operator==(const RawTensorIndex<Dimension>& other) co
         return false;
     }
 
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        if (m_values[i] != static_cast<const RawTensorIndex<Dimension>&>(other).m_values[i])
+        for (size_t i = 0; i < Dimension; ++i)
         {
-            return false;
+            if (m_values[i] != other.m_values[i])
+            {
+                return false;
+            }
         }
     }
 
@@ -272,11 +312,14 @@ RawTensorIndex<Dimension>::operator>=(const RawTensorIndex<Dimension>& other) co
         return false;
     }
 
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        if (m_values[i] < static_cast<const RawTensorIndex<Dimension>&>(other).m_values[i])
+        for (size_t i = 0; i < Dimension; ++i)
         {
-            return false;
+            if (m_values[i] < other.m_values[i])
+            {
+                return false;
+            }
         }
     }
 
@@ -293,11 +336,14 @@ RawTensorIndex<Dimension>::operator>(const RawTensorIndex<Dimension>& other) con
         return false;
     }
 
-    for (size_t i = 0; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        if (m_values[i] <= static_cast<const RawTensorIndex<Dimension>&>(other).m_values[i])
+        for (size_t i = 0; i < Dimension; ++i)
         {
-            return false;
+            if (m_values[i] <= other.m_values[i])
+            {
+                return false;
+            }
         }
     }
 
@@ -436,7 +482,7 @@ TensorIndex<Dimension>::TensorIndex()
 
 template <size_t Dimension>
 HOST DEVICE
-TensorIndex<Dimension>::TensorIndex(const size_t values[Dimension])
+TensorIndex<Dimension>::TensorIndex(const size_t values[Max<Dimension, 1>])
     : m_rawTensorIndex(values)
 {}
 

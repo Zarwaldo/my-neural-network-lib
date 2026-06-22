@@ -9,6 +9,25 @@
 
 #include <initializer_list>
 
+template <size_t First, size_t Second, typename Enable>
+struct MaxImpl
+{};
+
+template <size_t First, size_t Second>
+struct MaxImpl<First, Second, std::enable_if_t<(First >= Second)>>
+{
+    static constexpr size_t result = First;
+};
+
+template <size_t First, size_t Second>
+struct MaxImpl<First, Second, std::enable_if_t<(First < Second)>>
+{
+    static constexpr size_t result = Second;
+};
+
+template <size_t First, size_t Second>
+constexpr size_t Max = MaxImpl<First, Second, void>::result;
+
 template <long long int Dimension, long long int From, long long int To, typename Enable = void>
 struct DimensionOfRange
 {};
@@ -18,7 +37,7 @@ class RawTensorIndex
 {
 public:
     HOST DEVICE inline RawTensorIndex();
-    HOST DEVICE inline RawTensorIndex(const size_t values[Dimension]);
+    HOST DEVICE inline RawTensorIndex(const size_t values[Max<Dimension, 1>]);
     HOST DEVICE inline RawTensorIndex(const std::initializer_list<size_t>& list);
     HOST DEVICE inline RawTensorIndex(const RawTensorIndex& other);
 
@@ -62,7 +81,7 @@ public:
 
 private:
     bool m_isValid;
-    size_t m_values[Dimension];
+    size_t m_values[Max<Dimension, 1>];
 };
 
 template <size_t Dimension>
@@ -70,7 +89,7 @@ class TensorIndex : public AbstractTensorIndex
 {
 public:
     HOST DEVICE inline TensorIndex();
-    HOST DEVICE inline TensorIndex(const size_t values[Dimension]);
+    HOST DEVICE inline TensorIndex(const size_t values[Max<Dimension, 1>]);
     HOST DEVICE inline TensorIndex(const std::initializer_list<size_t>& list);
     HOST DEVICE inline TensorIndex(const AbstractTensorIndex& other);
     HOST DEVICE inline TensorIndex(const RawTensorIndex<Dimension>& rawTensorIndex);

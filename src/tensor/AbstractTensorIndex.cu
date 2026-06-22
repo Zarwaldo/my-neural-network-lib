@@ -90,6 +90,7 @@ public:
                 AbstractTensorIndex,
                 TensorIndex,
                 Map<
+                    MapEntry<Tuple<size_t{0}>, TensorIndexCtorParamTypes<0>>,
                     MapEntry<Tuple<size_t{1}>, TensorIndexCtorParamTypes<1>>,
                     MapEntry<Tuple<size_t{2}>, TensorIndexCtorParamTypes<2>>,
                     MapEntry<Tuple<size_t{3}>, TensorIndexCtorParamTypes<3>>,
