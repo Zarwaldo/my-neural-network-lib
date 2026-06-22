@@ -150,6 +150,11 @@ template <typename ValueType>
 AbstractTensor<ValueType>&
 NeuralNetwork<ValueType>::addTensor(const AbstractTensorIndex& size)
 {
+    if (!size.isValid())
+    {
+        throw std::runtime_error("NeuralNetwork::addTensor: The passed size is invalid.");
+    }
+
     const size_t finalDimension = 1 + size.dim(); // Thickness and dimensions required by user.
 
     const AbstractRtti<TensorBase>* tensorRtti = TensorBase::templateRtti().instantiate(Initializer<TypenameArgId, size_t>(std::move(TypenameArgId{TypenameArgIdOf<ValueType>}), std::move(size_t{finalDimension})));
