@@ -53,7 +53,7 @@ template <typename ValueType, typename KeyEnum>
 using TensorMapEntry = MapEntry<
     Tuple<TypenameArgIdOf<KeyEnum>>,
     TypeList<
-        TypeList<AbstractTensor<ValueType>* const [KeyEnum::NbValues]>,
+        TypeList<AbstractTensor<ValueType>* const *>,
         TypeList<const std::initializer_list<AbstractTensor<ValueType>*>&>
     >
 >;
