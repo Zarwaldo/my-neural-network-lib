@@ -37,6 +37,25 @@ RawTensorIndex<Dimension>::RawTensorIndex(const std::initializer_list<size_t>& l
 
 template <size_t Dimension>
 HOST DEVICE
+RawTensorIndex<Dimension>::RawTensorIndex(bool isValid)
+    : RawTensorIndex<Dimension>()
+{
+    if constexpr (Dimension > 0)
+    {
+        if (isValid)
+        {
+            for (size_t i = 0; i < Dimension; ++i)
+            {
+                m_values[i] = 0;
+            }
+        }
+    }
+
+    setValid(isValid);
+}
+
+template <size_t Dimension>
+HOST DEVICE
 RawTensorIndex<Dimension>::RawTensorIndex(const RawTensorIndex<Dimension>& other)
     : m_isValid(other.m_isValid)
 {
@@ -478,6 +497,12 @@ template <size_t Dimension>
 HOST DEVICE
 TensorIndex<Dimension>::TensorIndex()
     : m_rawTensorIndex()
+{}
+
+template <size_t Dimension>
+HOST DEVICE
+TensorIndex<Dimension>::TensorIndex(bool isValid)
+    : m_rawTensorIndex(isValid)
 {}
 
 template <size_t Dimension>

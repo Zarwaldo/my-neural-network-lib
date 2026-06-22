@@ -17,6 +17,31 @@ TEST_F(TensorIndexShould, tellItIsInValidWithDefaultConstructor)
     EXPECT_FALSE(result);
 }
 
+TEST_F(TensorIndexShould, tellItIsInvalidWithBooleanConstructor)
+{
+    // Given an invalid index
+    const TensorIndex<3> index(false);
+
+    // When we call the isValid method
+    const bool result = index.isValid();
+
+    // Then the result should be false
+    EXPECT_FALSE(result);
+}
+
+TEST_F(TensorIndexShould, beValidAndEqualZeroByDefaultWithBooleanConstructor)
+{
+    // Given a valid index
+    const TensorIndex<3> index(true);
+
+    // When looking at its value
+    // Then the said index should be valid and have its default coefficients equal to zero
+    ASSERT_TRUE(index.isValid());
+    EXPECT_EQ(index[0], 0);
+    EXPECT_EQ(index[1], 0);
+    EXPECT_EQ(index[2], 0);
+}
+
 TEST_F(TensorIndexShould, tellItIsValidWithArrayConstructor)
 {
     // Given a valid index

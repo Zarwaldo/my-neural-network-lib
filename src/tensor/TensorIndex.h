@@ -37,6 +37,7 @@ class RawTensorIndex
 {
 public:
     HOST DEVICE inline RawTensorIndex();
+    HOST DEVICE inline RawTensorIndex(bool isValid);
     HOST DEVICE inline RawTensorIndex(const size_t values[Max<Dimension, 1>]);
     HOST DEVICE inline RawTensorIndex(const std::initializer_list<size_t>& list);
     HOST DEVICE inline RawTensorIndex(const RawTensorIndex& other);
@@ -89,6 +90,7 @@ class TensorIndex : public AbstractTensorIndex
 {
 public:
     HOST DEVICE inline TensorIndex();
+    HOST DEVICE inline TensorIndex(bool isValid);
     HOST DEVICE inline TensorIndex(const size_t values[Max<Dimension, 1>]);
     HOST DEVICE inline TensorIndex(const std::initializer_list<size_t>& list);
     HOST DEVICE inline TensorIndex(const AbstractTensorIndex& other);
