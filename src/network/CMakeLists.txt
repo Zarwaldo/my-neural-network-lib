@@ -2,6 +2,7 @@ set(NETWORK_SOURCES
     ${SOURCE_ROOT}/network/Flow.cpp
     ${SOURCE_ROOT}/network/NeuralNetwork.cpp
     ${SOURCE_ROOT}/network/NeuralNetworkPartHolder.cpp
+    ${SOURCE_ROOT}/network/NeuralNetworkBuilderHolder.cpp
     ${SOURCE_ROOT}/network/NullInputProvider.cpp
     ${SOURCE_ROOT}/network/NullOutputReceiver.cpp
     ${SOURCE_ROOT}/network/NullParamTensorFiller.cpp

@@ -2,12 +2,16 @@
 
 #include <CommonMacros.h>
 
+#include <map>
 #include <memory>
+#include <string>
 #include <vector>
 
 class AbstractInitializer;
 template <typename BaseType>
 class AbstractRtti;
+template <typename ValueType>
+class AbstractNetworkBuilder;
 template <typename ValueType>
 class AbstractTensor;
 class AbstractTensorIndex;
@@ -43,10 +47,12 @@ public:
     AbstractTensor<ValueType>& addTensor(const AbstractTensorIndex& size, bool addThicknessDimension = true);
     AbstractTensorMap<ValueType>& addTensorMap(AbstractTensorMap<ValueType>* tensorMap);
     Module<ValueType>& addModule(const AbstractRtti<Module<ValueType>>& moduleRtti, AbstractInitializer&& modulesCtorParams, AbstractTensorMap<ValueType>& inputMap, AbstractTensorMap<ValueType>& outputMap, const ParamTensorFiller<ValueType>& paramTensorFiller);
+    std::map<std::string, void*> build(const AbstractRtti<AbstractNetworkBuilder<ValueType>>& builderRtti, AbstractInitializer&& initializer, const AbstractNetworkBuilder<ValueType>** resultBuilder = nullptr);
 
     void removeTensor(const AbstractTensor<ValueType>& tensor);
     void removeTensorMap(const AbstractTensorMap<ValueType>& tensorMap);
     void removeModule(const Module<ValueType>& module);
+    void unbuild(const AbstractNetworkBuilder<ValueType>& builder);
 
     virtual void setInput(AbstractTensorMap<ValueType>* map);
     virtual void setOutput(AbstractTensorMap<ValueType>* map);

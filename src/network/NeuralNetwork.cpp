@@ -6,6 +6,7 @@
 
 #include <network/Flow.h>
 #include <network/InputProvider.h>
+#include <network/NeuralNetworkBuilderHolder.h>
 #include <network/OutputReceiver.h>
 #include <network/ParamTensorFiller.h>
 
@@ -32,6 +33,7 @@ public:
         , m_modules()
         , m_inputMap(nullptr)
         , m_outputMap(nullptr)
+        , m_neuralNetworkBuilderHolder(new NeuralNetworkBuilderHolder<ValueType>())
         , m_thickness(thickness)
         , m_canExecuteCache()
     {}
@@ -72,6 +74,7 @@ public:
     std::vector<AbstractTensor<ValueType>*> m_tensors;
     std::vector<AbstractTensorMap<ValueType>*> m_tensorMaps;
     std::vector<Module<ValueType>*> m_modules;
+    NeuralNetworkBuilderHolder<ValueType>* m_neuralNetworkBuilderHolder;
     AbstractTensorMap<ValueType>* m_inputMap;
     AbstractTensorMap<ValueType>* m_outputMap;
     const size_t m_thickness;
@@ -119,6 +122,8 @@ NeuralNetwork<ValueType>::~NeuralNetwork()
 {
     if (m_pimpl == nullptr)
         return;
+
+    delete m_pimpl->m_neuralNetworkBuilderHolder;
 
     for (Module<ValueType>* module : m_pimpl->m_modules)
     {
@@ -234,6 +239,13 @@ NeuralNetwork<ValueType>::addModule(const AbstractRtti<Module<ValueType>>& modul
 }
 
 template <typename ValueType>
+std::map<std::string, void*>
+NeuralNetwork<ValueType>::build(const AbstractRtti<AbstractNetworkBuilder<ValueType>>& builderRtti, AbstractInitializer&& initializer, const AbstractNetworkBuilder<ValueType>** resultBuilder)
+{
+    return m_pimpl->m_neuralNetworkBuilderHolder->add(builderRtti, std::move(initializer), resultBuilder);
+}
+
+template <typename ValueType>
 void
 NeuralNetwork<ValueType>::removeTensor(const AbstractTensor<ValueType>& tensor)
 {
@@ -298,6 +310,13 @@ NeuralNetwork<ValueType>::removeModule(const Module<ValueType>& module)
     delete &module;
 
     m_pimpl->m_modules.erase(moduleIt);
+}
+
+template <typename ValueType>
+void
+NeuralNetwork<ValueType>::unbuild(const AbstractNetworkBuilder<ValueType>& builder)
+{
+    m_pimpl->m_neuralNetworkBuilderHolder->remove(builder);
 }
 
 template <typename ValueType>
