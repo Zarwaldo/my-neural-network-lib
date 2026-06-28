@@ -22,7 +22,7 @@ template <typename ValueType>
 class NeuralNetworkPartHolder
 {
 public:
-    NeuralNetworkPartHolder(NeuralNetwork<ValueType>& network);
+    explicit NeuralNetworkPartHolder(NeuralNetwork<ValueType>& network);
     NeuralNetworkPartHolder(const NeuralNetworkPartHolder& other) = delete;
     NeuralNetworkPartHolder(NeuralNetworkPartHolder&& other);
 
@@ -31,7 +31,7 @@ public:
     NeuralNetworkPartHolder& operator=(const NeuralNetworkPartHolder& other) = delete;
     NeuralNetworkPartHolder& operator=(NeuralNetworkPartHolder&& other);
 
-    AbstractTensor<ValueType>& addTensor(const AbstractTensorIndex& size);
+    AbstractTensor<ValueType>& addTensor(const AbstractTensorIndex& size, bool addThicknessDimension = true);
     AbstractTensorMap<ValueType>& addTensorMap(AbstractTensorMap<ValueType>* tensorMap);
     Module<ValueType>& addModule(const AbstractRtti<Module<ValueType>>& moduleRtti, AbstractInitializer&& modulesCtorParams, AbstractTensorMap<ValueType>& inputMap, AbstractTensorMap<ValueType>& outputMap, const ParamTensorFiller<ValueType>& paramTensorFiller);
 

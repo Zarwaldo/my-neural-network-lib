@@ -63,9 +63,9 @@ NeuralNetworkPartHolder<ValueType>::operator=(NeuralNetworkPartHolder&& other)
 
 template <typename ValueType>
 AbstractTensor<ValueType>&
-NeuralNetworkPartHolder<ValueType>::addTensor(const AbstractTensorIndex& size)
+NeuralNetworkPartHolder<ValueType>::addTensor(const AbstractTensorIndex& size, bool addThicknessDimension)
 {
-    AbstractTensor<ValueType>& tensor = m_pimpl->m_network->addTensor(size);
+    AbstractTensor<ValueType>& tensor = m_pimpl->m_network->addTensor(size, addThicknessDimension);
     m_pimpl->m_tensors.push_back(&tensor);
     return tensor;
 }
