@@ -1,6 +1,6 @@
-#include <network/NullInputProvider.h>
+#pragma once
 
-#include <network/api.h>
+#include <network/NullInputProvider.h>
 
 template <typename ValueType>
 NullInputProvider<ValueType>::NullInputProvider()
@@ -23,6 +23,3 @@ NullInputProvider<ValueType>::hasMoreThan(size_t nbInputs) const
 }
 
 IMPLEMENT_RTTI(NullInputProvider, InputProvider<ValueType>, PACK(typename), PACK(ValueType))
-
-template class MY_NEURAL_NETWORK_LIB__NETWORK__API NullInputProvider<float>;
-template class MY_NEURAL_NETWORK_LIB__NETWORK__API NullInputProvider<double>;

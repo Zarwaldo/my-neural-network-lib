@@ -1,6 +1,6 @@
-#include <network/NullOutputReceiver.h>
+#pragma once
 
-#include <network/api.h>
+#include <network/NullOutputReceiver.h>
 
 template <typename ValueType>
 NullOutputReceiver<ValueType>::NullOutputReceiver()
@@ -16,6 +16,3 @@ NullOutputReceiver<ValueType>::sendOutput(const AbstractTensorMap<ValueType>& ou
 {}
 
 IMPLEMENT_RTTI(NullOutputReceiver, OutputReceiver<ValueType>, PACK(typename), PACK(ValueType))
-
-template class MY_NEURAL_NETWORK_LIB__NETWORK__API NullOutputReceiver<float>;
-template class MY_NEURAL_NETWORK_LIB__NETWORK__API NullOutputReceiver<double>;

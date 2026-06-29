@@ -1,6 +1,6 @@
-#include <network/NullParamTensorFiller.h>
+#pragma once
 
-#include <network/api.h>
+#include <network/NullParamTensorFiller.h>
 
 template <typename ValueType>
 NullParamTensorFiller<ValueType>::NullParamTensorFiller()
@@ -16,6 +16,3 @@ NullParamTensorFiller<ValueType>::fill(AbstractTensorMap<ValueType>& tensorMap) 
 {}
 
 IMPLEMENT_RTTI(NullParamTensorFiller, ParamTensorFiller<ValueType>, PACK(typename), PACK(ValueType))
-
-template class MY_NEURAL_NETWORK_LIB__NETWORK__API NullParamTensorFiller<float>;
-template class MY_NEURAL_NETWORK_LIB__NETWORK__API NullParamTensorFiller<double>;

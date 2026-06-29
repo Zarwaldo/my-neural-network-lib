@@ -1,6 +1,7 @@
+#pragma once
+
 #include <network/NeuralNetworkPartHolder.h>
 
-#include <network/api.h>
 #include <network/NeuralNetwork.h>
 
 template <typename ValueType>
@@ -87,6 +88,3 @@ NeuralNetworkPartHolder<ValueType>::addModule(const AbstractRtti<Module<ValueTyp
     m_pimpl->m_modules.push_back(&module);
     return module;
 }
-
-template class MY_NEURAL_NETWORK_LIB__NETWORK__API NeuralNetworkPartHolder<float>;
-template class MY_NEURAL_NETWORK_LIB__NETWORK__API NeuralNetworkPartHolder<double>;

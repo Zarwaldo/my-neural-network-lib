@@ -1,3 +1,5 @@
+#pragma once
+
 #include <network/NeuralNetworkBuilderHolder.h>
 
 #include <network/AbstractNetworkBuilder.h>
@@ -62,6 +64,3 @@ NeuralNetworkBuilderHolder<ValueType>::remove(const AbstractNetworkBuilder<Value
 
     m_builders.erase(builderIt);
 }
-
-template class NeuralNetworkBuilderHolder<float>;
-template class NeuralNetworkBuilderHolder<double>;

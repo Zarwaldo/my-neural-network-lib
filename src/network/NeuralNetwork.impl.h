@@ -1,6 +1,6 @@
-#include <network/NeuralNetwork.h>
+#pragma once
 
-#include <network/api.h>
+#include <network/NeuralNetwork.h>
 
 #include <module/Module.h>
 
@@ -469,6 +469,3 @@ NeuralNetwork<ValueType>::thickness() const
 {
     return m_pimpl->m_thickness;
 }
-
-template class MY_NEURAL_NETWORK_LIB__NETWORK__API NeuralNetwork<float>;
-template class MY_NEURAL_NETWORK_LIB__NETWORK__API NeuralNetwork<double>;
