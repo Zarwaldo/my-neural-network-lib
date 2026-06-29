@@ -6,7 +6,6 @@ set(NETWORK_SOURCES
     ${SOURCE_ROOT}/network/NullInputProvider.cpp
     ${SOURCE_ROOT}/network/NullOutputReceiver.cpp
     ${SOURCE_ROOT}/network/NullParamTensorFiller.cpp
-    ${SOURCE_ROOT}/network/TrainingNeuralNetwork.cpp
 )
 
 add_library(network
