@@ -22,8 +22,7 @@ class PolymorphicTupleElementContainer<Type&, std::enable_if_t<std::is_object_v<
 public:
     HOST DEVICE PolymorphicTupleElementContainer(Type& obj);
 
-    HOST DEVICE const Type& get() const;
-    HOST DEVICE Type& get();
+    HOST DEVICE Type& get() const;
 
 private:
     Type* m_ptr;

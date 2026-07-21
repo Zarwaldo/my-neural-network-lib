@@ -525,7 +525,7 @@ TEST_F(PolymorphicTupleShould, castAnRValueTupleIfAllTypeAreConvertible) {
 }
 
 TEST_F(PolymorphicTupleShould, getConstPointersFromAConstLValueReferencesTuple) {
-    // Given a tuple
+    // Given a const tuple
     const PolymorphicTuple<AbstractContent&, Content<float>&, const Content<double>&> tuple = makePolymorphicTuple(*a, b, c);
 
     // When getting its const pointers
@@ -538,11 +538,37 @@ TEST_F(PolymorphicTupleShould, getConstPointersFromAConstLValueReferencesTuple) 
 }
 
 TEST_F(PolymorphicTupleShould, getConstPointersFromAConstRValueReferencesTuple) {
-    // Given a tuple
+    // Given a const tuple
     const PolymorphicTuple<AbstractContent&, Content<float>, Content<double>> tuple = makePolymorphicTuple(*a, std::move(bToMove), std::move(cToMove));
 
     // When getting its const pointers
     const PolymorphicTuple<const AbstractContent*, const Content<float>*, const Content<double>*> result = tuple.getPointers();
+
+    // Then the pointers of the resulting tuple point to the data of the original tuple
+    EXPECT_EQ(result.get<0>(), &tuple.get<0>());
+    EXPECT_EQ(result.get<1>(), &tuple.get<1>());
+    EXPECT_EQ(result.get<2>(), &tuple.get<2>());
+}
+
+TEST_F(PolymorphicTupleShould, getNonConstPointersFromANonConstLValueReferencesTuple) {
+    // Given a non-const tuple
+    PolymorphicTuple<AbstractContent&, Content<float>&, const Content<double>&> tuple = makePolymorphicTuple(*a, b, c);
+
+    // When getting its non-const pointers
+    const PolymorphicTuple<AbstractContent*, Content<float>*, const Content<double>*> result = tuple.getPointers();
+
+    // Then the pointers of the resulting tuple point to the data of the original tuple
+    EXPECT_EQ(result.get<0>(), &tuple.get<0>());
+    EXPECT_EQ(result.get<1>(), &tuple.get<1>());
+    EXPECT_EQ(result.get<2>(), &tuple.get<2>());
+}
+
+TEST_F(PolymorphicTupleShould, getNonConstPointersFromANonConstRValueReferencesTuple) {
+    // Given a non-const tuple
+    PolymorphicTuple<AbstractContent&, Content<float>, Content<double>> tuple = makePolymorphicTuple(*a, std::move(bToMove), std::move(cToMove));
+
+    // When getting its non-const pointers
+    const PolymorphicTuple<AbstractContent*, Content<float>*, Content<double>*> result = tuple.getPointers();
 
     // Then the pointers of the resulting tuple point to the data of the original tuple
     EXPECT_EQ(result.get<0>(), &tuple.get<0>());

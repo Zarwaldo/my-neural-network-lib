@@ -211,6 +211,20 @@ TupleTemplate<TupleElementContainer, FirstType, NextTypes...>::operator TupleTem
 }
 
 template <typename InputType>
+struct ToPointerMapConst
+{
+    static const InputType* doIt(const InputType& value)
+    {
+        return &value;
+    }
+
+    static const InputType* doIt(InputType& value)
+    {
+        return &value;
+    }
+};
+
+template <typename InputType>
 struct ToPointerMap
 {
     static const InputType* doIt(const InputType& value)
@@ -229,7 +243,7 @@ HOST DEVICE
 auto
 TupleTemplate<TupleElementContainer, FirstType, NextTypes...>::getPointers() const
 {
-    return map<ToPointerMap>();
+    return map<ToPointerMapConst>();
 }
 
 template <template <typename T> class TupleElementContainer, typename FirstType, typename... NextTypes>
