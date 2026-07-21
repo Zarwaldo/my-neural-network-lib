@@ -262,7 +262,7 @@ HOST
 RawTuple<const TensorIndex<OutputTensorDimensions>&...>
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getOutputTensorSizes() const
 {
-    const TensorMap<ValueType, OutputKeyEnum>* outputMap = getInputTensorMap();
+    const TensorMap<ValueType, OutputKeyEnum>* outputMap = getOutputTensorMap();
     if (outputMap == nullptr)
     {
         throw std::runtime_error("AbstractModule: output map not set");
