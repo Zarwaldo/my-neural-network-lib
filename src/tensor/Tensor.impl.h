@@ -270,11 +270,14 @@ HOST
 Tensor<ValueType, Dimension>*
 Tensor<ValueType, Dimension>::create(const TensorIndex<Dimension>& sizes)
 {
-    size_t strides[Dimension];
+    size_t strides[Max<Dimension, 1>];
     strides[0] = 1;
-    for (size_t i = 1; i < Dimension; ++i)
+    if constexpr (Dimension > 0)
     {
-        strides[i] = strides[i-1] * sizes[i-1];
+        for (size_t i = 1; i < Dimension; ++i)
+        {
+            strides[i] = strides[i-1] * sizes[i-1];
+        }
     }
 
     ManagedMemorySharedPtr<ValueType> data(sizes.nbInferiorIndices());

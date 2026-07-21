@@ -93,9 +93,12 @@ TensorThreadDistributor<ValueType, Dimension>::askNewIndex(const RawTensorIndex<
 {
     if (!previous.isValid())
     {
-        size_t array[Dimension];
-        for (size_t dim = 0; dim < Dimension; dim++)
-            array[dim] = 0;
+        size_t array[Max<Dimension, 1>];
+        if constexpr (Dimension > 0)
+        {
+            for (size_t dim = 0; dim < Dimension; dim++)
+                array[dim] = 0;
+        }
 
         if constexpr (Dimension >= 1)
             array[0] = blockIdx.x * blockDim.x + threadIdx.x;
@@ -108,12 +111,15 @@ TensorThreadDistributor<ValueType, Dimension>::askNewIndex(const RawTensorIndex<
     }
 
     bool isMax = true;
-    for (size_t dim = 3; dim < Dimension; ++dim)
-        if (previous[dim] < m_rawTensor.sizes()[dim] - 1)
-        {
-            isMax = false;
-            break;
-        }
+    if constexpr (Dimension > 0)
+    {
+        for (size_t dim = 3; dim < Dimension; ++dim)
+            if (previous[dim] < m_rawTensor.sizes()[dim] - 1)
+            {
+                isMax = false;
+                break;
+            }
+    }
 
     __syncthreads();
 
