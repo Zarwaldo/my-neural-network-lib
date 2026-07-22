@@ -25,7 +25,7 @@ TEST_F(PluginLoaderShould, beAbleToLoadAPluginFromPath) {
     EXPECT_EQ(plugin->getName(), L"nativemodules");
 
     // And Rttis provided by the plugin can be retrieved
-    const AbstractTemplateRtti<Module<float>>* moduleRtti = pluginLoader.resources().modules<float>().getTemplateRttiByName("AdditionModule<float>");
+    const AbstractTemplateRtti<Module<float>>* moduleRtti = pluginLoader.resources().getRttiHolder<Module<float>>().getTemplateRttiByName("AdditionModule<float>");
     EXPECT_NE(moduleRtti, nullptr);
 }
 

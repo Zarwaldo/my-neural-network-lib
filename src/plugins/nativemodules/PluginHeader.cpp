@@ -65,7 +65,7 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
 {
     token = new ResourcesContainerToken(resourcesContainer->edit());
 
-    token->modules<float>().subscribe(
+    token->getRttiHolderToken<Module<float>>().subscribe(
         new TemplateRtti<
             Module<float>,
             TemplateProvider<float>::AdditionModuleTemplate,
@@ -78,7 +78,7 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
             >
         >("AdditionModule<float>")
     );
-    token->modules<double>().subscribe(
+    token->getRttiHolderToken<Module<double>>().subscribe(
         new TemplateRtti<
             Module<double>,
             TemplateProvider<double>::AdditionModuleTemplate,
@@ -92,7 +92,7 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
         >("AdditionModule<double>")
     );
 
-    token->modules<float>().subscribe(
+    token->getRttiHolderToken<Module<float>>().subscribe(
         new TemplateRtti<
             Module<float>,
             TemplateProvider<float>::PerceptronModuleTemplate,
@@ -109,7 +109,7 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
             >
         >("PerceptronModule<float>")
     );
-    token->modules<double>().subscribe(
+    token->getRttiHolderToken<Module<double>>().subscribe(
         new TemplateRtti<
             Module<double>,
             TemplateProvider<double>::PerceptronModuleTemplate,
@@ -127,7 +127,7 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
         >("PerceptronModule<double>")
     );
 
-    token->tensorMaps<float>().subscribe(
+    token->getRttiHolderToken<AbstractTensorMap<float>>().subscribe(
         new TemplateRtti<
             AbstractTensorMap<float>,
             TemplateProvider<float>::TensorMapTemplate,
@@ -138,7 +138,7 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
         >("TensorMap<float>")
     );
 
-    token->tensorMaps<double>().subscribe(
+    token->getRttiHolderToken<AbstractTensorMap<double>>().subscribe(
         new TemplateRtti<
             AbstractTensorMap<double>,
             TemplateProvider<double>::TensorMapTemplate,
@@ -149,8 +149,8 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
         >("TensorMap<double>")
     );
 
-    token->tensorMapKeyEnums().subscribe(new Rtti<AbstractTensorMapKeyEnum, TensorSingleton, TypeList<size_t>>("TensorSingleton"));
-    token->tensorMapKeyEnums().subscribe(new Rtti<AbstractTensorMapKeyEnum, PerceptronParamsKeyEnum, TypeList<size_t>>("PerceptronParamsKeyEnum"));
+    token->getRttiHolderToken<AbstractTensorMapKeyEnum>().subscribe(new Rtti<AbstractTensorMapKeyEnum, TensorSingleton, TypeList<size_t>>("TensorSingleton"));
+    token->getRttiHolderToken<AbstractTensorMapKeyEnum>().subscribe(new Rtti<AbstractTensorMapKeyEnum, PerceptronParamsKeyEnum, TypeList<size_t>>("PerceptronParamsKeyEnum"));
 }
 
 void
