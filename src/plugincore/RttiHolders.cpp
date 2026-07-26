@@ -4,18 +4,17 @@
 
 #include <module/Module.h>
 
+#include <plugincore/ResourcesContainer.h>
+
 #include <tensor/TensorMap.h>
 #include <tensor/AbstractTensorMapKeyEnum.h>
 
 #include <CommonMacros.h>
 
-template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolderToken<Module<float>>;
-template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolderToken<Module<double>>;
-template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolderToken<AbstractTensorMap<float>>;
-template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolderToken<AbstractTensorMap<double>>;
-template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolderToken<AbstractTensorMapKeyEnum>;
-template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolder<Module<float>>;
-template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolder<Module<double>>;
-template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolder<AbstractTensorMap<float>>;
-template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolder<AbstractTensorMap<double>>;
-template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolder<AbstractTensorMapKeyEnum>;
+#define __RTTI_HOLDERS__RTTI_HOLDER_TOKEN__EXPLICIT_INSTANCIATION(Type, context) \
+    template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolderToken<Type>;
+FOR_EACH_SEP(__RTTI_HOLDERS__RTTI_HOLDER_TOKEN__EXPLICIT_INSTANCIATION, FORWARD(), , __RESOURCES_CONTAINER__SUPPORTED_TYPES)
+
+#define __RTTI_HOLDERS__RTTI_HOLDER__EXPLICIT_INSTANCIATION(Type, context) \
+    template class MY_NEURAL_NETWORK_LIB__PLUGINCORE__API RttiHolder<Type>;
+FOR_EACH_SEP(__RTTI_HOLDERS__RTTI_HOLDER__EXPLICIT_INSTANCIATION, FORWARD(), , __RESOURCES_CONTAINER__SUPPORTED_TYPES)
