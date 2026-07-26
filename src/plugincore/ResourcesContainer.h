@@ -2,6 +2,8 @@
 
 #include <module/Module.h>
 
+#include <network/AbstractNetworkBuilder.h>
+
 #include <plugincore/api.h>
 #include <plugincore/ResourcesContainerImpl.h>
 
@@ -10,6 +12,8 @@
 #define __RESOURCES_CONTAINER__SUPPORTED_TYPES \
     Module<float>,                             \
     Module<double>,                            \
+    AbstractNetworkBuilder<float>,             \
+    AbstractNetworkBuilder<double>,            \
     AbstractTensorMap<float>,                  \
     AbstractTensorMap<double>,                 \
     AbstractTensorMapKeyEnum
