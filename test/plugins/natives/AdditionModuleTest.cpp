@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <plugins/nativemodules/AdditionModule.h>
-#include <plugins/nativemodules/TensorMapKeyEnums.h>
+#include <plugins/natives/modules/additionmodule/AdditionModule.h>
+#include <plugins/natives/tensormaps/TensorMapKeyEnums.h>
 
 #include <tensor/TensorMap.h>
 

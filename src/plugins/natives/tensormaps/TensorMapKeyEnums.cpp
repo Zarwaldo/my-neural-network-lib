@@ -1,4 +1,4 @@
-#include <plugins/nativemodules/TensorMapKeyEnums.h>
+#include <plugins/natives/tensormaps/TensorMapKeyEnums.h>
 
 #include <module/AbstractModule.h>
 

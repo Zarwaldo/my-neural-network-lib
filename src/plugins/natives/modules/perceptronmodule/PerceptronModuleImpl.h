@@ -2,7 +2,7 @@
 
 #include <module/ModuleMacros.h>
 
-#include <plugins/nativemodules/TensorMapKeyEnums.h>
+#include <plugins/natives/tensormaps/TensorMapKeyEnums.h>
 
 DECLARE_MODULE(
     PerceptronModuleImpl,

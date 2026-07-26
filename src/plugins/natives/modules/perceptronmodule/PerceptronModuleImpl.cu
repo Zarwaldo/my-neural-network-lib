@@ -1,4 +1,4 @@
-#include <plugins/nativemodules/PerceptronModuleImpl.h>
+#include <plugins/natives/modules/perceptronmodule/PerceptronModuleImpl.h>
 
 #include <module/api.h>
 #include <module/ModuleMacros.impl.cuh>

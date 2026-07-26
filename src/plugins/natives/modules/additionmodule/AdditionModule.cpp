@@ -1,7 +1,7 @@
-#include <plugins/nativemodules/AdditionModule.h>
+#include <plugins/natives/modules/additionmodule/AdditionModule.h>
 
-#include <plugins/nativemodules/api.h>
-#include <plugins/nativemodules/AdditionModuleImpl.h>
+#include <plugins/natives/api.h>
+#include <plugins/natives/modules/additionmodule/AdditionModuleImpl.h>
 
 #include <module/api.h>
 

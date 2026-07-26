@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include <plugins/nativemodules/PerceptronModule.h>
-#include <plugins/nativemodules/TensorMapKeyEnums.h>
+#include <plugins/natives/modules/perceptronmodule/PerceptronModule.h>
+#include <plugins/natives/tensormaps/TensorMapKeyEnums.h>
 
 #include <tensor/TensorMap.h>
 

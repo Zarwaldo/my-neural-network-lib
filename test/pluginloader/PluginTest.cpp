@@ -34,10 +34,10 @@ TEST_F(PluginShould, throwAnExceptionIfTheInputPathIsNotANeuralNetworkPluginLibr
 TEST_F(PluginShould, notThrowAnExceptionIfTheInputPathIsANeuralNetworkPluginLibrary) {
     // Given a resources container and a library path to a non-existing library
     ResourcesContainer resourcesContainer;
-    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
+    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
 
     // When instanciating the plugin
-    Plugin(L"nativemodules", libPath, resourcesContainer);
+    Plugin(L"natives", libPath, resourcesContainer);
 
     // Then the call does not throw an exception
 }
@@ -45,21 +45,21 @@ TEST_F(PluginShould, notThrowAnExceptionIfTheInputPathIsANeuralNetworkPluginLibr
 TEST_F(PluginShould, haveTheCorrectName) {
     // Given a plugin
     ResourcesContainer resourcesContainer;
-    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
-    const Plugin plugin = Plugin(L"nativemodules", libPath, resourcesContainer);
+    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
+    const Plugin plugin = Plugin(L"natives", libPath, resourcesContainer);
 
     // When getting its name
     const std::wstring result = plugin.getName();
 
     // Then the returned name is the one passed to constructor
-    EXPECT_EQ(result, L"nativemodules");
+    EXPECT_EQ(result, L"natives");
 }
 
 TEST_F(PluginShould, haveTheCorrectLibraryPath) {
     // Given a plugin
     ResourcesContainer resourcesContainer;
-    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
-    const Plugin plugin = Plugin(L"nativemodules", libPath, resourcesContainer);
+    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
+    const Plugin plugin = Plugin(L"natives", libPath, resourcesContainer);
 
     // When getting its library path
     const std::filesystem::path result = plugin.getAbsoluteLibraryPath();
@@ -71,8 +71,8 @@ TEST_F(PluginShould, haveTheCorrectLibraryPath) {
 TEST_F(PluginShould, beLoadedByDefault) {
     // Given a plugin
     ResourcesContainer resourcesContainer;
-    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
-    const Plugin plugin = Plugin(L"nativemodules", libPath, resourcesContainer);
+    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
+    const Plugin plugin = Plugin(L"natives", libPath, resourcesContainer);
 
     // When checking if it is loaded
     const bool result = plugin.isLoaded();
@@ -84,8 +84,8 @@ TEST_F(PluginShould, beLoadedByDefault) {
 TEST_F(PluginShould, notBeLoadedIfUnloadWasCalled) {
     // Given a plugin
     ResourcesContainer resourcesContainer;
-    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
-    Plugin plugin = Plugin(L"nativemodules", libPath, resourcesContainer);
+    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
+    Plugin plugin = Plugin(L"natives", libPath, resourcesContainer);
 
     // When unloading it
     plugin.unload();
@@ -97,8 +97,8 @@ TEST_F(PluginShould, notBeLoadedIfUnloadWasCalled) {
 TEST_F(PluginShould, notBeLoadedIfLoadWasCalled) {
     // Given an unloaded plugin
     ResourcesContainer resourcesContainer;
-    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
-    Plugin plugin = Plugin(L"nativemodules", libPath, resourcesContainer);
+    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
+    Plugin plugin = Plugin(L"natives", libPath, resourcesContainer);
     plugin.unload();
 
     // When loading it
@@ -111,8 +111,8 @@ TEST_F(PluginShould, notBeLoadedIfLoadWasCalled) {
 TEST_F(PluginShould, provideRttisInTheDefaultCase) {
     // Given a plugin
     ResourcesContainer resourcesContainer;
-    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
-    Plugin plugin = Plugin(L"nativemodules", libPath, resourcesContainer);
+    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
+    Plugin plugin = Plugin(L"natives", libPath, resourcesContainer);
 
     // When fetching an rtti from its resources
     const AbstractTemplateRtti<Module<float>>* result = resourcesContainer.getRttiHolder<Module<float>>().getTemplateRttiByName("AdditionModule<float>");
@@ -124,8 +124,8 @@ TEST_F(PluginShould, provideRttisInTheDefaultCase) {
 TEST_F(PluginShould, provideRttisWhenUnloaded) {
     // Given an unloaded plugin
     ResourcesContainer resourcesContainer;
-    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
-    Plugin plugin = Plugin(L"nativemodules", libPath, resourcesContainer);
+    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
+    Plugin plugin = Plugin(L"natives", libPath, resourcesContainer);
     plugin.unload();
 
     // When fetching an rtti from its resources
@@ -138,8 +138,8 @@ TEST_F(PluginShould, provideRttisWhenUnloaded) {
 TEST_F(PluginShould, provideRttisWhenReloaded) {
     // Given a reloaded plugin
     ResourcesContainer resourcesContainer;
-    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
-    Plugin plugin = Plugin(L"nativemodules", libPath, resourcesContainer);
+    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
+    Plugin plugin = Plugin(L"natives", libPath, resourcesContainer);
     plugin.unload();
     plugin.load();
 

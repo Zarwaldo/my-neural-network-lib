@@ -14,15 +14,15 @@ class PluginLoaderShould : public ::testing::Test
 TEST_F(PluginLoaderShould, beAbleToLoadAPluginFromPath) {
     // Given a plugin loader and the path to a plugin library
     PluginLoader pluginLoader;
-    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
+    const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
 
     // When we load this plugin
     pluginLoader.loadPluginFromPath(libPath);
 
     // Then the plugin can be found in the plugin loader
-    const Plugin* plugin = pluginLoader.getPluginByName(L"nativemodules");
+    const Plugin* plugin = pluginLoader.getPluginByName(L"natives");
     EXPECT_NE(plugin, nullptr);
-    EXPECT_EQ(plugin->getName(), L"nativemodules");
+    EXPECT_EQ(plugin->getName(), L"natives");
 
     // And Rttis provided by the plugin can be retrieved
     const AbstractTemplateRtti<Module<float>>* moduleRtti = pluginLoader.resources().getRttiHolder<Module<float>>().getTemplateRttiByName("AdditionModule<float>");
@@ -37,9 +37,9 @@ TEST_F(PluginLoaderShould, beAbleToLoadPluginsFromTheExecutablesDirectory) {
     pluginLoader.loadPluginsFromExecutableDir();
 
     // Then the plugins can be found in the plugin loader
-    const Plugin* nativeModulesPlugin = pluginLoader.getPluginByName(L"nativemodules");
-    EXPECT_NE(nativeModulesPlugin, nullptr);
-    EXPECT_EQ(nativeModulesPlugin->getName(), L"nativemodules");
+    const Plugin* nativesPlugin = pluginLoader.getPluginByName(L"natives");
+    EXPECT_NE(nativesPlugin, nullptr);
+    EXPECT_EQ(nativesPlugin->getName(), L"natives");
 }
 
 TEST_F(PluginLoaderShould, beAbleToIterateOnTheLoadedPlugins) {
@@ -56,5 +56,5 @@ TEST_F(PluginLoaderShould, beAbleToIterateOnTheLoadedPlugins) {
 
     // Then the list should contain all the plugins' names
     EXPECT_EQ(pluginsNames.size(), 1);
-    EXPECT_EQ(pluginsNames[0], L"nativemodules");
+    EXPECT_EQ(pluginsNames[0], L"natives");
 }

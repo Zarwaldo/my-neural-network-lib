@@ -1,7 +1,7 @@
-#include <plugins/nativemodules/PerceptronModule.h>
+#include <plugins/natives/modules/perceptronmodule/PerceptronModule.h>
 
-#include <plugins/nativemodules/PerceptronModuleImpl.h>
-#include <plugins/nativemodules/api.h>
+#include <plugins/natives/modules/perceptronmodule/PerceptronModuleImpl.h>
+#include <plugins/natives/api.h>
 
 #include <module/api.h>
 

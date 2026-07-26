@@ -1,4 +1,4 @@
-#include <plugins/nativemodules/AdditionModuleImpl.h>
+#include <plugins/natives/modules/additionmodule/AdditionModuleImpl.h>
 
 #include <module/api.h>
 

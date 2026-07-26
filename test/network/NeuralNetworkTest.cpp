@@ -12,8 +12,8 @@
 
 #include <pluginloader/PluginLoader.h>
 
-#include <plugins/nativemodules/AdditionModule.h>
-#include <plugins/nativemodules/TensorMapKeyEnums.h>
+#include <plugins/natives/modules/additionmodule/AdditionModule.h>
+#include <plugins/natives/tensormaps/TensorMapKeyEnums.h>
 
 #include <rtti/RttiHolder.h>
 #include <rtti/RttiHolder.impl.h>
@@ -262,7 +262,7 @@ protected:
     void SetUp() override
     {
         pluginLoader = new PluginLoader();
-        const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "nativemodules.dll";
+        const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
         pluginLoader->loadPluginFromPath(libPath);
 
         buildersRttiHolder = new RttiHolder<AbstractNetworkBuilder<float>>;

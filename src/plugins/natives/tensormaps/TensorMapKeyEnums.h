@@ -2,7 +2,7 @@
 
 #include <tensor/TensorMapKeyEnum.h>
 
-#include <plugins/nativemodules/api.h>
+#include <plugins/natives/api.h>
 
 #include <rtti/TypenameArgId.h>
 

@@ -1,1 +1,1 @@
-add_subdirectory(nativemodules)
+add_subdirectory(natives)
