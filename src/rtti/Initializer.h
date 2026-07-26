@@ -6,6 +6,8 @@ class AbstractInitializer
 {
 public:
     virtual inline ~AbstractInitializer();
+
+    virtual inline bool operator==(const AbstractInitializer& other) const = 0;
 };
 
 template <typename... ParamTypes>
@@ -18,6 +20,8 @@ public:
 
     template <typename FunctionType>
     inline auto apply(FunctionType&& function) const;
+
+    virtual inline bool operator==(const AbstractInitializer& other) const override;
 
 private:
     PolymorphicTuple<ParamTypes...> m_args;
