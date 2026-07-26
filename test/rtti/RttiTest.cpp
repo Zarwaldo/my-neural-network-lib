@@ -3,9 +3,9 @@
 #include <rtti/AbstractRtti.h>
 #include <rtti/Initializer.h>
 #include <rtti/Rtti.h>
-#include <rtti/TemplateRtti.h>
-#include <rtti/RttiHolder.h>
 #include <rtti/RttiHolder.impl.h>
+#include <rtti/StaticRttiHolder.h>
+#include <rtti/TemplateRtti.h>
 
 using namespace BuildTimeList;
 
@@ -133,27 +133,29 @@ class RttiShould : public ::testing::Test
 protected:
     void SetUp() override
     {
-        rttiHolder = new RttiHolder<Base>;
+        staticRttiHolder = new StaticRttiHolder<Base>([](RttiHolderToken<Base>& token) {
+            token.subscribe(new Rtti<Base, ConcreteClass, TypeList<>, BuildTimeFunctionPointer<createConcreteClass>, TypeList<int>, TypeList<int, int>>("ConcreteClass"));
+            token.subscribe(new Rtti<Base, TemplateClass<float>, TypeList<float>, TypeList<float, float>>("TemplateClass<float>"));
+            token.subscribe(new Rtti<Base, TemplateClass<double>, TypeList<double>, TypeList<double, double>>("TemplateClass<double>"));
 
-        rttiToken = new RttiHolderToken(std::move(rttiHolder->edit()));
-        rttiToken->subscribe(new Rtti<Base, ConcreteClass, TypeList<>, BuildTimeFunctionPointer<createConcreteClass>, TypeList<int>, TypeList<int, int>>("ConcreteClass"));
-        rttiToken->subscribe(new Rtti<Base, TemplateClass<float>, TypeList<float>, TypeList<float, float>>("TemplateClass<float>"));
-        rttiToken->subscribe(new Rtti<Base, TemplateClass<double>, TypeList<double>, TypeList<double, double>>("TemplateClass<double>"));
-
-        TemplateRtti<Base, TemplateClass2>& templateClass2Rtti = rttiToken->getOrSubscribeTemplateRtti<TemplateClass2>("TemplateClass2");
-        templateClass2Rtti.subscribe<int{0}, int{0}>(new Rtti<Base, TemplateClass2<0, 0>, TypeList<>, TypeList<int>, TypeList<int, int>>("TemplateClass2<0,0>"));
-        templateClass2Rtti.subscribe<int{1}, int{2}>(new Rtti<Base, TemplateClass2<1, 2>, TypeList<>, TypeList<int>, TypeList<int, int>>("TemplateClass2<1,2>"));
-        templateClass2Rtti.subscribe<int{2}, int{4}>(new Rtti<Base, TemplateClass2<2, 4>, TypeList<>, TypeList<int>, TypeList<int, int>>("TemplateClass2<2,4>"));
+            TemplateRtti<Base, TemplateClass2>& templateClass2Rtti = token.getOrSubscribeTemplateRtti<TemplateClass2>("TemplateClass2");
+            templateClass2Rtti.subscribe<int{0}, int{0}>(new Rtti<Base, TemplateClass2<0, 0>, TypeList<>, TypeList<int>, TypeList<int, int>>("TemplateClass2<0,0>"));
+            templateClass2Rtti.subscribe<int{1}, int{2}>(new Rtti<Base, TemplateClass2<1, 2>, TypeList<>, TypeList<int>, TypeList<int, int>>("TemplateClass2<1,2>"));
+            templateClass2Rtti.subscribe<int{2}, int{4}>(new Rtti<Base, TemplateClass2<2, 4>, TypeList<>, TypeList<int>, TypeList<int, int>>("TemplateClass2<2,4>"));
+        });
     }
 
     void TearDown() override
     {
-        delete rttiToken;
-        delete rttiHolder;
+        delete staticRttiHolder;
     }
 
-    RttiHolder<Base>* rttiHolder;
-    RttiHolderToken<Base>* rttiToken;
+    const RttiHolder<Base>& getRttiHolder() const
+    {
+        return staticRttiHolder->getRttiHolder();
+    }
+
+    StaticRttiHolder<Base>* staticRttiHolder;
 };
 
 TEST_F(RttiShould, returnConcreteClassRTTIOnCallToGetTypeOnConcreteClass) {
@@ -230,7 +232,7 @@ TEST_F(RttiShould, returnConcreteClassRTTIOnConcreteClassTypeName) {
     const std::string classATypeName("ConcreteClass");
 
     // When an RTTI with this name is fetched in the RTTI holder
-    const AbstractRtti<Base>* rtti = rttiHolder->getRttiByName(classATypeName);
+    const AbstractRtti<Base>* rtti = getRttiHolder().getRttiByName(classATypeName);
 
     // Then the returned RTTI should be the RTTI of ConcreteClass
     EXPECT_EQ(rtti, ConcreteClass::getRtti());
@@ -241,7 +243,7 @@ TEST_F(RttiShould, returnTemplateClassFloatRTTIOnTemplateClassFloatTypeName) {
     const std::string classBTypeName("TemplateClass<float>");
 
     // When an RTTI with this name is fetched in the RTTI holder
-    const AbstractRtti<Base>* rtti = rttiHolder->getRttiByName(classBTypeName);
+    const AbstractRtti<Base>* rtti = getRttiHolder().getRttiByName(classBTypeName);
 
     // Then the returned RTTI should be the RTTI of TemplateClass<float>
     EXPECT_EQ(rtti, TemplateClass<float>::getRtti());
@@ -252,7 +254,7 @@ TEST_F(RttiShould, returnTemplateClassDoubleRTTIOnTemplateClassDoubleTypeName) {
     const std::string classBTypeName("TemplateClass<double>");
 
     // When an RTTI with this name is fetched in the RTTI holder
-    const AbstractRtti<Base>* rtti = rttiHolder->getRttiByName(classBTypeName);
+    const AbstractRtti<Base>* rtti = getRttiHolder().getRttiByName(classBTypeName);
 
     // Then the returned RTTI should be the RTTI of TemplateClass<double>
     EXPECT_EQ(rtti, TemplateClass<double>::getRtti());
@@ -263,7 +265,7 @@ TEST_F(RttiShould, returnNullptrOnInvalidTypeName) {
     const std::string invalidTypeName("InvalidClassName");
 
     // When an RTTI with this name is fetched in the RTTI holder
-    const AbstractRtti<Base>* rtti = rttiHolder->getRttiByName(invalidTypeName);
+    const AbstractRtti<Base>* rtti = getRttiHolder().getRttiByName(invalidTypeName);
 
     // Then the returned RTTI should be null
     EXPECT_EQ(rtti, nullptr);
@@ -274,7 +276,7 @@ TEST_F(RttiShould, returnNullptrWhenSearchingConcreteRttiOnATemplateRttiName) {
     const std::string templateClass("TemplateClass2");
 
     // When a template RTTI with this name is fetched in the RTTI holder
-    const AbstractRtti<Base>* rtti = rttiHolder->getRttiByName(templateClass);
+    const AbstractRtti<Base>* rtti = getRttiHolder().getRttiByName(templateClass);
 
     // Then the returned RTTI should be null
     EXPECT_EQ(rtti, nullptr);
@@ -285,7 +287,7 @@ TEST_F(RttiShould, returnACorrectTemplateRttiOnATemplateRttiName) {
     const std::string templateClass("TemplateClass2");
 
     // When a template RTTI with this name is fetched in the RTTI holder
-    const AbstractTemplateRtti<Base>* templateRtti = rttiHolder->getTemplateRttiByName(templateClass);
+    const AbstractTemplateRtti<Base>* templateRtti = getRttiHolder().getTemplateRttiByName(templateClass);
 
     // Then the returned RTTI should not be null
     EXPECT_NE(templateRtti, nullptr);
@@ -298,7 +300,7 @@ TEST_F(RttiShould, returnNullptrWhenSearchingTemplateRttiOnAConcreteClassName) {
     const std::string concreteTypeName("ConcreteClass");
 
     // When a template RTTI with this name is fetched in the RTTI holder
-    const AbstractTemplateRtti<Base>* templateRtti = rttiHolder->getTemplateRttiByName(concreteTypeName);
+    const AbstractTemplateRtti<Base>* templateRtti = getRttiHolder().getTemplateRttiByName(concreteTypeName);
 
     // Then the returned RTTI should be null
     EXPECT_EQ(templateRtti, nullptr);
@@ -309,7 +311,7 @@ TEST_F(RttiShould, returnNullptrWhenSearchingTemplateRttiOnAnInvalidName) {
     const std::string invalidTemplateTypeName("InvalidTemplateClassName");
 
     // When a template RTTI with this name is fetched in the RTTI holder
-    const AbstractTemplateRtti<Base>* templateRtti = rttiHolder->getTemplateRttiByName(invalidTemplateTypeName);
+    const AbstractTemplateRtti<Base>* templateRtti = getRttiHolder().getTemplateRttiByName(invalidTemplateTypeName);
 
     // Then the returned RTTI should be null
     EXPECT_EQ(templateRtti, nullptr);
@@ -430,7 +432,7 @@ TEST_F(RttiShould, createTemplateClassDoubleInstanceFromTwoArgsConstructor) {
 
 TEST_F(RttiShould, instantiateATemplateRttiWithFirstTemplateArgsSet) {
     // Given a template RTTI
-    const AbstractTemplateRtti<Base>* templateRtti = rttiHolder->getTemplateRttiByName("TemplateClass2");
+    const AbstractTemplateRtti<Base>* templateRtti = getRttiHolder().getTemplateRttiByName("TemplateClass2");
 
     // When instantiating a template RTTI on its first template arguments set
     const AbstractRtti<Base>* rtti = templateRtti->instantiate(Initializer<int, int>(0, 0));
@@ -448,7 +450,7 @@ TEST_F(RttiShould, instantiateATemplateRttiWithFirstTemplateArgsSet) {
 
 TEST_F(RttiShould, instantiateATemplateRttiWithSecondTemplateArgsSet) {
     // Given a template RTTI
-    const AbstractTemplateRtti<Base>* templateRtti = rttiHolder->getTemplateRttiByName("TemplateClass2");
+    const AbstractTemplateRtti<Base>* templateRtti = getRttiHolder().getTemplateRttiByName("TemplateClass2");
 
     // When instantiating a template RTTI on its second template arguments set
     const AbstractRtti<Base>* rtti = templateRtti->instantiate(Initializer<int, int>(1, 2));
@@ -466,7 +468,7 @@ TEST_F(RttiShould, instantiateATemplateRttiWithSecondTemplateArgsSet) {
 
 TEST_F(RttiShould, instantiateATemplateRttiWithThirdTemplateArgsSet) {
     // Given a template RTTI
-    const AbstractTemplateRtti<Base>* templateRtti = rttiHolder->getTemplateRttiByName("TemplateClass2");
+    const AbstractTemplateRtti<Base>* templateRtti = getRttiHolder().getTemplateRttiByName("TemplateClass2");
 
     // When instantiating a template RTTI on its third template arguments set
     const AbstractRtti<Base>* rtti = templateRtti->instantiate(Initializer<int, int>(2, 4));
@@ -484,7 +486,7 @@ TEST_F(RttiShould, instantiateATemplateRttiWithThirdTemplateArgsSet) {
 
 TEST_F(RttiShould, notInstantiateATemplateRttiWithAnInvalidTemplateArgsSet) {
     // Given a template RTTI
-    const AbstractTemplateRtti<Base>* templateRtti = rttiHolder->getTemplateRttiByName("TemplateClass2");
+    const AbstractTemplateRtti<Base>* templateRtti = getRttiHolder().getTemplateRttiByName("TemplateClass2");
 
     // When instantiating a template RTTI on an invalid template args set
     const AbstractRtti<Base>* rtti = templateRtti->instantiate(Initializer<int, int>(0, 1));

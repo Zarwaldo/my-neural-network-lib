@@ -1,6 +1,7 @@
 #include <tensor/AbstractTensorIndex.h>
 
 #include <rtti/RttiHolder.impl.h>
+#include <rtti/StaticRttiHolder.h>
 #include <rtti/TemplateRtti.h>
 
 #include <tensor/TensorIndex.h>
@@ -81,52 +82,20 @@ using TensorIndexRtti = Rtti<
     TypeList<const RawTensorIndex<Dimension>&>
 >;
 
-class TensorIndexRttiHolderInitializer
-{
-public:
-    template <size_t Dimension>
-    using TensorIndexCtorParamTypes = TypeList<
-        TypeList<>,
-        TypeList<const size_t*>,
-        TypeList<const std::initializer_list<size_t>&>,
-        TypeList<const AbstractTensorIndex&>,
-        TypeList<const RawTensorIndex<Dimension>&>
-    >;
+static const StaticRttiHolder<AbstractTensorIndex> tensorIndexStaticRttiHolder([](RttiHolderToken<AbstractTensorIndex>& token) {
+    TemplateRtti<AbstractTensorIndex, TensorIndex>& tensorIndexTemplateRtti = token.getOrSubscribeTemplateRtti<TensorIndex>("TensorIndex");
 
-    TensorIndexRttiHolderInitializer()
-        : tensorIndexRttiHolder(new RttiHolder<AbstractTensorIndex>())
-        , tensorIndexRttiHolderToken(new RttiHolderToken<AbstractTensorIndex>(tensorIndexRttiHolder->edit()))
-    {
-        TemplateRtti<AbstractTensorIndex, TensorIndex>& tensorIndexTemplateRtti = tensorIndexRttiHolderToken->getOrSubscribeTemplateRtti<TensorIndex>("TensorIndex");
-        tensorIndexTemplateRtti.subscribe<size_t{0}>(new TensorIndexRtti<0>("TensorIndex<0>"));
-        tensorIndexTemplateRtti.subscribe<size_t{1}>(new TensorIndexRtti<1>("TensorIndex<1>"));
-        tensorIndexTemplateRtti.subscribe<size_t{2}>(new TensorIndexRtti<2>("TensorIndex<2>"));
-        tensorIndexTemplateRtti.subscribe<size_t{3}>(new TensorIndexRtti<3>("TensorIndex<3>"));
-        tensorIndexTemplateRtti.subscribe<size_t{4}>(new TensorIndexRtti<4>("TensorIndex<4>"));
-        tensorIndexTemplateRtti.subscribe<size_t{5}>(new TensorIndexRtti<5>("TensorIndex<5>"));
-    }
-
-    TensorIndexRttiHolderInitializer(const TensorIndexRttiHolderInitializer& other) = delete;
-    TensorIndexRttiHolderInitializer(TensorIndexRttiHolderInitializer&& other) = delete;
-
-    ~TensorIndexRttiHolderInitializer()
-    {
-        delete tensorIndexRttiHolderToken;
-        delete tensorIndexRttiHolder;
-    }
-
-    TensorIndexRttiHolderInitializer operator=(const TensorIndexRttiHolderInitializer& other) = delete;
-    TensorIndexRttiHolderInitializer operator=(TensorIndexRttiHolderInitializer&& other) = delete;
-
-    RttiHolder<AbstractTensorIndex>* tensorIndexRttiHolder;
-    RttiHolderToken<AbstractTensorIndex>* tensorIndexRttiHolderToken;
-};
-
-static const TensorIndexRttiHolderInitializer rttiInitializer;
+    tensorIndexTemplateRtti.subscribe<size_t{0}>(new TensorIndexRtti<0>("TensorIndex<0>"));
+    tensorIndexTemplateRtti.subscribe<size_t{1}>(new TensorIndexRtti<1>("TensorIndex<1>"));
+    tensorIndexTemplateRtti.subscribe<size_t{2}>(new TensorIndexRtti<2>("TensorIndex<2>"));
+    tensorIndexTemplateRtti.subscribe<size_t{3}>(new TensorIndexRtti<3>("TensorIndex<3>"));
+    tensorIndexTemplateRtti.subscribe<size_t{4}>(new TensorIndexRtti<4>("TensorIndex<4>"));
+    tensorIndexTemplateRtti.subscribe<size_t{5}>(new TensorIndexRtti<5>("TensorIndex<5>"));
+});
 
 HOST
 const AbstractTemplateRtti<AbstractTensorIndex>&
 AbstractTensorIndex::templateRtti()
 {
-    return *rttiInitializer.tensorIndexRttiHolder->getTemplateRttiByName("TensorIndex");
+    return *tensorIndexStaticRttiHolder.getRttiHolder().getTemplateRttiByName("TensorIndex");
 }

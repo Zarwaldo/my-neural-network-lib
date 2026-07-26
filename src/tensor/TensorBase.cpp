@@ -3,6 +3,7 @@
 #include <rtti/AbstractTemplateRtti.h>
 #include <rtti/Rtti.h>
 #include <rtti/RttiHolder.impl.h>
+#include <rtti/StaticRttiHolder.h>
 #include <rtti/TemplateRtti.h>
 #include <rtti/TypenameArgId.h>
 
@@ -40,43 +41,27 @@ using TensorRtti = Rtti<
     BuildTimeFunctionPointer<createTensor<ValueType, Dimension>>
 >;
 
-class TensorRttiHolderInitializer
-{
-public:
-    TensorRttiHolderInitializer()
-        : tensorRttiHolder(new RttiHolder<TensorBase>())
-        , tensorRttiHolderToken(new RttiHolderToken<TensorBase>(tensorRttiHolder->edit()))
-    {
-        TemplateRtti<TensorBase, NTTPTensorTemplate>& tensorTemplateRtti = tensorRttiHolderToken->getOrSubscribeTemplateRtti<NTTPTensorTemplate>("Tensor");
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{0}>(new TensorRtti<float, 0>("Tensor<float,0>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{1}>(new TensorRtti<float, 1>("Tensor<float,1>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{2}>(new TensorRtti<float, 2>("Tensor<float,2>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{3}>(new TensorRtti<float, 3>("Tensor<float,3>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{4}>(new TensorRtti<float, 4>("Tensor<float,4>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{5}>(new TensorRtti<float, 5>("Tensor<float,5>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{0}>(new TensorRtti<double, 0>("Tensor<double,0>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{1}>(new TensorRtti<double, 1>("Tensor<double,1>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{2}>(new TensorRtti<double, 2>("Tensor<double,2>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{3}>(new TensorRtti<double, 3>("Tensor<double,3>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{4}>(new TensorRtti<double, 4>("Tensor<double,4>"));
-        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{5}>(new TensorRtti<double, 5>("Tensor<double,5>"));
-    }
+static const StaticRttiHolder<TensorBase> tensorStaticRttiHolder([](RttiHolderToken<TensorBase>& token) {
+    TemplateRtti<TensorBase, NTTPTensorTemplate>& tensorTemplateRtti = token.getOrSubscribeTemplateRtti<NTTPTensorTemplate>("Tensor");
 
-    ~TensorRttiHolderInitializer()
-    {
-        delete tensorRttiHolderToken;
-        delete tensorRttiHolder;
-    }
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{0}>(new TensorRtti<float, 0>("Tensor<float,0>"));
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{1}>(new TensorRtti<float, 1>("Tensor<float,1>"));
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{2}>(new TensorRtti<float, 2>("Tensor<float,2>"));
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{3}>(new TensorRtti<float, 3>("Tensor<float,3>"));
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{4}>(new TensorRtti<float, 4>("Tensor<float,4>"));
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{5}>(new TensorRtti<float, 5>("Tensor<float,5>"));
 
-    RttiHolder<TensorBase>* tensorRttiHolder;
-    RttiHolderToken<TensorBase>* tensorRttiHolderToken;
-};
-
-static const TensorRttiHolderInitializer initializer;
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{0}>(new TensorRtti<double, 0>("Tensor<double,0>"));
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{1}>(new TensorRtti<double, 1>("Tensor<double,1>"));
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{2}>(new TensorRtti<double, 2>("Tensor<double,2>"));
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{3}>(new TensorRtti<double, 3>("Tensor<double,3>"));
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{4}>(new TensorRtti<double, 4>("Tensor<double,4>"));
+    tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{5}>(new TensorRtti<double, 5>("Tensor<double,5>"));
+});
 
 HOST
 const AbstractTemplateRtti<TensorBase>&
 TensorBase::templateRtti()
 {
-    return *initializer.tensorRttiHolder->getTemplateRttiByName("Tensor");
+    return *tensorStaticRttiHolder.getRttiHolder().getTemplateRttiByName("Tensor");
 }
