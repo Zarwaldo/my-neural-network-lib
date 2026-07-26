@@ -5,70 +5,73 @@
 #include <rtti/AbstractRtti.h>
 #include <rtti/Initializer.h>
 
+#include <vector>
+
+template <typename BaseType>
+struct TemplateRttiPimpl
+{
+    TemplateRttiPimpl(const std::string& templateName)
+        : m_templateName(templateName)
+        , m_rttisMap()
+    {}
+
+    const std::string m_templateName;
+    std::vector<std::pair<const AbstractInitializer*, const AbstractRtti<BaseType>*>> m_rttisMap;
+};
+
 template <typename BaseType, template <auto...> typename Template>
-TemplateRtti<BaseType, Template, BuildTimeList::Map<>>::TemplateRtti(const std::string& typeName)
-    : m_typeName(typeName)
+TemplateRtti<BaseType, Template>::TemplateRtti(const std::string& templateName)
+    : m_pimpl(new TemplateRttiPimpl<BaseType>(templateName))
 {}
 
 template <typename BaseType, template <auto...> typename Template>
-TemplateRtti<BaseType, Template, BuildTimeList::Map<>>::~TemplateRtti()
-{}
+TemplateRtti<BaseType, Template>::~TemplateRtti()
+{
+    for (std::pair<const AbstractInitializer*, const AbstractRtti<BaseType>*> entry : m_pimpl->m_rttisMap)
+    {
+        delete entry.first;
+        delete entry.second;
+    }
 
+    delete m_pimpl;
+}
 
 template <typename BaseType, template <auto...> typename Template>
 const std::string&
-TemplateRtti<BaseType, Template, BuildTimeList::Map<>>::getTypeName() const
+TemplateRtti<BaseType, Template>::getTypeName() const
 {
-    return m_typeName;
+    return m_pimpl->m_templateName;
 }
 
 template <typename BaseType, template <auto...> typename Template>
 const AbstractRtti<BaseType>*
-TemplateRtti<BaseType, Template, BuildTimeList::Map<>>::instantiate(AbstractInitializer&& initializer) const
+TemplateRtti<BaseType, Template>::instantiate(AbstractInitializer&& initializer) const
 {
-    return nullptr;
-}
-
-template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstCtorParamTypes, typename... NextMapEntries>
-TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstCtorParamTypes...>>, NextMapEntries...>>::TemplateRtti(const std::string& templateTypeName)
-    : TemplateRtti<BaseType, Template, BuildTimeList::Map<NextMapEntries...>>(templateTypeName)
-    , m_rtti(buildTypeName(templateTypeName))
-{}
-
-template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstCtorParamTypes, typename... NextMapEntries>
-TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstCtorParamTypes...>>, NextMapEntries...>>::~TemplateRtti()
-{
-}
-
-template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstCtorParamTypes, typename... NextMapEntries>
-const AbstractRtti<BaseType>*
-TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstCtorParamTypes...>>, NextMapEntries...>>::instantiate(AbstractInitializer&& initializer) const
-{
-    if (Initializer<decltype(FirstTemplateArgs)...>* concreteInitializer = dynamic_cast<Initializer<decltype(FirstTemplateArgs)...>*>(&initializer))
+    for (std::pair<const AbstractInitializer*, const AbstractRtti<BaseType>*> entry : m_pimpl->m_rttisMap)
     {
-        if (concreteInitializer->apply([](decltype(FirstTemplateArgs)... runtimeArgs) { return ((FirstTemplateArgs == runtimeArgs) && ...); }))
+        if (*entry.first == initializer)
         {
-            return &m_rtti;
+            return entry.second;
         }
     }
 
-    return TemplateRtti<BaseType, Template, BuildTimeList::Map<NextMapEntries...>>::instantiate(std::move(initializer));
+    return nullptr;
 }
 
-template <typename BaseType, template <auto...> typename Template, auto... FirstTemplateArgs, typename... FirstCtorParamTypes, typename... NextMapEntries>
-std::string
-TemplateRtti<BaseType, Template, BuildTimeList::Map<BuildTimeList::MapEntry<BuildTimeList::Tuple<FirstTemplateArgs...>, BuildTimeList::TypeList<FirstCtorParamTypes...>>, NextMapEntries...>>::buildTypeName(const std::string& templateTypeName)
+template <typename BaseType, template <auto...> typename Template>
+template <auto... TemplateParams>
+void
+TemplateRtti<BaseType, Template>::subscribe(const AbstractRtti<BaseType>* rtti)
 {
-    const std::string argsStrings[] = { std::to_string(FirstTemplateArgs)... };
-
-    std::string result = templateTypeName + "<";
-    for (size_t i = 0; i < sizeof...(FirstTemplateArgs); ++i)
+    if (dynamic_cast<const Rtti<BaseType, Template<TemplateParams...>>*>(rtti) == nullptr)
     {
-        result += argsStrings[i];
-        if (i + 1 < sizeof...(FirstTemplateArgs))
-            result += ",";
+        throw std::runtime_error("TemplateRtti<BaseType, Template>::subscribe: The given rtti must be for type Template<TemplateParams...>.");
     }
-    result += ">";
 
-    return result;
+    m_pimpl->m_rttisMap.push_back(
+        std::pair<const AbstractInitializer*, const AbstractRtti<BaseType>*>(
+            new Initializer{TemplateParams...},
+            rtti
+        )
+    );
 }

@@ -17,6 +17,9 @@ class RttiHolder;
 template <typename BaseType>
 class RttiHolderTokenPimpl;
 
+template <typename BaseType, template <auto...> typename Template>
+class TemplateRtti;
+
 template <typename BaseType>
 class RttiHolderToken
 {
@@ -29,7 +32,9 @@ public:
     inline RttiHolderToken<BaseType>& operator=(const RttiHolderToken<BaseType>& other) = delete;
     inline RttiHolderToken<BaseType>& operator=(RttiHolderToken<BaseType>&& other);
 
-    inline void subscribe(const RttiBase<BaseType>* rtti);
+    inline void subscribe(RttiBase<BaseType>* rtti);
+    template <template <auto...> typename Template>
+    inline TemplateRtti<BaseType, Template>& getOrSubscribeTemplateRtti(const std::string& templateName);
 
 private:
     inline RttiHolderToken(RttiHolder<BaseType>* owner);
@@ -56,13 +61,16 @@ public:
     inline RttiHolder& operator=(RttiHolder&& other);
 
     inline const AbstractRtti<BaseType>* getRttiByName(const std::string& typeName) const;
-    inline const AbstractTemplateRtti<BaseType>* getTemplateRttiByName(const std::string& typeName) const;
+    inline const AbstractTemplateRtti<BaseType>* getTemplateRttiByName(const std::string& templateName) const;
 
     inline RttiHolderToken<BaseType> edit();
 
 private:
-    inline void addRtti(const RttiBase<BaseType>* rtti);
+    inline void addRtti(RttiBase<BaseType>* rtti);
     inline void removeRtti(const RttiBase<BaseType>* rtti);
+
+    template <template <auto...> typename Template>
+    inline TemplateRtti<BaseType, Template>* getTemplateRttiByName(const std::string& templateName);
 
     RttiHolderPimpl<BaseType>* m_pimpl;
 

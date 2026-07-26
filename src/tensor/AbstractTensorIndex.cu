@@ -70,6 +70,17 @@ AbstractTensorIndex::range(long long int from, long long int to) const
     return result;
 }
 
+template <size_t Dimension>
+using TensorIndexRtti = Rtti<
+    AbstractTensorIndex,
+    TensorIndex<Dimension>,
+    TypeList<>,
+    TypeList<const size_t*>,
+    TypeList<const std::initializer_list<size_t>&>,
+    TypeList<const AbstractTensorIndex&>,
+    TypeList<const RawTensorIndex<Dimension>&>
+>;
+
 class TensorIndexRttiHolderInitializer
 {
 public:
@@ -86,20 +97,13 @@ public:
         : tensorIndexRttiHolder(new RttiHolder<AbstractTensorIndex>())
         , tensorIndexRttiHolderToken(new RttiHolderToken<AbstractTensorIndex>(tensorIndexRttiHolder->edit()))
     {
-        tensorIndexRttiHolderToken->subscribe(
-            new TemplateRtti<
-                AbstractTensorIndex,
-                TensorIndex,
-                Map<
-                    MapEntry<Tuple<size_t{0}>, TensorIndexCtorParamTypes<0>>,
-                    MapEntry<Tuple<size_t{1}>, TensorIndexCtorParamTypes<1>>,
-                    MapEntry<Tuple<size_t{2}>, TensorIndexCtorParamTypes<2>>,
-                    MapEntry<Tuple<size_t{3}>, TensorIndexCtorParamTypes<3>>,
-                    MapEntry<Tuple<size_t{4}>, TensorIndexCtorParamTypes<4>>,
-                    MapEntry<Tuple<size_t{5}>, TensorIndexCtorParamTypes<5>>
-                >
-            >("TensorIndex")
-        );
+        TemplateRtti<AbstractTensorIndex, TensorIndex>& tensorIndexTemplateRtti = tensorIndexRttiHolderToken->getOrSubscribeTemplateRtti<TensorIndex>("TensorIndex");
+        tensorIndexTemplateRtti.subscribe<size_t{0}>(new TensorIndexRtti<0>("TensorIndex<0>"));
+        tensorIndexTemplateRtti.subscribe<size_t{1}>(new TensorIndexRtti<1>("TensorIndex<1>"));
+        tensorIndexTemplateRtti.subscribe<size_t{2}>(new TensorIndexRtti<2>("TensorIndex<2>"));
+        tensorIndexTemplateRtti.subscribe<size_t{3}>(new TensorIndexRtti<3>("TensorIndex<3>"));
+        tensorIndexTemplateRtti.subscribe<size_t{4}>(new TensorIndexRtti<4>("TensorIndex<4>"));
+        tensorIndexTemplateRtti.subscribe<size_t{5}>(new TensorIndexRtti<5>("TensorIndex<5>"));
     }
 
     TensorIndexRttiHolderInitializer(const TensorIndexRttiHolderInitializer& other) = delete;

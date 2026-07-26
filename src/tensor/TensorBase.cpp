@@ -1,6 +1,7 @@
 #include <tensor/TensorBase.h>
 
 #include <rtti/AbstractTemplateRtti.h>
+#include <rtti/Rtti.h>
 #include <rtti/RttiHolder.impl.h>
 #include <rtti/TemplateRtti.h>
 #include <rtti/TypenameArgId.h>
@@ -13,6 +14,9 @@ using namespace BuildTimeList;
 TensorBase::~TensorBase()
 {
 }
+
+template <TypenameArgId ValueTypeId, size_t Dimension>
+using NTTPTensorTemplate = Tensor<TypeFromTypenameArgId<ValueTypeId>, Dimension>;
 
 namespace
 {
@@ -29,13 +33,11 @@ namespace
     }
 }
 
-template <TypenameArgId ValueTypeId, size_t Dimension>
-using TypenameCompliantTensorTemplate = Tensor<TypeFromTypenameArgId<ValueTypeId>, Dimension>;
-
 template <typename ValueType, size_t Dimension>
-using TensorEntry = MapEntry<
-    Tuple<TypenameArgIdOf<ValueType>, size_t{Dimension}>,
-    TypeList<BuildTimeFunctionPointer<createTensor<ValueType, Dimension>>>
+using TensorRtti = Rtti<
+    TensorBase,
+    Tensor<ValueType, Dimension>,
+    BuildTimeFunctionPointer<createTensor<ValueType, Dimension>>
 >;
 
 class TensorRttiHolderInitializer
@@ -45,24 +47,19 @@ public:
         : tensorRttiHolder(new RttiHolder<TensorBase>())
         , tensorRttiHolderToken(new RttiHolderToken<TensorBase>(tensorRttiHolder->edit()))
     {
-        tensorRttiHolderToken->subscribe(
-            new TemplateRtti<
-                TensorBase,
-                TypenameCompliantTensorTemplate,
-                Map<
-                    TensorEntry<float, 1>,
-                    TensorEntry<float, 2>,
-                    TensorEntry<float, 3>,
-                    TensorEntry<float, 4>,
-                    TensorEntry<float, 5>,
-                    TensorEntry<double, 1>,
-                    TensorEntry<double, 2>,
-                    TensorEntry<double, 3>,
-                    TensorEntry<double, 4>,
-                    TensorEntry<double, 5>
-                >
-            >("Tensor")
-        );
+        TemplateRtti<TensorBase, NTTPTensorTemplate>& tensorTemplateRtti = tensorRttiHolderToken->getOrSubscribeTemplateRtti<NTTPTensorTemplate>("Tensor");
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{0}>(new TensorRtti<float, 0>("Tensor<float,0>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{1}>(new TensorRtti<float, 1>("Tensor<float,1>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{2}>(new TensorRtti<float, 2>("Tensor<float,2>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{3}>(new TensorRtti<float, 3>("Tensor<float,3>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{4}>(new TensorRtti<float, 4>("Tensor<float,4>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<float>, size_t{5}>(new TensorRtti<float, 5>("Tensor<float,5>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{0}>(new TensorRtti<double, 0>("Tensor<double,0>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{1}>(new TensorRtti<double, 1>("Tensor<double,1>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{2}>(new TensorRtti<double, 2>("Tensor<double,2>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{3}>(new TensorRtti<double, 3>("Tensor<double,3>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{4}>(new TensorRtti<double, 4>("Tensor<double,4>"));
+        tensorTemplateRtti.subscribe<TypenameArgIdOf<double>, size_t{5}>(new TensorRtti<double, 5>("Tensor<double,5>"));
     }
 
     ~TensorRttiHolderInitializer()

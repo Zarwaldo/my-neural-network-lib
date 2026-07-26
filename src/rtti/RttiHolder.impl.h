@@ -3,7 +3,7 @@
 #include <rtti/RttiHolder.h>
 
 #include <rtti/AbstractRtti.h>
-#include <rtti/AbstractTemplateRtti.h>
+#include <rtti/TemplateRtti.h>
 #include <rtti/RttiBase.h>
 
 #include <vector>
@@ -69,13 +69,29 @@ RttiHolderToken<BaseType>::operator=(RttiHolderToken<BaseType>&& other)
 
 template <typename BaseType>
 void
-RttiHolderToken<BaseType>::subscribe(const RttiBase<BaseType>* rtti)
+RttiHolderToken<BaseType>::subscribe(RttiBase<BaseType>* rtti)
 {
     if (rtti == nullptr)
         return;
 
     m_pimpl->m_rttis.push_back(rtti);
     m_pimpl->m_owner->addRtti(rtti);
+}
+
+template <typename BaseType>
+template <template <auto...> typename Template>
+TemplateRtti<BaseType, Template>&
+RttiHolderToken<BaseType>::getOrSubscribeTemplateRtti(const std::string& templateName)
+{
+    TemplateRtti<BaseType, Template>* templateRtti = m_pimpl->m_owner->template getTemplateRttiByName<Template>(templateName);
+
+    if (templateRtti == nullptr)
+    {
+        templateRtti = new TemplateRtti<BaseType, Template>(templateName);
+        subscribe(templateRtti);
+    }
+
+    return *templateRtti;
 }
 
 template <typename BaseType>
@@ -93,7 +109,7 @@ public:
     ~RttiHolderPimpl()
     {}
 
-    std::vector<const RttiBase<BaseType>*> m_rttis;
+    std::vector<RttiBase<BaseType>*> m_rttis;
 };
 
 template <typename BaseType>
@@ -187,7 +203,7 @@ RttiHolder<BaseType>::edit()
 
 template <typename BaseType>
 void
-RttiHolder<BaseType>::addRtti(const RttiBase<BaseType>* rtti)
+RttiHolder<BaseType>::addRtti(RttiBase<BaseType>* rtti)
 {
     if (rtti == nullptr)
         return;
@@ -199,7 +215,7 @@ template <typename BaseType>
 void
 RttiHolder<BaseType>::removeRtti(const RttiBase<BaseType>* rtti)
 {
-    for (typename std::vector<const RttiBase<BaseType>*>::const_iterator it = m_pimpl->m_rttis.begin(); it != m_pimpl->m_rttis.end(); it++)
+    for (typename std::vector<RttiBase<BaseType>*>::const_iterator it = m_pimpl->m_rttis.begin(); it != m_pimpl->m_rttis.end(); it++)
     {
         if (*it == rtti)
         {
@@ -208,4 +224,23 @@ RttiHolder<BaseType>::removeRtti(const RttiBase<BaseType>* rtti)
             return;
         }
     }
+}
+
+template <typename BaseType>
+template <template <auto...> typename Template>
+TemplateRtti<BaseType, Template>*
+RttiHolder<BaseType>::getTemplateRttiByName(const std::string& templateName)
+{
+    for (RttiBase<BaseType>* rtti : m_pimpl->m_rttis)
+    {
+        if (TemplateRtti<BaseType, Template>* concreteTemplateRtti = dynamic_cast<TemplateRtti<BaseType, Template>*>(rtti))
+        {
+            if (concreteTemplateRtti->getTypeName() == templateName)
+            {
+                return concreteTemplateRtti;
+            }
+        }
+    }
+
+    return nullptr;
 }

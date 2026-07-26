@@ -7,6 +7,8 @@
 #include <rtti/RttiHolder.h>
 #include <rtti/RttiHolder.impl.h>
 
+using namespace BuildTimeList;
+
 class Base
 {
 public:
@@ -134,20 +136,14 @@ protected:
         rttiHolder = new RttiHolder<Base>;
 
         rttiToken = new RttiHolderToken(std::move(rttiHolder->edit()));
-        rttiToken->subscribe(new Rtti<Base, ConcreteClass, BuildTimeList::TypeList<>, BuildTimeFunctionPointer<createConcreteClass>, BuildTimeList::TypeList<int>, BuildTimeList::TypeList<int, int>>("ConcreteClass"));
-        rttiToken->subscribe(new Rtti<Base, TemplateClass<float>, BuildTimeList::TypeList<float>, BuildTimeList::TypeList<float, float>>("TemplateClass<float>"));
-        rttiToken->subscribe(new Rtti<Base, TemplateClass<double>, BuildTimeList::TypeList<double>, BuildTimeList::TypeList<double, double>>("TemplateClass<double>"));
-        rttiToken->subscribe(
-            new TemplateRtti<
-                Base,
-                TemplateClass2,
-                BuildTimeList::Map<
-                    BuildTimeList::MapEntry<BuildTimeList::Tuple<0, 0>, BuildTimeList::TypeList<BuildTimeList::TypeList<>, BuildTimeList::TypeList<int>, BuildTimeList::TypeList<int, int>>>,
-                    BuildTimeList::MapEntry<BuildTimeList::Tuple<1, 2>, BuildTimeList::TypeList<BuildTimeList::TypeList<>, BuildTimeList::TypeList<int>, BuildTimeList::TypeList<int, int>>>,
-                    BuildTimeList::MapEntry<BuildTimeList::Tuple<2, 4>, BuildTimeList::TypeList<BuildTimeList::TypeList<>, BuildTimeList::TypeList<int>, BuildTimeList::TypeList<int, int>>>
-                >
-            >("TemplateClass2")
-        );
+        rttiToken->subscribe(new Rtti<Base, ConcreteClass, TypeList<>, BuildTimeFunctionPointer<createConcreteClass>, TypeList<int>, TypeList<int, int>>("ConcreteClass"));
+        rttiToken->subscribe(new Rtti<Base, TemplateClass<float>, TypeList<float>, TypeList<float, float>>("TemplateClass<float>"));
+        rttiToken->subscribe(new Rtti<Base, TemplateClass<double>, TypeList<double>, TypeList<double, double>>("TemplateClass<double>"));
+
+        TemplateRtti<Base, TemplateClass2>& templateClass2Rtti = rttiToken->getOrSubscribeTemplateRtti<TemplateClass2>("TemplateClass2");
+        templateClass2Rtti.subscribe<int{0}, int{0}>(new Rtti<Base, TemplateClass2<0, 0>, TypeList<>, TypeList<int>, TypeList<int, int>>("TemplateClass2<0,0>"));
+        templateClass2Rtti.subscribe<int{1}, int{2}>(new Rtti<Base, TemplateClass2<1, 2>, TypeList<>, TypeList<int>, TypeList<int, int>>("TemplateClass2<1,2>"));
+        templateClass2Rtti.subscribe<int{2}, int{4}>(new Rtti<Base, TemplateClass2<2, 4>, TypeList<>, TypeList<int>, TypeList<int, int>>("TemplateClass2<2,4>"));
     }
 
     void TearDown() override
@@ -516,10 +512,10 @@ protected:
 TEST_F(RttiHolderTokenShould, deleteOnlyTheRttisCreatedByThisToken) {
     // Given two rtti tokens that both subscribed some rttis
     RttiHolderToken<Base>* rttiToken1 = new RttiHolderToken<Base>(std::move(rttiHolder->edit()));
-    rttiToken1->subscribe(new Rtti<Base, ConcreteClass, BuildTimeList::TypeList<>, BuildTimeList::TypeList<int>, BuildTimeList::TypeList<int, int>>("ConcreteClass"));
+    rttiToken1->subscribe(new Rtti<Base, ConcreteClass, TypeList<>, TypeList<int>, TypeList<int, int>>("ConcreteClass"));
     RttiHolderToken<Base>* rttiToken2 = new RttiHolderToken<Base>(std::move(rttiHolder->edit()));
-    rttiToken2->subscribe(new Rtti<Base, TemplateClass<float>, BuildTimeList::TypeList<float>, BuildTimeList::TypeList<float, float>>("TemplateClass<float>"));
-    rttiToken2->subscribe(new Rtti<Base, TemplateClass<double>, BuildTimeList::TypeList<double>, BuildTimeList::TypeList<double, double>>("TemplateClass<double>"));
+    rttiToken2->subscribe(new Rtti<Base, TemplateClass<float>, TypeList<float>, TypeList<float, float>>("TemplateClass<float>"));
+    rttiToken2->subscribe(new Rtti<Base, TemplateClass<double>, TypeList<double>, TypeList<double, double>>("TemplateClass<double>"));
 
     // When deleting the first token
     delete rttiToken1;

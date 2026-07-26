@@ -29,33 +29,26 @@ struct TemplateProvider
     using TensorMapTemplate = TensorMap<ValueType, TypeFromTypenameArgId<KeyEnumId>>;
 };
 
-template <size_t Dimension>
-using AdditionModuleEntry = MapEntry<
-    Tuple<size_t{Dimension}>,
-    TypeList<
-        TypeList<
-            const RawTuple<const TensorIndex<Dimension>&>&
-        >
-    >
+template <typename ValueType, size_t Dimension>
+using AdditionModuleRtti = Rtti<
+    Module<ValueType>,
+    AdditionModule<ValueType, Dimension>,
+    TypeList<const RawTuple<const TensorIndex<Dimension>&>&>
 >;
 
-template <size_t InputDimension, size_t OutputDimension>
-using PerceptronModuleEntry = MapEntry<
-    Tuple<size_t{InputDimension}, size_t{OutputDimension}>,
-    TypeList<
-        TypeList<
-            const RawTuple<const TensorIndex<InputDimension + OutputDimension>&, const TensorIndex<OutputDimension>&>&
-        >
-    >
+template <typename ValueType, size_t InputDimension, size_t OutputDimension>
+using PerceptronModuleRtti = Rtti<
+    Module<ValueType>,
+    PerceptronModule<ValueType, InputDimension, OutputDimension>,
+    TypeList<const RawTuple<const TensorIndex<InputDimension + OutputDimension>&, const TensorIndex<OutputDimension>&>&>
 >;
 
 template <typename ValueType, typename KeyEnum>
-using TensorMapEntry = MapEntry<
-    Tuple<TypenameArgIdOf<KeyEnum>>,
-    TypeList<
-        TypeList<AbstractTensor<ValueType>* const *>,
-        TypeList<const std::initializer_list<AbstractTensor<ValueType>*>&>
-    >
+using TensorMapRtti = Rtti<
+    AbstractTensorMap<ValueType>,
+    TensorMap<ValueType, KeyEnum>,
+    TypeList<AbstractTensor<ValueType>* const *>,
+    TypeList<const std::initializer_list<AbstractTensor<ValueType>*>&>
 >;
 
 static ResourcesContainerToken* token = nullptr;
@@ -65,92 +58,70 @@ openNeuralNetworkPlugin(ResourcesContainer* resourcesContainer)
 {
     token = new ResourcesContainerToken(resourcesContainer->edit());
 
-    token->getRttiHolderToken<Module<float>>().subscribe(
-        new TemplateRtti<
-            Module<float>,
-            TemplateProvider<float>::AdditionModuleTemplate,
-            Map<
-                AdditionModuleEntry<1>,
-                AdditionModuleEntry<2>,
-                AdditionModuleEntry<3>,
-                AdditionModuleEntry<4>,
-                AdditionModuleEntry<5>
-            >
-        >("AdditionModule<float>")
+    RttiHolderToken<Module<float>>& moduleFloatRttiHolderToken = token->getRttiHolderToken<Module<float>>();
+    RttiHolderToken<Module<double>>& moduleDoubleRttiHolderToken = token->getRttiHolderToken<Module<double>>();
+
+    TemplateRtti<Module<float>, TemplateProvider<float>::AdditionModuleTemplate>& additionModuleFloatTemplateRtti = moduleFloatRttiHolderToken.getOrSubscribeTemplateRtti<TemplateProvider<float>::AdditionModuleTemplate>("AdditionModule<float>");
+    additionModuleFloatTemplateRtti.subscribe<size_t{1}>(new AdditionModuleRtti<float, 1>("AdditionModule<float,1>"));
+    additionModuleFloatTemplateRtti.subscribe<size_t{2}>(new AdditionModuleRtti<float, 2>("AdditionModule<float,2>"));
+    additionModuleFloatTemplateRtti.subscribe<size_t{3}>(new AdditionModuleRtti<float, 3>("AdditionModule<float,3>"));
+    additionModuleFloatTemplateRtti.subscribe<size_t{4}>(new AdditionModuleRtti<float, 4>("AdditionModule<float,4>"));
+    additionModuleFloatTemplateRtti.subscribe<size_t{5}>(new AdditionModuleRtti<float, 5>("AdditionModule<float,5>"));
+
+    TemplateRtti<Module<double>, TemplateProvider<double>::AdditionModuleTemplate>& additionModuleDoubleTemplateRtti = moduleDoubleRttiHolderToken.getOrSubscribeTemplateRtti<TemplateProvider<double>::AdditionModuleTemplate>("AdditionModule<double>");
+    additionModuleDoubleTemplateRtti.subscribe<size_t{1}>(new AdditionModuleRtti<double, 1>("AdditionModule<double,1>"));
+    additionModuleDoubleTemplateRtti.subscribe<size_t{2}>(new AdditionModuleRtti<double, 2>("AdditionModule<double,2>"));
+    additionModuleDoubleTemplateRtti.subscribe<size_t{3}>(new AdditionModuleRtti<double, 3>("AdditionModule<double,3>"));
+    additionModuleDoubleTemplateRtti.subscribe<size_t{4}>(new AdditionModuleRtti<double, 4>("AdditionModule<double,4>"));
+    additionModuleDoubleTemplateRtti.subscribe<size_t{5}>(new AdditionModuleRtti<double, 5>("AdditionModule<double,5>"));
+
+    TemplateRtti<Module<float>, TemplateProvider<float>::PerceptronModuleTemplate>& perceptronModuleFloatTemplateRtti = moduleFloatRttiHolderToken.getOrSubscribeTemplateRtti<TemplateProvider<float>::PerceptronModuleTemplate>("PerceptronModule<float>");
+    perceptronModuleFloatTemplateRtti.subscribe<size_t{1}, size_t{1}>(new PerceptronModuleRtti<float, 1, 1>("PerceptronModule<float,1,1>"));
+    perceptronModuleFloatTemplateRtti.subscribe<size_t{1}, size_t{2}>(new PerceptronModuleRtti<float, 1, 2>("PerceptronModule<float,1,2>"));
+    perceptronModuleFloatTemplateRtti.subscribe<size_t{1}, size_t{3}>(new PerceptronModuleRtti<float, 1, 3>("PerceptronModule<float,1,3>"));
+    perceptronModuleFloatTemplateRtti.subscribe<size_t{2}, size_t{1}>(new PerceptronModuleRtti<float, 2, 1>("PerceptronModule<float,2,1>"));
+    perceptronModuleFloatTemplateRtti.subscribe<size_t{2}, size_t{2}>(new PerceptronModuleRtti<float, 2, 2>("PerceptronModule<float,2,2>"));
+    perceptronModuleFloatTemplateRtti.subscribe<size_t{2}, size_t{3}>(new PerceptronModuleRtti<float, 2, 3>("PerceptronModule<float,2,3>"));
+    perceptronModuleFloatTemplateRtti.subscribe<size_t{3}, size_t{1}>(new PerceptronModuleRtti<float, 3, 1>("PerceptronModule<float,3,1>"));
+    perceptronModuleFloatTemplateRtti.subscribe<size_t{3}, size_t{2}>(new PerceptronModuleRtti<float, 3, 2>("PerceptronModule<float,3,2>"));
+    perceptronModuleFloatTemplateRtti.subscribe<size_t{3}, size_t{3}>(new PerceptronModuleRtti<float, 3, 3>("PerceptronModule<float,3,3>"));
+
+    TemplateRtti<Module<double>, TemplateProvider<double>::PerceptronModuleTemplate>& perceptronModuleDoubleTemplateRtti = moduleDoubleRttiHolderToken.getOrSubscribeTemplateRtti<TemplateProvider<double>::PerceptronModuleTemplate>("PerceptronModule<double>");
+    perceptronModuleDoubleTemplateRtti.subscribe<size_t{1}, size_t{1}>(new PerceptronModuleRtti<double, 1, 1>("PerceptronModule<double,1,1>"));
+    perceptronModuleDoubleTemplateRtti.subscribe<size_t{1}, size_t{2}>(new PerceptronModuleRtti<double, 1, 2>("PerceptronModule<double,1,2>"));
+    perceptronModuleDoubleTemplateRtti.subscribe<size_t{1}, size_t{3}>(new PerceptronModuleRtti<double, 1, 3>("PerceptronModule<double,1,3>"));
+    perceptronModuleDoubleTemplateRtti.subscribe<size_t{2}, size_t{1}>(new PerceptronModuleRtti<double, 2, 1>("PerceptronModule<double,2,1>"));
+    perceptronModuleDoubleTemplateRtti.subscribe<size_t{2}, size_t{2}>(new PerceptronModuleRtti<double, 2, 2>("PerceptronModule<double,2,2>"));
+    perceptronModuleDoubleTemplateRtti.subscribe<size_t{2}, size_t{3}>(new PerceptronModuleRtti<double, 2, 3>("PerceptronModule<double,2,3>"));
+    perceptronModuleDoubleTemplateRtti.subscribe<size_t{3}, size_t{1}>(new PerceptronModuleRtti<double, 3, 1>("PerceptronModule<double,3,1>"));
+    perceptronModuleDoubleTemplateRtti.subscribe<size_t{3}, size_t{2}>(new PerceptronModuleRtti<double, 3, 2>("PerceptronModule<double,3,2>"));
+    perceptronModuleDoubleTemplateRtti.subscribe<size_t{3}, size_t{3}>(new PerceptronModuleRtti<double, 3, 3>("PerceptronModule<double,3,3>"));
+
+    RttiHolderToken<AbstractTensorMap<float>>& tensorMapFloatRttiHolderToken = token->getRttiHolderToken<AbstractTensorMap<float>>();
+    RttiHolderToken<AbstractTensorMap<double>>& tensorMapDoubleRttiHolderToken = token->getRttiHolderToken<AbstractTensorMap<double>>();
+
+    token->getRttiHolderToken<AbstractTensorMapKeyEnum>().subscribe(
+        new Rtti<
+            AbstractTensorMapKeyEnum,
+            TensorSingleton,
+            TypeList<size_t>
+        >("TensorSingleton")
     );
-    token->getRttiHolderToken<Module<double>>().subscribe(
-        new TemplateRtti<
-            Module<double>,
-            TemplateProvider<double>::AdditionModuleTemplate,
-            Map<
-                AdditionModuleEntry<1>,
-                AdditionModuleEntry<2>,
-                AdditionModuleEntry<3>,
-                AdditionModuleEntry<4>,
-                AdditionModuleEntry<5>
-            >
-        >("AdditionModule<double>")
+    token->getRttiHolderToken<AbstractTensorMapKeyEnum>().subscribe(
+        new Rtti<
+            AbstractTensorMapKeyEnum,
+            PerceptronParamsKeyEnum,
+            TypeList<size_t>
+        >("PerceptronParamsKeyEnum")
     );
 
-    token->getRttiHolderToken<Module<float>>().subscribe(
-        new TemplateRtti<
-            Module<float>,
-            TemplateProvider<float>::PerceptronModuleTemplate,
-            Map<
-                PerceptronModuleEntry<1, 1>,
-                PerceptronModuleEntry<1, 2>,
-                PerceptronModuleEntry<1, 3>,
-                PerceptronModuleEntry<2, 1>,
-                PerceptronModuleEntry<2, 2>,
-                PerceptronModuleEntry<2, 3>,
-                PerceptronModuleEntry<3, 1>,
-                PerceptronModuleEntry<3, 2>,
-                PerceptronModuleEntry<3, 3>
-            >
-        >("PerceptronModule<float>")
-    );
-    token->getRttiHolderToken<Module<double>>().subscribe(
-        new TemplateRtti<
-            Module<double>,
-            TemplateProvider<double>::PerceptronModuleTemplate,
-            Map<
-                PerceptronModuleEntry<1, 1>,
-                PerceptronModuleEntry<1, 2>,
-                PerceptronModuleEntry<1, 3>,
-                PerceptronModuleEntry<2, 1>,
-                PerceptronModuleEntry<2, 2>,
-                PerceptronModuleEntry<2, 3>,
-                PerceptronModuleEntry<3, 1>,
-                PerceptronModuleEntry<3, 2>,
-                PerceptronModuleEntry<3, 3>
-            >
-        >("PerceptronModule<double>")
-    );
+    TemplateRtti<AbstractTensorMap<float>, TemplateProvider<float>::TensorMapTemplate>& tensorMapFloatTemplateRtti = tensorMapFloatRttiHolderToken.getOrSubscribeTemplateRtti<TemplateProvider<float>::TensorMapTemplate>("TensorMap<float>");
+    tensorMapFloatTemplateRtti.subscribe<TypenameArgIdOf<TensorSingleton>>(new TensorMapRtti<float, TensorSingleton>("TensorMap<float,TensorSingleton>"));
+    tensorMapFloatTemplateRtti.subscribe<TypenameArgIdOf<PerceptronParamsKeyEnum>>(new TensorMapRtti<float, PerceptronParamsKeyEnum>("TensorMap<float,PerceptronParamsKeyEnum>"));
 
-    token->getRttiHolderToken<AbstractTensorMap<float>>().subscribe(
-        new TemplateRtti<
-            AbstractTensorMap<float>,
-            TemplateProvider<float>::TensorMapTemplate,
-            Map<
-                TensorMapEntry<float, TensorSingleton>,
-                TensorMapEntry<float, PerceptronParamsKeyEnum>
-            >
-        >("TensorMap<float>")
-    );
-
-    token->getRttiHolderToken<AbstractTensorMap<double>>().subscribe(
-        new TemplateRtti<
-            AbstractTensorMap<double>,
-            TemplateProvider<double>::TensorMapTemplate,
-            Map<
-                TensorMapEntry<double, TensorSingleton>,
-                TensorMapEntry<double, PerceptronParamsKeyEnum>
-            >
-        >("TensorMap<double>")
-    );
-
-    token->getRttiHolderToken<AbstractTensorMapKeyEnum>().subscribe(new Rtti<AbstractTensorMapKeyEnum, TensorSingleton, TypeList<size_t>>("TensorSingleton"));
-    token->getRttiHolderToken<AbstractTensorMapKeyEnum>().subscribe(new Rtti<AbstractTensorMapKeyEnum, PerceptronParamsKeyEnum, TypeList<size_t>>("PerceptronParamsKeyEnum"));
+    TemplateRtti<AbstractTensorMap<double>, TemplateProvider<double>::TensorMapTemplate>& tensorMapDoubleTemplateRtti = tensorMapDoubleRttiHolderToken.getOrSubscribeTemplateRtti<TemplateProvider<double>::TensorMapTemplate>("TensorMap<double>");
+    tensorMapDoubleTemplateRtti.subscribe<TypenameArgIdOf<TensorSingleton>>(new TensorMapRtti<double, TensorSingleton>("TensorMap<double,TensorSingleton>"));
+    tensorMapDoubleTemplateRtti.subscribe<TypenameArgIdOf<PerceptronParamsKeyEnum>>(new TensorMapRtti<double, PerceptronParamsKeyEnum>("TensorMap<double,PerceptronParamsKeyEnum>"));
 }
 
 void
