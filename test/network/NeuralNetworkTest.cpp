@@ -166,8 +166,8 @@ template <typename ValueType>
 class AddTensorBuilder : public AbstractNetworkBuilder<ValueType>
 {
 public:
-    AddTensorBuilder(NeuralNetwork<ValueType>* network, const AbstractTensorIndex* size)
-        : m_networkPartHolder(*network)
+    AddTensorBuilder(NeuralNetwork<ValueType>& network, const AbstractTensorIndex* size)
+        : m_networkPartHolder(network)
         , m_size(size)
     {}
 
@@ -196,8 +196,8 @@ template <typename ValueType>
 class AddSingleTensorMapBuilder : public AbstractNetworkBuilder<ValueType>
 {
 public:
-    AddSingleTensorMapBuilder(NeuralNetwork<ValueType>* network, AbstractTensor<ValueType>* tensor)
-        : m_networkPartHolder(*network)
+    AddSingleTensorMapBuilder(NeuralNetwork<ValueType>& network, AbstractTensor<ValueType>* tensor)
+        : m_networkPartHolder(network)
         , m_tensor(*tensor)
     {}
 
@@ -226,8 +226,8 @@ template <typename ValueType>
 class AddAdditionModuleBuilder : public AbstractNetworkBuilder<ValueType>
 {
 public:
-    AddAdditionModuleBuilder(NeuralNetwork<ValueType>* network, AbstractTensorMap<ValueType>* inputTensorMap, AbstractTensorMap<ValueType>* outputTensorMap)
-        : m_networkPartHolder(*network)
+    AddAdditionModuleBuilder(NeuralNetwork<ValueType>& network, AbstractTensorMap<ValueType>* inputTensorMap, AbstractTensorMap<ValueType>* outputTensorMap)
+        : m_networkPartHolder(network)
         , m_inputTensorMap(*inputTensorMap)
         , m_outputTensorMap(*outputTensorMap)
     {}
@@ -268,9 +268,9 @@ protected:
         buildersRttiHolder = new RttiHolder<AbstractNetworkBuilder<float>>;
 
         buildersRttiToken = new RttiHolderToken(std::move(buildersRttiHolder->edit()));
-        buildersRttiToken->subscribe(new Rtti<AbstractNetworkBuilder<float>, AddTensorBuilder<float>, BuildTimeList::TypeList<NeuralNetwork<float>*, const AbstractTensorIndex*>>("AddTensorBuilder<float>"));
-        buildersRttiToken->subscribe(new Rtti<AbstractNetworkBuilder<float>, AddSingleTensorMapBuilder<float>, BuildTimeList::TypeList<NeuralNetwork<float>*, AbstractTensor<float>*>>("AddSingleTensorMapBuilder<float>"));
-        buildersRttiToken->subscribe(new Rtti<AbstractNetworkBuilder<float>, AddAdditionModuleBuilder<float>, BuildTimeList::TypeList<NeuralNetwork<float>*, AbstractTensorMap<float>*, AbstractTensorMap<float>*>>("AddAdditionModuleBuilder<float>"));
+        buildersRttiToken->subscribe(new Rtti<AbstractNetworkBuilder<float>, AddTensorBuilder<float>, BuildTimeList::TypeList<NeuralNetwork<float>&, const AbstractTensorIndex*>>("AddTensorBuilder<float>"));
+        buildersRttiToken->subscribe(new Rtti<AbstractNetworkBuilder<float>, AddSingleTensorMapBuilder<float>, BuildTimeList::TypeList<NeuralNetwork<float>&, AbstractTensor<float>*>>("AddSingleTensorMapBuilder<float>"));
+        buildersRttiToken->subscribe(new Rtti<AbstractNetworkBuilder<float>, AddAdditionModuleBuilder<float>, BuildTimeList::TypeList<NeuralNetwork<float>&, AbstractTensorMap<float>*, AbstractTensorMap<float>*>>("AddAdditionModuleBuilder<float>"));
 
         inputProvider = new SampleInputProvider({
             std::make_tuple(0.0f, 0.0f, 0.0f, 0.0f, 0.0f),
@@ -540,8 +540,8 @@ TEST_F(NeuralNetworkShould, useNeuralNetworkBuilders) {
     const AbstractNetworkBuilder<float>* addTensorResultBuilder = nullptr;
     std::map<std::string, void*> addTensorBuildingResult = network.build(
         *AddTensorBuilder<float>::getRtti(),
-        Initializer<NeuralNetwork<float>*, const AbstractTensorIndex*>(
-            &network,
+        Initializer<NeuralNetwork<float>&, const AbstractTensorIndex*>(
+            network,
             new TensorIndex<1>{5}
         ),
         &addTensorResultBuilder
@@ -550,8 +550,8 @@ TEST_F(NeuralNetworkShould, useNeuralNetworkBuilders) {
     const AbstractNetworkBuilder<float>* addTensorMapResultBuilder = nullptr;
     std::map<std::string, void*> addTensorMapBuildingResult = network.build(
         *AddSingleTensorMapBuilder<float>::getRtti(),
-        Initializer<NeuralNetwork<float>*, AbstractTensor<float>*>(
-            &network,
+        Initializer<NeuralNetwork<float>&, AbstractTensor<float>*>(
+            network,
             std::move(static_cast<AbstractTensor<float>*>(addTensorBuildingResult["added_tensor"]))
         ),
         &addTensorMapResultBuilder
@@ -561,8 +561,8 @@ TEST_F(NeuralNetworkShould, useNeuralNetworkBuilders) {
     const AbstractNetworkBuilder<float>* addAdditionModuleResultBuilder = nullptr;
     std::map<std::string, void*> addModuleBuildingResult = network.build(
         *AddAdditionModuleBuilder<float>::getRtti(),
-        Initializer<NeuralNetwork<float>*, AbstractTensorMap<float>*, AbstractTensorMap<float>*>(
-            &network,
+        Initializer<NeuralNetwork<float>&, AbstractTensorMap<float>*, AbstractTensorMap<float>*>(
+            network,
             &firstTensorMap,
             std::move(static_cast<AbstractTensorMap<float>*>(addTensorMapBuildingResult["added_tensor_map"]))
         ),
@@ -594,8 +594,8 @@ TEST_F(NeuralNetworkShould, unbuildNeuralNetworkBuilders) {
     const AbstractNetworkBuilder<float>* addTensorResultBuilder = nullptr;
     std::map<std::string, void*> addTensorBuildingResult = network.build(
         *AddTensorBuilder<float>::getRtti(),
-        Initializer<NeuralNetwork<float>*, const AbstractTensorIndex*>(
-            &network,
+        Initializer<NeuralNetwork<float>&, const AbstractTensorIndex*>(
+            network,
             new TensorIndex<1>{5}
         ),
         &addTensorResultBuilder
@@ -604,8 +604,8 @@ TEST_F(NeuralNetworkShould, unbuildNeuralNetworkBuilders) {
     const AbstractNetworkBuilder<float>* addTensorMapResultBuilder = nullptr;
     std::map<std::string, void*> addTensorMapBuildingResult = network.build(
         *AddSingleTensorMapBuilder<float>::getRtti(),
-        Initializer<NeuralNetwork<float>*, AbstractTensor<float>*>(
-            &network,
+        Initializer<NeuralNetwork<float>&, AbstractTensor<float>*>(
+            network,
             std::move(static_cast<AbstractTensor<float>*>(addTensorBuildingResult["added_tensor"]))
         ),
         &addTensorMapResultBuilder
@@ -615,8 +615,8 @@ TEST_F(NeuralNetworkShould, unbuildNeuralNetworkBuilders) {
     const AbstractNetworkBuilder<float>* addAdditionModuleResultBuilder = nullptr;
     network.build(
         *AddAdditionModuleBuilder<float>::getRtti(),
-        Initializer<NeuralNetwork<float>*, AbstractTensorMap<float>*, AbstractTensorMap<float>*>(
-            &network,
+        Initializer<NeuralNetwork<float>&, AbstractTensorMap<float>*, AbstractTensorMap<float>*>(
+            network,
             &firstTensorMap,
             std::move(static_cast<AbstractTensorMap<float>*>(addTensorMapBuildingResult["added_tensor_map"]))
         ),
@@ -649,8 +649,8 @@ TEST_F(NeuralNetworkShould, notCrashOnDeletion) {
 
     std::map<std::string, void*> addTensorBuildingResult = network->build(
         *AddTensorBuilder<float>::getRtti(),
-        Initializer<NeuralNetwork<float>*, const AbstractTensorIndex*>(
-            std::move(static_cast<NeuralNetwork<float>*>(network)),
+        Initializer<NeuralNetwork<float>&, const AbstractTensorIndex*>(
+            *network,
             new TensorIndex<1>{5}
         ),
         nullptr
@@ -658,8 +658,8 @@ TEST_F(NeuralNetworkShould, notCrashOnDeletion) {
 
     std::map<std::string, void*> addTensorMapBuildingResult = network->build(
         *AddSingleTensorMapBuilder<float>::getRtti(),
-        Initializer<NeuralNetwork<float>*, AbstractTensor<float>*>(
-            std::move(static_cast<NeuralNetwork<float>*>(network)),
+        Initializer<NeuralNetwork<float>&, AbstractTensor<float>*>(
+            *network,
             std::move(static_cast<AbstractTensor<float>*>(addTensorBuildingResult["added_tensor"]))
         ),
         nullptr
@@ -668,8 +668,8 @@ TEST_F(NeuralNetworkShould, notCrashOnDeletion) {
     ASSERT_EQ(network->getTensorMaps().size(), 2);
     network->build(
         *AddAdditionModuleBuilder<float>::getRtti(),
-        Initializer<NeuralNetwork<float>*, AbstractTensorMap<float>*, AbstractTensorMap<float>*>(
-            std::move(static_cast<NeuralNetwork<float>*>(network)),
+        Initializer<NeuralNetwork<float>&, AbstractTensorMap<float>*, AbstractTensorMap<float>*>(
+            *network,
             &firstTensorMap,
             std::move(static_cast<AbstractTensorMap<float>*>(addTensorMapBuildingResult["added_tensor_map"]))
         ),
