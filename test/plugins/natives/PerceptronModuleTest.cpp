@@ -160,8 +160,8 @@ TEST_F(PerceptronModuleShould, computeBackpropagation) {
         float expected = 0.0f;
         for (size_t resultId = 0; resultId < input->sizes()[0]; ++resultId)
         {
-            const TensorIndex<3> inputIndex = TensorIndex<1>{resultId} * weightIndex.range<0, 1>();
-            const TensorIndex<2> outputIndex = TensorIndex<1>{resultId} * weightIndex.range<2, 2>();
+            const TensorIndex<3> inputIndex = TensorIndex<1>{resultId} * weightIndex.range<0, 2>();
+            const TensorIndex<2> outputIndex = TensorIndex<1>{resultId} * weightIndex.range<2, 3>();
             expected += (*input)[inputIndex] * (*costPartDerivWRTOutput)[outputIndex];
         }
 

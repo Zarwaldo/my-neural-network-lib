@@ -115,8 +115,8 @@ PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::parameterBackp
             return;
 
         result = ValueType{};
-        inputIndex = RawTensorIndex<1>{0} * weightIndex.template range<0, InputDimension - 1>();
-        outputIndex = RawTensorIndex<1>{0} * weightIndex.template range<InputDimension, InputDimension + OutputDimension - 1>();
+        inputIndex = RawTensorIndex<1>{0} * weightIndex.template range<0, InputDimension>();
+        outputIndex = RawTensorIndex<1>{0} * weightIndex.template range<InputDimension, InputDimension + OutputDimension>();
 
         for (inputIndex[0] = 0; inputIndex[0] < costPartDerivWRTOutput->sizes()[0]; ++inputIndex[0])
         {

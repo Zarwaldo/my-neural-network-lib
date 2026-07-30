@@ -910,7 +910,7 @@ TEST_F(TensorIndexShould, createARangeOfItsValues)
     const TensorIndex<5> index({5, 1, 3, 4, 2});
 
     // When taking a range of its values
-    const TensorIndex<3> result = index.range<1, 3>();
+    const TensorIndex<3> result = index.range<1, 4>();
 
     // Then the result should contain the values from this range
     ASSERT_TRUE(result.isValid());

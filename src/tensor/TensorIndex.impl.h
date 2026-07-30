@@ -412,39 +412,33 @@ RawTensorIndex<Dimension>::operator[](const size_t index)
 }
 
 template <long long int Dimension, long long int From, long long int To>
-struct DimensionOfRange<Dimension, From, To, std::enable_if_t<(Dimension >= 0) && (0 <= From) && (From < Dimension) && (0 <= To) && (To < Dimension) && (From <= To)>>
+struct DimensionOfRange<Dimension, From, To, std::enable_if_t<(Dimension >= 0) && (0 <= From) && (From < Dimension) && (0 <= To) && (To <= Dimension) && (From <= To)>>
 {
-    static constexpr size_t result = To - From + 1;
+    static constexpr size_t result = To - From;
 };
 
 template <long long int Dimension, long long int From, long long int To>
-struct DimensionOfRange<Dimension, From, To, std::enable_if_t<(Dimension >= 0) && (0 <= From) && (From < Dimension) && (0 <= To) && (To < Dimension) && (From > To)>>
+struct DimensionOfRange<Dimension, From, To, std::enable_if_t<(Dimension >= 0) && (0 <= From) && (From < Dimension) && (0 <= To) && (To <= Dimension) && (From > To)>>
 {
     static constexpr size_t result = 0;
 };
 
 template <long long int Dimension, long long int From, long long int To>
-struct DimensionOfRange<Dimension, From, To, std::enable_if_t<(Dimension >= 0) && (0 <= From) && (From < Dimension) && (To < 0)>>
+struct DimensionOfRange<Dimension, From, To, std::enable_if_t<(Dimension >= 0) && (0 <= From) && (From < Dimension) && (Dimension < To)>>
 {
-    static constexpr size_t result = DimensionOfRange<Dimension, From, To + Dimension>::result;
+    static constexpr size_t result = DimensionOfRange<Dimension, From, Dimension>::result;
 };
 
 template <long long int Dimension, long long int From, long long int To>
-struct DimensionOfRange<Dimension, From, To, std::enable_if_t<(Dimension >= 0) && (0 <= From) && (From < Dimension) && (Dimension <= To)>>
+struct DimensionOfRange<Dimension, From, To, std::enable_if_t<(Dimension >= 0) && (0 <= From) && (From < Dimension) && (-Dimension - 1 <= To) && (To <= -1)>>
 {
-    static constexpr size_t result = DimensionOfRange<Dimension, From, To - Dimension>::result;
-};
-
-template <long long int Dimension, long long int From, long long int To>
-struct DimensionOfRange<Dimension, From, To, std::enable_if_t<(Dimension >= 0) && (From < 0)>>
-{
-    static constexpr size_t result = DimensionOfRange<Dimension, From + Dimension, To>::result;
+    static constexpr size_t result = DimensionOfRange<Dimension, From, To + Dimension + 1>::result;
 };
 
 template <long long int Dimension, long long int From, long long int To>
 struct DimensionOfRange<Dimension, From, To, std::enable_if_t<(Dimension >= 0) && (Dimension <= From)>>
 {
-    static constexpr size_t result = DimensionOfRange<Dimension, From - Dimension, To>::result;
+    static constexpr size_t result = 0;
 };
 
 template <size_t Dimension>
