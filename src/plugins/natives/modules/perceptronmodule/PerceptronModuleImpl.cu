@@ -154,23 +154,37 @@ PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::parameterBackp
 }
 
 extern template class MY_NEURAL_NETWORK_LIB__MODULE__API Module<float>;
+template class PerceptronModuleImpl<float, 0, 0>;
+template class PerceptronModuleImpl<float, 1, 0>;
+template class PerceptronModuleImpl<float, 2, 0>;
+template class PerceptronModuleImpl<float, 3, 0>;
+template class PerceptronModuleImpl<float, 0, 1>;
 template class PerceptronModuleImpl<float, 1, 1>;
 template class PerceptronModuleImpl<float, 2, 1>;
 template class PerceptronModuleImpl<float, 3, 1>;
+template class PerceptronModuleImpl<float, 0, 2>;
 template class PerceptronModuleImpl<float, 1, 2>;
 template class PerceptronModuleImpl<float, 2, 2>;
 template class PerceptronModuleImpl<float, 3, 2>;
+template class PerceptronModuleImpl<float, 0, 3>;
 template class PerceptronModuleImpl<float, 1, 3>;
 template class PerceptronModuleImpl<float, 2, 3>;
 template class PerceptronModuleImpl<float, 3, 3>;
 
 extern template class MY_NEURAL_NETWORK_LIB__MODULE__API Module<double>;
+template class PerceptronModuleImpl<double, 0, 0>;
+template class PerceptronModuleImpl<double, 1, 0>;
+template class PerceptronModuleImpl<double, 2, 0>;
+template class PerceptronModuleImpl<double, 3, 0>;
+template class PerceptronModuleImpl<double, 0, 1>;
 template class PerceptronModuleImpl<double, 1, 1>;
 template class PerceptronModuleImpl<double, 2, 1>;
 template class PerceptronModuleImpl<double, 3, 1>;
+template class PerceptronModuleImpl<double, 0, 2>;
 template class PerceptronModuleImpl<double, 1, 2>;
 template class PerceptronModuleImpl<double, 2, 2>;
 template class PerceptronModuleImpl<double, 3, 2>;
+template class PerceptronModuleImpl<double, 0, 3>;
 template class PerceptronModuleImpl<double, 1, 3>;
 template class PerceptronModuleImpl<double, 2, 3>;
 template class PerceptronModuleImpl<double, 3, 3>;
