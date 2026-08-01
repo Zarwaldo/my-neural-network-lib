@@ -59,7 +59,7 @@
         : m_value(value)                                                                                             \
     {}                                                                                                               \
                                                                                                                      \
-    EnumClassName::EnumClassName(size_t value)                                                                \
+    EnumClassName::EnumClassName(size_t value)                                                                       \
         : EnumClassName(static_cast<__TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NAME(EnumClassName)>(value))                \
     {}                                                                                                               \
                                                                                                                      \
