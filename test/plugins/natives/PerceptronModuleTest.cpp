@@ -3,6 +3,7 @@
 #include <plugins/natives/modules/perceptronmodule/PerceptronModule.h>
 #include <plugins/natives/tensormaps/TensorMapKeyEnums.h>
 
+#include <tensor/Tensor.h>
 #include <tensor/TensorMap.h>
 
 class PerceptronModuleShould : public ::testing::Test

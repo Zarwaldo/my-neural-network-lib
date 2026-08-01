@@ -18,6 +18,7 @@
 #include <rtti/RttiHolder.h>
 #include <rtti/RttiHolder.impl.h>
 
+#include <tensor/Tensor.h>
 #include <tensor/TensorIndex.h>
 #include <tensor/TensorMap.h>
 

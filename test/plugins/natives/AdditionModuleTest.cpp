@@ -3,6 +3,7 @@
 #include <plugins/natives/modules/additionmodule/AdditionModule.h>
 #include <plugins/natives/tensormaps/TensorMapKeyEnums.h>
 
+#include <tensor/Tensor.h>
 #include <tensor/TensorMap.h>
 
 class AdditionModuleShould : public ::testing::Test

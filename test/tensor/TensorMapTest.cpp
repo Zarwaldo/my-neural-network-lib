@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include <tensor/TensorMap.h>
+#include <tensor/TensorMap.impl.h>
 
 class TensorMapShould : public ::testing::Test
 {
