@@ -36,6 +36,11 @@ NeuralNetworkPartHolder<ValueType>::NeuralNetworkPartHolder(NeuralNetworkPartHol
 template <typename ValueType>
 NeuralNetworkPartHolder<ValueType>::~NeuralNetworkPartHolder()
 {
+    if (m_pimpl == nullptr)
+    {
+        return;
+    }
+
     for (const Module<ValueType>* module : m_pimpl->m_modules)
     {
         m_pimpl->m_network->removeModule(*module);
