@@ -2,7 +2,7 @@
 
 #include <module/TensorThreadDistributor.cuh>
 
-#include <tensor/Tensor.h>
+#include <tensor/RawTensor.h>
 
 template <typename ValueType, size_t Dimension>
 DEVICE

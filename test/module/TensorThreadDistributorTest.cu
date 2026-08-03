@@ -2,6 +2,7 @@
 
 #include <module/TensorThreadDistributor.cuh>
 
+#include <tensor/Tensor.h>
 #include <tensor/TensorIndex.h>
 
 class TensorThreadDistributorStaticallyShould : public ::testing::Test
