@@ -10,6 +10,7 @@
 #include <network/NullInputProvider.impl.h>
 #include <network/NullOutputReceiver.impl.h>
 #include <network/NullParamTensorFiller.impl.h>
+#include <network/TrainingNeuralNetwork.impl.h>
 
 template class MY_NEURAL_NETWORK_LIB__NETWORK__API DuplicateTensorBuilder<float>;
 template class MY_NEURAL_NETWORK_LIB__NETWORK__API DuplicateTensorBuilder<double>;
@@ -69,3 +70,6 @@ template class MY_NEURAL_NETWORK_LIB__NETWORK__API NullOutputReceiver<double>;
 
 template class MY_NEURAL_NETWORK_LIB__NETWORK__API NullParamTensorFiller<float>;
 template class MY_NEURAL_NETWORK_LIB__NETWORK__API NullParamTensorFiller<double>;
+
+template class MY_NEURAL_NETWORK_LIB__NETWORK__API TrainingNeuralNetwork<float>;
+template class MY_NEURAL_NETWORK_LIB__NETWORK__API TrainingNeuralNetwork<double>;
