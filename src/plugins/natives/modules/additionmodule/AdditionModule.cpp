@@ -15,15 +15,15 @@ IMPLEMENT_MODULE_WRAPPER(
 )
 
 extern template class MY_NEURAL_NETWORK_LIB__MODULE__API Module<float>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API AdditionModule<float, 1>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API AdditionModule<float, 2>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API AdditionModule<float, 3>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API AdditionModule<float, 4>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API AdditionModule<float, 5>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API AdditionModule<float, 1>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API AdditionModule<float, 2>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API AdditionModule<float, 3>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API AdditionModule<float, 4>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API AdditionModule<float, 5>;
 
 extern template class MY_NEURAL_NETWORK_LIB__MODULE__API Module<double>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API AdditionModule<double, 1>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API AdditionModule<double, 2>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API AdditionModule<double, 3>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API AdditionModule<double, 4>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API AdditionModule<double, 5>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API AdditionModule<double, 1>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API AdditionModule<double, 2>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API AdditionModule<double, 3>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API AdditionModule<double, 4>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API AdditionModule<double, 5>;

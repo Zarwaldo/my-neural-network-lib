@@ -92,15 +92,15 @@ EuclidianDistanceCostBuilder<ValueType, Dimension>::build()
 
 IMPLEMENT_RTTI(EuclidianDistanceCostBuilder, AbstractNetworkBuilder<ValueType>, PACK(typename, size_t), PACK(ValueType, Dimension))
 
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<float, 0>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<float, 1>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<float, 2>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<float, 3>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<float, 4>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<float, 5>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<double, 0>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<double, 1>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<double, 2>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<double, 3>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<double, 4>;
-template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API EuclidianDistanceCostBuilder<double, 5>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<float, 0>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<float, 1>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<float, 2>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<float, 3>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<float, 4>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<float, 5>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<double, 0>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<double, 1>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<double, 2>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<double, 3>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<double, 4>;
+template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<double, 5>;

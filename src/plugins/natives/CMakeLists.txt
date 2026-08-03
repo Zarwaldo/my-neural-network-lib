@@ -30,7 +30,7 @@ target_link_libraries(natives
         network
 )
 
-target_compile_definitions(natives PRIVATE MY_NEURAL_NETWORK_LIB__NATIVE_MODULES)
+target_compile_definitions(natives PRIVATE MY_NEURAL_NETWORK_LIB__NATIVES)
 
 target_compile_options(natives PRIVATE
     $<$<COMPILE_LANGUAGE:CXX>:/Zc:preprocessor>

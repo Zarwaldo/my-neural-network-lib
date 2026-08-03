@@ -7,7 +7,7 @@
 #include <plugins/natives/networkbuilders/NetworkBuildersHeader.h>
 #include <plugins/natives/tensormaps/TensorMapsHeader.h>
 
-PLUGINCORE__INCLUDE_PLUGIN_HEADER(MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API)
+PLUGINCORE__INCLUDE_PLUGIN_HEADER(MY_NEURAL_NETWORK_LIB__NATIVES__API)
 
 static ResourcesContainerToken* token = nullptr;
 
