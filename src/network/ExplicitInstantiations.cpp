@@ -1,11 +1,36 @@
 #include <network/api.h>
 
+#include <rtti/StaticRttiHolder.h>
+
+#include <network/DuplicateTensorBuilder.impl.h>
 #include <network/NeuralNetwork.impl.h>
 #include <network/NeuralNetworkBuilderHolder.impl.h>
 #include <network/NeuralNetworkPartHolder.impl.h>
 #include <network/NullInputProvider.impl.h>
 #include <network/NullOutputReceiver.impl.h>
 #include <network/NullParamTensorFiller.impl.h>
+
+template class MY_NEURAL_NETWORK_LIB__NETWORK__API DuplicateTensorBuilder<float>;
+template class MY_NEURAL_NETWORK_LIB__NETWORK__API DuplicateTensorBuilder<double>;
+StaticRttiHolder<AbstractNetworkBuilder<float>> duplicateTensorBuilderFloatRttiHolderInitializer([](RttiHolderToken<AbstractNetworkBuilder<float>>& token) {
+    token.subscribe(
+        new Rtti<
+            AbstractNetworkBuilder<float>,
+            DuplicateTensorBuilder<float>,
+            BuildTimeList::TypeList<NeuralNetwork<float>&, const AbstractTensor<float>&>
+        >("DuplicateTensorBuilder<float>")
+    );
+});
+StaticRttiHolder<AbstractNetworkBuilder<double>> duplicateTensorBuilderDoubleRttiHolderInitializer([](RttiHolderToken<AbstractNetworkBuilder<double>>& token) {
+    token.subscribe(
+        new Rtti<
+            AbstractNetworkBuilder<double>,
+            DuplicateTensorBuilder<double>,
+            BuildTimeList::TypeList<NeuralNetwork<double>&, const AbstractTensor<double>&>
+        >("DuplicateTensorBuilder<double>")
+    );
+});
+
 
 template class MY_NEURAL_NETWORK_LIB__NETWORK__API NeuralNetwork<float>;
 template class MY_NEURAL_NETWORK_LIB__NETWORK__API NeuralNetwork<double>;
