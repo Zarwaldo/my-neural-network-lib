@@ -9,6 +9,8 @@ set(NATIVES_SOURCES
     ${SOURCE_ROOT}/plugins/natives/modules/perceptronmodule/PerceptronModule.cpp
     ${SOURCE_ROOT}/plugins/natives/modules/perceptronmodule/PerceptronModuleHeader.cpp
     ${SOURCE_ROOT}/plugins/natives/modules/perceptronmodule/PerceptronModuleImpl.cu
+    ${SOURCE_ROOT}/plugins/natives/networkbuilders/EuclidianDistanceCostBuilder.cpp
+    ${SOURCE_ROOT}/plugins/natives/networkbuilders/NetworkBuildersHeader.cpp
     ${SOURCE_ROOT}/plugins/natives/tensormaps/TensorMapKeyEnums.cpp
     ${SOURCE_ROOT}/plugins/natives/tensormaps/TensorMapsHeader.cpp
 )
@@ -25,6 +27,7 @@ target_include_directories(natives
 target_link_libraries(natives
     PUBLIC
         plugincore
+        network
 )
 
 target_compile_definitions(natives PRIVATE MY_NEURAL_NETWORK_LIB__NATIVE_MODULES)
