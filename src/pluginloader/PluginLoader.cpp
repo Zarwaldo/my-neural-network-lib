@@ -39,9 +39,18 @@ public:
     ResourcesContainer m_resourcesContainer;
 };
 
-PluginLoader::PluginLoader()
+PluginLoader::PluginLoader(bool loadNatives)
     : m_pimpl(new PluginLoaderPimpl)
-{}
+{
+    if (loadNatives)
+    {
+#ifdef _WIN32
+        loadPluginFromPath(getExecutableDir() / "natives.dll");
+#else
+        loadPluginFromPath(getExecutableDir() / "natives.so");
+#endif
+    }
+}
 
 PluginLoader::~PluginLoader()
 {

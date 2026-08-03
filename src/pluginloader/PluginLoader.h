@@ -16,7 +16,7 @@ namespace std::filesystem
 class MY_NEURAL_NETWORK_LIB__PLUGINLOADER__API PluginLoader
 {
 public:
-    PluginLoader();
+    PluginLoader(bool loadNatives = true);
     PluginLoader(const PluginLoader& other) = delete;
     PluginLoader(PluginLoader&& other) = delete;
     ~PluginLoader();

@@ -11,9 +11,17 @@
 class PluginLoaderShould : public ::testing::Test
 {};
 
+TEST_F(PluginLoaderShould, beEmptyByDefault) {
+    // Given a plugin loader with no loaded plugin
+    PluginLoader pluginLoader(false);
+
+    // Then there is no plugin in the loader
+    EXPECT_EQ(pluginLoader.begin(), pluginLoader.end());
+}
+
 TEST_F(PluginLoaderShould, beAbleToLoadAPluginFromPath) {
     // Given a plugin loader and the path to a plugin library
-    PluginLoader pluginLoader;
+    PluginLoader pluginLoader(false);
     const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
 
     // When we load this plugin
@@ -31,7 +39,7 @@ TEST_F(PluginLoaderShould, beAbleToLoadAPluginFromPath) {
 
 TEST_F(PluginLoaderShould, beAbleToLoadPluginsFromTheExecutablesDirectory) {
     // Given a plugin loader
-    PluginLoader pluginLoader;
+    PluginLoader pluginLoader(false);
 
     // When we load this plugin
     pluginLoader.loadPluginsFromExecutableDir();
@@ -44,7 +52,7 @@ TEST_F(PluginLoaderShould, beAbleToLoadPluginsFromTheExecutablesDirectory) {
 
 TEST_F(PluginLoaderShould, beAbleToIterateOnTheLoadedPlugins) {
     // Given a plugin loader that has loaded all plugins from the executable's directory
-    PluginLoader pluginLoader;
+    PluginLoader pluginLoader(false);
     pluginLoader.loadPluginsFromExecutableDir();
 
     // When we iterate on the plugin loader to fetch the loaded plugins' names
@@ -55,6 +63,22 @@ TEST_F(PluginLoaderShould, beAbleToIterateOnTheLoadedPlugins) {
     }
 
     // Then the list should contain all the plugins' names
+    EXPECT_EQ(pluginsNames.size(), 1);
+    EXPECT_EQ(pluginsNames[0], L"natives");
+}
+
+TEST_F(PluginLoaderShould, loadTheNativesPluginByDefault) {
+    // Given a plugin loader that loads the natives plugin by default
+    PluginLoader pluginLoader;
+
+    // When we iterate on the plugin loader to fetch the loaded plugins' names
+    std::vector<std::wstring> pluginsNames;
+    for (Plugin& plugin : pluginLoader)
+    {
+        pluginsNames.push_back(plugin.getName());
+    }
+
+    // Then the list should contain the natives plugin and only it
     EXPECT_EQ(pluginsNames.size(), 1);
     EXPECT_EQ(pluginsNames[0], L"natives");
 }

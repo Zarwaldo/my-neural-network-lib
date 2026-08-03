@@ -142,8 +142,6 @@ protected:
     void SetUp() override
     {
         pluginLoader = new PluginLoader();
-        const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
-        pluginLoader->loadPluginFromPath(libPath);
 
         trainingMonitor = new SampleTrainingMonitor<float, 1>(M_PI, M_E);
         trainingNotifier = new SampleTrainingNotifier<float>;

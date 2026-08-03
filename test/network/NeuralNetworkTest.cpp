@@ -263,8 +263,6 @@ protected:
     void SetUp() override
     {
         pluginLoader = new PluginLoader();
-        const std::filesystem::path libPath = PluginLoader::getExecutableDir() / "natives.dll";
-        pluginLoader->loadPluginFromPath(libPath);
 
         buildersRttiHolder = new RttiHolder<AbstractNetworkBuilder<float>>;
 
