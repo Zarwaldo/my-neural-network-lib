@@ -3,6 +3,9 @@ set(NATIVES_SOURCES
     ${SOURCE_ROOT}/plugins/natives/modules/additionmodule/AdditionModule.cpp
     ${SOURCE_ROOT}/plugins/natives/modules/additionmodule/AdditionModuleHeader.cpp
     ${SOURCE_ROOT}/plugins/natives/modules/additionmodule/AdditionModuleImpl.cu
+    ${SOURCE_ROOT}/plugins/natives/modules/euclidiandistancemodule/EuclidianDistanceModule.cpp
+    ${SOURCE_ROOT}/plugins/natives/modules/euclidiandistancemodule/EuclidianDistanceModuleHeader.cpp
+    ${SOURCE_ROOT}/plugins/natives/modules/euclidiandistancemodule/EuclidianDistanceModuleImpl.cu
     ${SOURCE_ROOT}/plugins/natives/modules/perceptronmodule/PerceptronModule.cpp
     ${SOURCE_ROOT}/plugins/natives/modules/perceptronmodule/PerceptronModuleHeader.cpp
     ${SOURCE_ROOT}/plugins/natives/modules/perceptronmodule/PerceptronModuleImpl.cu
