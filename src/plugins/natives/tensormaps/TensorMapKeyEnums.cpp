@@ -9,6 +9,11 @@ IMPLEMENT_TENSOR_MAP_KEY_ENUM(TensorSingleton)
 template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API TensorMap<float, TensorSingleton>;
 template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API TensorMap<double, TensorSingleton>;
 
+IMPLEMENT_TENSOR_MAP_KEY_ENUM(TensorPair)
+
+template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API TensorMap<float, TensorPair>;
+template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API TensorMap<double, TensorPair>;
+
 IMPLEMENT_TENSOR_MAP_KEY_ENUM(PerceptronParamsKeyEnum)
 
 template class MY_NEURAL_NETWORK_LIB__NATIVE_MODULES__API TensorMap<float, PerceptronParamsKeyEnum>;

@@ -43,6 +43,13 @@ TensorMapsHeader::load(ResourcesContainerToken& token)
     token.getRttiHolderToken<AbstractTensorMapKeyEnum>().subscribe(
         new Rtti<
             AbstractTensorMapKeyEnum,
+            TensorPair,
+            TypeList<size_t>
+        >("TensorPair")
+    );
+    token.getRttiHolderToken<AbstractTensorMapKeyEnum>().subscribe(
+        new Rtti<
+            AbstractTensorMapKeyEnum,
             PerceptronParamsKeyEnum,
             TypeList<size_t>
         >("PerceptronParamsKeyEnum")
@@ -50,9 +57,11 @@ TensorMapsHeader::load(ResourcesContainerToken& token)
 
     TemplateRtti<AbstractTensorMap<float>, TemplateProvider<float>::TensorMapTemplate>& tensorMapFloatTemplateRtti = tensorMapFloatRttiHolderToken.getOrSubscribeTemplateRtti<TemplateProvider<float>::TensorMapTemplate>("TensorMap<float>");
     tensorMapFloatTemplateRtti.subscribe<TypenameArgIdOf<TensorSingleton>>(new TensorMapRtti<float, TensorSingleton>("TensorMap<float,TensorSingleton>"));
+    tensorMapFloatTemplateRtti.subscribe<TypenameArgIdOf<TensorPair>>(new TensorMapRtti<float, TensorPair>("TensorMap<float,TensorPair>"));
     tensorMapFloatTemplateRtti.subscribe<TypenameArgIdOf<PerceptronParamsKeyEnum>>(new TensorMapRtti<float, PerceptronParamsKeyEnum>("TensorMap<float,PerceptronParamsKeyEnum>"));
 
     TemplateRtti<AbstractTensorMap<double>, TemplateProvider<double>::TensorMapTemplate>& tensorMapDoubleTemplateRtti = tensorMapDoubleRttiHolderToken.getOrSubscribeTemplateRtti<TemplateProvider<double>::TensorMapTemplate>("TensorMap<double>");
     tensorMapDoubleTemplateRtti.subscribe<TypenameArgIdOf<TensorSingleton>>(new TensorMapRtti<double, TensorSingleton>("TensorMap<double,TensorSingleton>"));
+    tensorMapDoubleTemplateRtti.subscribe<TypenameArgIdOf<TensorPair>>(new TensorMapRtti<double, TensorPair>("TensorMap<double,TensorPair>"));
     tensorMapDoubleTemplateRtti.subscribe<TypenameArgIdOf<PerceptronParamsKeyEnum>>(new TensorMapRtti<double, PerceptronParamsKeyEnum>("TensorMap<double,PerceptronParamsKeyEnum>"));
 }
