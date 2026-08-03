@@ -1,3 +1,4 @@
 add_neural_network_test(duplicate_tensor_builder_test ${CMAKE_CURRENT_SOURCE_DIR}/DuplicateTensorBuilderTest.cpp network)
+add_neural_network_test(duplicate_tensor_map_builder_test ${CMAKE_CURRENT_SOURCE_DIR}/DuplicateTensorMapBuilderTest.cpp network)
 add_neural_network_test(neural_network_test ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworkTest.cpp network pluginloader natives)
 add_neural_network_test(neural_network_part_holder_test ${CMAKE_CURRENT_SOURCE_DIR}/NeuralNetworkPartHolderTest.cpp network pluginloader natives)

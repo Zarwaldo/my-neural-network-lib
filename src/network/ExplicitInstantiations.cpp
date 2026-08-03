@@ -3,6 +3,7 @@
 #include <rtti/StaticRttiHolder.h>
 
 #include <network/DuplicateTensorBuilder.impl.h>
+#include <network/DuplicateTensorMapBuilder.impl.h>
 #include <network/NeuralNetwork.impl.h>
 #include <network/NeuralNetworkBuilderHolder.impl.h>
 #include <network/NeuralNetworkPartHolder.impl.h>
@@ -31,6 +32,26 @@ StaticRttiHolder<AbstractNetworkBuilder<double>> duplicateTensorBuilderDoubleRtt
     );
 });
 
+template class MY_NEURAL_NETWORK_LIB__NETWORK__API DuplicateTensorMapBuilder<float>;
+template class MY_NEURAL_NETWORK_LIB__NETWORK__API DuplicateTensorMapBuilder<double>;
+StaticRttiHolder<AbstractNetworkBuilder<float>> duplicateTensorMapBuilderFloatRttiHolderInitializer([](RttiHolderToken<AbstractNetworkBuilder<float>>& token) {
+    token.subscribe(
+        new Rtti<
+            AbstractNetworkBuilder<float>,
+            DuplicateTensorMapBuilder<float>,
+            BuildTimeList::TypeList<NeuralNetwork<float>&, const AbstractTensorMap<float>&, const std::map<const AbstractTensor<float>*, AbstractTensor<float>*>&>
+        >("DuplicateTensorMapBuilder<float>")
+    );
+});
+StaticRttiHolder<AbstractNetworkBuilder<double>> duplicateTensorMapBuilderDoubleRttiHolderInitializer([](RttiHolderToken<AbstractNetworkBuilder<double>>& token) {
+    token.subscribe(
+        new Rtti<
+            AbstractNetworkBuilder<double>,
+            DuplicateTensorMapBuilder<double>,
+            BuildTimeList::TypeList<NeuralNetwork<double>&, const AbstractTensorMap<double>&, const std::map<const AbstractTensor<double>*, AbstractTensor<double>*>&>
+        >("DuplicateTensorMapBuilder<float>")
+    );
+});
 
 template class MY_NEURAL_NETWORK_LIB__NETWORK__API NeuralNetwork<float>;
 template class MY_NEURAL_NETWORK_LIB__NETWORK__API NeuralNetwork<double>;
