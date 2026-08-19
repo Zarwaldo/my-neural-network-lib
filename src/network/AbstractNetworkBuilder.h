@@ -5,10 +5,10 @@
 #include <map>
 #include <string>
 
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensor;
 
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractNetworkBuilder
 {
 public:
@@ -16,5 +16,5 @@ public:
 
     virtual std::map<std::string, void*> build() = 0;
 
-    DECLARE_AS_RTTI_BASE_TYPE(AbstractNetworkBuilder<ValueType>)
+    DECLARE_AS_RTTI_BASE_TYPE(AbstractNetworkBuilder<ScalarType>)
 };

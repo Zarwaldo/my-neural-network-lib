@@ -11,76 +11,76 @@
 #include <tensor/Tensor.h>
 #include <tensor/TensorMap.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 struct EuclidianDistanceCostBuilderPimpl
 {
-    EuclidianDistanceCostBuilderPimpl(NeuralNetworkPartHolder<ValueType>&& networkPartHolder, TensorMap<ValueType, TensorSingleton>& outputTensorMap, TensorMap<ValueType, TensorSingleton>& expectedTensorMap, Tensor<ValueType, 0>& costTensor)
+    EuclidianDistanceCostBuilderPimpl(NeuralNetworkPartHolder<ScalarType>&& networkPartHolder, TensorMap<ScalarType, TensorSingleton>& outputTensorMap, TensorMap<ScalarType, TensorSingleton>& expectedTensorMap, Tensor<ScalarType, 0>& costTensor)
         : networkPartHolder(std::move(networkPartHolder))
         , outputTensorMap(outputTensorMap)
         , expectedTensorMap(expectedTensorMap)
         , costTensor(costTensor)
     {}
 
-    NeuralNetworkPartHolder<ValueType> networkPartHolder;
-    TensorMap<ValueType, TensorSingleton>& outputTensorMap;
-    TensorMap<ValueType, TensorSingleton>& expectedTensorMap;
-    Tensor<ValueType, 0>& costTensor;
+    NeuralNetworkPartHolder<ScalarType> networkPartHolder;
+    TensorMap<ScalarType, TensorSingleton>& outputTensorMap;
+    TensorMap<ScalarType, TensorSingleton>& expectedTensorMap;
+    Tensor<ScalarType, 0>& costTensor;
 };
 
-template <typename ValueType, size_t Dimension>
-EuclidianDistanceCostBuilder<ValueType, Dimension>::EuclidianDistanceCostBuilder(NeuralNetwork<ValueType>& network, AbstractTensorMap<ValueType>& outputTensorMap, AbstractTensorMap<ValueType>& expectedTensorMap, AbstractTensor<ValueType>& costTensor)
+template <typename ScalarType, size_t Dimension>
+EuclidianDistanceCostBuilder<ScalarType, Dimension>::EuclidianDistanceCostBuilder(NeuralNetwork<ScalarType>& network, AbstractTensorMap<ScalarType>& outputTensorMap, AbstractTensorMap<ScalarType>& expectedTensorMap, AbstractTensor<ScalarType>& costTensor)
     : m_pimpl(
-        new EuclidianDistanceCostBuilderPimpl<ValueType>(
-            NeuralNetworkPartHolder<ValueType>(network),
-            static_cast<TensorMap<ValueType, TensorSingleton>&>(outputTensorMap),
-            static_cast<TensorMap<ValueType, TensorSingleton>&>(expectedTensorMap),
-            static_cast<Tensor<ValueType, 0>&>(costTensor)
+        new EuclidianDistanceCostBuilderPimpl<ScalarType>(
+            NeuralNetworkPartHolder<ScalarType>(network),
+            static_cast<TensorMap<ScalarType, TensorSingleton>&>(outputTensorMap),
+            static_cast<TensorMap<ScalarType, TensorSingleton>&>(expectedTensorMap),
+            static_cast<Tensor<ScalarType, 0>&>(costTensor)
         )
     )
 {}
 
-template <typename ValueType, size_t Dimension>
-EuclidianDistanceCostBuilder<ValueType, Dimension>::EuclidianDistanceCostBuilder(EuclidianDistanceCostBuilder&& other)
+template <typename ScalarType, size_t Dimension>
+EuclidianDistanceCostBuilder<ScalarType, Dimension>::EuclidianDistanceCostBuilder(EuclidianDistanceCostBuilder&& other)
     : m_pimpl(other.m_pimpl)
 {
     other.m_pimpl = nullptr;
 }
 
-template <typename ValueType, size_t Dimension>
-EuclidianDistanceCostBuilder<ValueType, Dimension>::~EuclidianDistanceCostBuilder()
+template <typename ScalarType, size_t Dimension>
+EuclidianDistanceCostBuilder<ScalarType, Dimension>::~EuclidianDistanceCostBuilder()
 {
     delete m_pimpl;
 }
 
-template <typename ValueType, size_t Dimension>
-EuclidianDistanceCostBuilder<ValueType, Dimension>&
-EuclidianDistanceCostBuilder<ValueType, Dimension>::operator=(EuclidianDistanceCostBuilder&& other)
+template <typename ScalarType, size_t Dimension>
+EuclidianDistanceCostBuilder<ScalarType, Dimension>&
+EuclidianDistanceCostBuilder<ScalarType, Dimension>::operator=(EuclidianDistanceCostBuilder&& other)
 {
     std::swap(m_pimpl, other.m_pimpl);
     return *this;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 std::map<std::string, void*>
-EuclidianDistanceCostBuilder<ValueType, Dimension>::build()
+EuclidianDistanceCostBuilder<ScalarType, Dimension>::build()
 {
-    AbstractTensorMap<ValueType>& inputTensorMap = m_pimpl->networkPartHolder.addTensorMap(
-        new TensorMap<ValueType, TensorPair>{
+    AbstractTensorMap<ScalarType>& inputTensorMap = m_pimpl->networkPartHolder.addTensorMap(
+        new TensorMap<ScalarType, TensorPair>{
             &m_pimpl->outputTensorMap.get(0),
             &m_pimpl->expectedTensorMap.get(0)
         }
     );
 
-    AbstractTensorMap<ValueType>& outputTensorMap = m_pimpl->networkPartHolder.addTensorMap(
-        new TensorMap<ValueType, TensorSingleton>{
+    AbstractTensorMap<ScalarType>& outputTensorMap = m_pimpl->networkPartHolder.addTensorMap(
+        new TensorMap<ScalarType, TensorSingleton>{
             &m_pimpl->costTensor
         }
     );
 
     const RawTuple<const TensorIndex<0>&> moduleParameter = makeRawTuple<const TensorIndex<0>&>(TensorIndex<0>(true));
-    const NullParamTensorFiller<ValueType> nullParamTensorFiller;
-    Module<ValueType>& module = m_pimpl->networkPartHolder.addModule(
-        *EuclidianDistanceModule<ValueType, Dimension>::getRtti(),
+    const NullParamTensorFiller<ScalarType> nullParamTensorFiller;
+    Module<ScalarType>& module = m_pimpl->networkPartHolder.addModule(
+        *EuclidianDistanceModule<ScalarType, Dimension>::getRtti(),
         Initializer<const RawTuple<const TensorIndex<0>&>&>(moduleParameter),
         inputTensorMap,
         outputTensorMap,
@@ -90,7 +90,7 @@ EuclidianDistanceCostBuilder<ValueType, Dimension>::build()
     return {};
 }
 
-IMPLEMENT_RTTI(EuclidianDistanceCostBuilder, AbstractNetworkBuilder<ValueType>, PACK(typename, size_t), PACK(ValueType, Dimension))
+IMPLEMENT_RTTI(EuclidianDistanceCostBuilder, AbstractNetworkBuilder<ScalarType>, PACK(typename, size_t), PACK(ScalarType, Dimension))
 
 template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<float, 0>;
 template class MY_NEURAL_NETWORK_LIB__NATIVES__API EuclidianDistanceCostBuilder<float, 1>;

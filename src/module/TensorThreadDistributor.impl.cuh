@@ -4,21 +4,21 @@
 
 #include <tensor/RawTensor.h>
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 DEVICE
-TensorThreadDistributor<ValueType, Dimension>::TensorThreadDistributor(RawTensor<ValueType, Dimension>& rawTensor)
+TensorThreadDistributor<ScalarType, Dimension>::TensorThreadDistributor(RawTensor<ScalarType, Dimension>& rawTensor)
     : m_rawTensor(rawTensor)
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 DEVICE
-TensorThreadDistributor<ValueType, Dimension>::~TensorThreadDistributor()
+TensorThreadDistributor<ScalarType, Dimension>::~TensorThreadDistributor()
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
 dim3
-TensorThreadDistributor<ValueType, Dimension>::getNbThreads()
+TensorThreadDistributor<ScalarType, Dimension>::getNbThreads()
 {
     int device;
     cudaGetDevice(&device);
@@ -44,10 +44,10 @@ TensorThreadDistributor<ValueType, Dimension>::getNbThreads()
     };
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
 dim3
-TensorThreadDistributor<ValueType, Dimension>::getNbBlocks(const RawTensor<ValueType, Dimension>& rawTensor)
+TensorThreadDistributor<ScalarType, Dimension>::getNbBlocks(const RawTensor<ScalarType, Dimension>& rawTensor)
 {
     const dim3 nbThreads = getNbThreads();
     const TensorIndex<Dimension>& tensorSize = rawTensor.sizes();
@@ -86,10 +86,10 @@ TensorThreadDistributor<ValueType, Dimension>::getNbBlocks(const RawTensor<Value
     }
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 DEVICE
 RawTensorIndex<Dimension>
-TensorThreadDistributor<ValueType, Dimension>::askNewIndex(const RawTensorIndex<Dimension>& previous) const
+TensorThreadDistributor<ScalarType, Dimension>::askNewIndex(const RawTensorIndex<Dimension>& previous) const
 {
     if (!previous.isValid())
     {
@@ -129,7 +129,7 @@ TensorThreadDistributor<ValueType, Dimension>::askNewIndex(const RawTensorIndex<
     return *(++m_rawTensor.iterator(previous));
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 template <typename FunctionType>
 DEVICE
 std::enable_if_t<
@@ -143,7 +143,7 @@ std::enable_if_t<
     >,
     void
 >
-TensorThreadDistributor<ValueType, Dimension>::iterate<FunctionType>(const FunctionType&& function)
+TensorThreadDistributor<ScalarType, Dimension>::iterate<FunctionType>(const FunctionType&& function)
 {
     RawTensorIndex<Dimension> index = askNewIndex(RawTensorIndex<Dimension>());
 

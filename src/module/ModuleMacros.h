@@ -5,7 +5,7 @@
 #include <rtti/Rtti.h>
 #include <helpers/Macros.h>
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 class RawTensor;
 
 template <size_t Dimension>
@@ -27,9 +27,9 @@ class TensorIndex;
 
 // Parameter macros
 
-#define __MODULE__RAW_TENSOR_PTR_PARAM(Dimension, ValueType, constQualifier) constQualifier RawTensor<ValueType, Dimension>*
+#define __MODULE__RAW_TENSOR_PTR_PARAM(Dimension, ScalarType, constQualifier) constQualifier RawTensor<ScalarType, Dimension>*
 #define __MODULE__TENSOR_INDEX_REF_PARAM(Dimension, constQualifier) constQualifier TensorIndex<Dimension>&
-#define __MODULE__PACKED_RAW_TENSOR_PTR_PARAM(Dimension, ValueType, constQualifier) PACK(__MODULE__RAW_TENSOR_PTR_PARAM(Dimension, ValueType, constQualifier))
+#define __MODULE__PACKED_RAW_TENSOR_PTR_PARAM(Dimension, ScalarType, constQualifier) PACK(__MODULE__RAW_TENSOR_PTR_PARAM(Dimension, ScalarType, constQualifier))
 
 // Computation kernel method
 
@@ -47,12 +47,12 @@ class TensorIndex;
 
 /// Parameter types
 
-#define __IMPLEMENT_MODULE__COMPUTATION_KERNEL__PACKED_PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                               \
-    __MODULE__PACKED_RAW_TENSOR_PTR_PARAM(__IMPLEMENT_MODULE__COMPUTATION_KERNEL__OUTPUT_TENSOR_DIMENSION(index, OutputTensorDimensionsPack), ValueType, ),                                               \
-    FOR_EACH(__MODULE__PACKED_RAW_TENSOR_PTR_PARAM, FORWARD(ValueType, const), __IMPLEMENT_MODULE__COMPUTATION_KERNEL__INPUT_TENSOR_DIMENSIONS(InputTensorDimensionsPack, ParameterTensorDimensionsPack))
+#define __IMPLEMENT_MODULE__COMPUTATION_KERNEL__PACKED_PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                               \
+    __MODULE__PACKED_RAW_TENSOR_PTR_PARAM(__IMPLEMENT_MODULE__COMPUTATION_KERNEL__OUTPUT_TENSOR_DIMENSION(index, OutputTensorDimensionsPack), ScalarType, ),                                               \
+    FOR_EACH(__MODULE__PACKED_RAW_TENSOR_PTR_PARAM, FORWARD(ScalarType, const), __IMPLEMENT_MODULE__COMPUTATION_KERNEL__INPUT_TENSOR_DIMENSIONS(InputTensorDimensionsPack, ParameterTensorDimensionsPack))
 
-#define __IMPLEMENT_MODULE__COMPUTATION_KERNEL__PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                                           \
-    FOR_EACH(__MODULE__UNPACK, FORWARD(), __IMPLEMENT_MODULE__COMPUTATION_KERNEL__PACKED_PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack))
+#define __IMPLEMENT_MODULE__COMPUTATION_KERNEL__PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                                           \
+    FOR_EACH(__MODULE__UNPACK, FORWARD(), __IMPLEMENT_MODULE__COMPUTATION_KERNEL__PACKED_PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack))
 
 /// Params names
 
@@ -68,17 +68,17 @@ class TensorIndex;
 
 #define __IMPLEMENT_MODULE__COMPUTATION_KERNEL__NAMED_PARAMETER(type, paramName) __MODULE__UNPACK(type) paramName
 #define __IMPLEMENT_MODULE__COMPUTATION_KERNEL__NAMED_PARAMETER__PACKED(arg, ...) __MODULE__UNPACK3(PACK(__IMPLEMENT_MODULE__COMPUTATION_KERNEL__NAMED_PARAMETER)(__MODULE__UNPACK2(arg)))
-#define __IMPLEMENT_MODULE__COMPUTATION_KERNEL__NAMED_PARAMS(index, ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack) \
-    FOR_EACH4(__IMPLEMENT_MODULE__COMPUTATION_KERNEL__NAMED_PARAMETER__PACKED, FORWARD(), INTERTWINE_PACKS23(                                                                                                       \
-        PACK(__IMPLEMENT_MODULE__COMPUTATION_KERNEL__PACKED_PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)),                                  \
-        PACK(__IMPLEMENT_MODULE__COMPUTATION_KERNEL__PARAMS_NAMES(index, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum))                                                                                            \
+#define __IMPLEMENT_MODULE__COMPUTATION_KERNEL__NAMED_PARAMS(index, ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack) \
+    FOR_EACH4(__IMPLEMENT_MODULE__COMPUTATION_KERNEL__NAMED_PARAMETER__PACKED, FORWARD(), INTERTWINE_PACKS23(                                                                                                        \
+        PACK(__IMPLEMENT_MODULE__COMPUTATION_KERNEL__PACKED_PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)),                                  \
+        PACK(__IMPLEMENT_MODULE__COMPUTATION_KERNEL__PARAMS_NAMES(index, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum))                                                                                             \
     ))
 
 /// Declaration
 
-#define __MODULE__DECLARE_COMPUTATION_KERNEL(index, ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack) \
-    DEVICE static TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) void __MODULE__COMPUTATION_KERNEL_NAME_FROM_INDEX(index, OutputKeyEnum)(                                                                                  \
-        __IMPLEMENT_MODULE__COMPUTATION_KERNEL__NAMED_PARAMS(index, ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)         \
+#define __MODULE__DECLARE_COMPUTATION_KERNEL(index, ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack) \
+    DEVICE static TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) void __MODULE__COMPUTATION_KERNEL_NAME_FROM_INDEX(index, OutputKeyEnum)(                                                                                   \
+        __IMPLEMENT_MODULE__COMPUTATION_KERNEL__NAMED_PARAMS(index, ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)         \
     );
 
 // Input backpropagation kernel method
@@ -97,12 +97,12 @@ class TensorIndex;
 
 /// Parameter types
 
-#define __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack) \
-    __MODULE__PACKED_RAW_TENSOR_PTR_PARAM(__IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__OUTPUT_TENSOR_DIMENSION(index, InputTensorDimensionsPack), ValueType, ),                                                                            \
-    FOR_EACH(__MODULE__PACKED_RAW_TENSOR_PTR_PARAM, FORWARD(ValueType, const), __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__INPUT_TENSOR_DIMENSIONS(InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack))
+#define __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                                                           \
+    __MODULE__PACKED_RAW_TENSOR_PTR_PARAM(__IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__OUTPUT_TENSOR_DIMENSION(index, InputTensorDimensionsPack), ScalarType, ),                                                                            \
+    FOR_EACH(__MODULE__PACKED_RAW_TENSOR_PTR_PARAM, FORWARD(ScalarType, const), __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__INPUT_TENSOR_DIMENSIONS(InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack))
 
-#define __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                                            \
-    FOR_EACH2(__MODULE__UNPACK, FORWARD(), __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack))
+#define __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                                            \
+    FOR_EACH2(__MODULE__UNPACK, FORWARD(), __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack))
 
 /// Params names
 
@@ -121,17 +121,17 @@ class TensorIndex;
 #define __IMPLEMENT_MODULE__BACKPROPAGATION_KERNEL__NAMED_PARAMETER(type, paramName) __MODULE__UNPACK(type) paramName
 #define __IMPLEMENT_MODULE__BACKPROPAGATION_KERNEL__NAMED_PARAMETER__PACKED(arg, ...) __MODULE__UNPACK3(PACK(__IMPLEMENT_MODULE__BACKPROPAGATION_KERNEL__NAMED_PARAMETER)(__MODULE__UNPACK2(arg)))
 
-#define __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__NAMED_PARAMS(index, ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack) \
-    FOR_EACH4(__IMPLEMENT_MODULE__BACKPROPAGATION_KERNEL__NAMED_PARAMETER__PACKED, FORWARD(), INTERTWINE_PACKS23(                                                                                                             \
-        PACK(__IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)),                                  \
-        PACK(__IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__PARAMS_NAMES(index, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum))                                                                                            \
+#define __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__NAMED_PARAMS(index, ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack) \
+    FOR_EACH4(__IMPLEMENT_MODULE__BACKPROPAGATION_KERNEL__NAMED_PARAMETER__PACKED, FORWARD(), INTERTWINE_PACKS23(                                                                                                              \
+        PACK(__IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)),                                  \
+        PACK(__IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__PARAMS_NAMES(index, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum))                                                                                             \
     ))
 
 /// Declaration
 
-#define __MODULE__DECLARE_INPUT_BACKPROPAGATION_KERNEL(index, ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack) \
-    DEVICE static TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) void __MODULE__INPUT_BACKPROPAGATION_KERNEL_NAME_FROM_INDEX(index, InputKeyEnum)(                                                                                   \
-        __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__NAMED_PARAMS(index, ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)         \
+#define __MODULE__DECLARE_INPUT_BACKPROPAGATION_KERNEL(index, ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack) \
+    DEVICE static TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) void __MODULE__INPUT_BACKPROPAGATION_KERNEL_NAME_FROM_INDEX(index, InputKeyEnum)(                                                                                    \
+        __IMPLEMENT_MODULE__INPUT_BACKPROPAGATION_KERNEL__NAMED_PARAMS(index, ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)         \
     );
 
 // Parameter backpropagation kernel method
@@ -150,12 +150,12 @@ class TensorIndex;
 
 /// Parameter types
 
-#define __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                                                           \
-    __MODULE__PACKED_RAW_TENSOR_PTR_PARAM(__IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__OUTPUT_TENSOR_DIMENSION(index, ParameterTensorDimensionsPack), ValueType, ),                                                                        \
-    FOR_EACH(__MODULE__PACKED_RAW_TENSOR_PTR_PARAM, FORWARD(ValueType, const), __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__INPUT_TENSOR_DIMENSIONS(InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack))
+#define __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                                                           \
+    __MODULE__PACKED_RAW_TENSOR_PTR_PARAM(__IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__OUTPUT_TENSOR_DIMENSION(index, ParameterTensorDimensionsPack), ScalarType, ),                                                                        \
+    FOR_EACH(__MODULE__PACKED_RAW_TENSOR_PTR_PARAM, FORWARD(ScalarType, const), __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__INPUT_TENSOR_DIMENSIONS(InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack))
 
-#define __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                                            \
-    FOR_EACH2(__MODULE__UNPACK, FORWARD(), __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack))
+#define __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)                                            \
+    FOR_EACH2(__MODULE__UNPACK, FORWARD(), __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack))
 
 /// Params names
 
@@ -168,67 +168,67 @@ class TensorIndex;
 
 /// Named parameters
 
-#define __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__NAMED_PARAMS(index, ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack) \
-    FOR_EACH4(__IMPLEMENT_MODULE__BACKPROPAGATION_KERNEL__NAMED_PARAMETER__PACKED, FORWARD(), INTERTWINE_PACKS23(                                                                                                             \
-        PACK(__IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ValueType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)),                                  \
-        PACK(__IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__PARAMS_NAMES(index, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum))                                                                                            \
+#define __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__NAMED_PARAMS(index, ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack) \
+    FOR_EACH4(__IMPLEMENT_MODULE__BACKPROPAGATION_KERNEL__NAMED_PARAMETER__PACKED, FORWARD(), INTERTWINE_PACKS23(                                                                                                              \
+        PACK(__IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__PACKED_PARAMS_TYPES(index, ScalarType, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)),                                  \
+        PACK(__IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__PARAMS_NAMES(index, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum))                                                                                             \
     ))
 
 /// Declaration
 
-#define __MODULE__DECLARE_PARAM_BACKPROPAGATION_KERNEL(index, ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack) \
-    DEVICE static TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) void __MODULE__PARAM_BACKPROPAGATION_KERNEL_NAME_FROM_INDEX(index, ParameterKeyEnum)(                                                                               \
-        __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__NAMED_PARAMS(index, ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)         \
+#define __MODULE__DECLARE_PARAM_BACKPROPAGATION_KERNEL(index, ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack) \
+    DEVICE static TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) void __MODULE__PARAM_BACKPROPAGATION_KERNEL_NAME_FROM_INDEX(index, ParameterKeyEnum)(                                                                                \
+        __IMPLEMENT_MODULE__PARAM_BACKPROPAGATION_KERNEL__NAMED_PARAMS(index, ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack)         \
     );
 
 // Main declatation
 
-#define DECLARE_MODULE(ConcreteModuleName, ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamTypesPack, TemplateParamNamesPack)                                        \
-    TEMPLATE_MACROS__TEMPLATE_PREFIX(TemplateParamTypesPack, TemplateParamNamesPack)                                                                                                                                                                                              \
-    class ConcreteModuleName : public AbstractModule<                                                                                                                                                                                                                             \
-        ValueType,                                                                                                                                                                                                                                                                \
-        InputKeyEnum,                                                                                                                                                                                                                                                             \
-        ParameterKeyEnum,                                                                                                                                                                                                                                                         \
-        OutputKeyEnum,                                                                                                                                                                                                                                                            \
-        BuildTimeList::IntegerList<__MODULE__UNPACK(InputTensorDimensionsPack)>,                                                                                                                                                                                                  \
-        BuildTimeList::IntegerList<__MODULE__UNPACK(ParameterTensorDimensionsPack)>,                                                                                                                                                                                              \
-        BuildTimeList::IntegerList<__MODULE__UNPACK(OutputTensorDimensionsPack)>                                                                                                                                                                                                  \
-    >                                                                                                                                                                                                                                                                             \
-    {                                                                                                                                                                                                                                                                             \
-    public:                                                                                                                                                                                                                                                                       \
-        HOST explicit TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) ConcreteModuleName(                                                                                                                                                                                         \
-            const RawTuple<FOR_EACH(__MODULE__TENSOR_INDEX_REF_PARAM, FORWARD(const), __MODULE__UNPACK(ParameterTensorDimensionsPack))>& parameterTensorsSizes                                                                                                                    \
-        );                                                                                                                                                                                                                                                                        \
-                                                                                                                                                                                                                                                                                  \
-        HOST virtual TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) void compute() const override;                                                                                                                                                                               \
-        HOST virtual TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) void backpropagate(AbstractTensorMap<ValueType>& costPartDerivWRTInput, AbstractTensorMap<ValueType>& costPartDerivWRTParameter, const AbstractTensorMap<ValueType>& costPartDerivWRTOutput) const override; \
-                                                                                                                                                                                                                                                                                  \
-        HOST static TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) bool areSizesCorrect(                                                                                                                                                                                         \
-            const RawTuple<FOR_EACH(__MODULE__TENSOR_INDEX_REF_PARAM, FORWARD(const), __MODULE__UNPACK(InputTensorDimensionsPack))>& inputTensorsSizes,                                                                                                                           \
-            const RawTuple<FOR_EACH(__MODULE__TENSOR_INDEX_REF_PARAM, FORWARD(const), __MODULE__UNPACK(ParameterTensorDimensionsPack))>& parameterTensorsSizes,                                                                                                                   \
-            const RawTuple<FOR_EACH(__MODULE__TENSOR_INDEX_REF_PARAM, FORWARD(const), __MODULE__UNPACK(OutputTensorDimensionsPack))>& outputTensorsSizes                                                                                                                          \
-        );                                                                                                                                                                                                                                                                        \
-                                                                                                                                                                                                                                                                                  \
-        FOR_EACH_SEP5(                                                                                                                                                                                                                                                            \
-            __MODULE__DECLARE_COMPUTATION_KERNEL,                                                                                                                                                                                                                                 \
-            FORWARD(),                                                                                                                                                                                                                                                            \
-            FORWARD(ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack),                                                                                      \
-            RANGE(TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NB_VALUES(OutputKeyEnum))                                                                                                                                                                                                    \
-        )                                                                                                                                                                                                                                                                         \
-                                                                                                                                                                                                                                                                                  \
-        FOR_EACH_SEP5(                                                                                                                                                                                                                                                            \
-            __MODULE__DECLARE_INPUT_BACKPROPAGATION_KERNEL,                                                                                                                                                                                                                       \
-            FORWARD(),                                                                                                                                                                                                                                                            \
-            FORWARD(ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack),                                                                                      \
-            RANGE(TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NB_VALUES(InputKeyEnum))                                                                                                                                                                                                     \
-        )                                                                                                                                                                                                                                                                         \
-                                                                                                                                                                                                                                                                                  \
-        FOR_EACH_SEP5(                                                                                                                                                                                                                                                            \
-            __MODULE__DECLARE_PARAM_BACKPROPAGATION_KERNEL,                                                                                                                                                                                                                       \
-            FORWARD(),                                                                                                                                                                                                                                                            \
-            FORWARD(ValueType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack),                                                                                      \
-            RANGE(TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NB_VALUES(ParameterKeyEnum))                                                                                                                                                                                                 \
-        )                                                                                                                                                                                                                                                                         \
-                                                                                                                                                                                                                                                                                  \
-        DECLARE_RTTI(Module<ValueType>)                                                                                                                                                                                                                                           \
+#define DECLARE_MODULE(ConcreteModuleName, ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamTypesPack, TemplateParamNamesPack)                                          \
+    TEMPLATE_MACROS__TEMPLATE_PREFIX(TemplateParamTypesPack, TemplateParamNamesPack)                                                                                                                                                                                                 \
+    class ConcreteModuleName : public AbstractModule<                                                                                                                                                                                                                                \
+        ScalarType,                                                                                                                                                                                                                                                                  \
+        InputKeyEnum,                                                                                                                                                                                                                                                                \
+        ParameterKeyEnum,                                                                                                                                                                                                                                                            \
+        OutputKeyEnum,                                                                                                                                                                                                                                                               \
+        BuildTimeList::IntegerList<__MODULE__UNPACK(InputTensorDimensionsPack)>,                                                                                                                                                                                                     \
+        BuildTimeList::IntegerList<__MODULE__UNPACK(ParameterTensorDimensionsPack)>,                                                                                                                                                                                                 \
+        BuildTimeList::IntegerList<__MODULE__UNPACK(OutputTensorDimensionsPack)>                                                                                                                                                                                                     \
+    >                                                                                                                                                                                                                                                                                \
+    {                                                                                                                                                                                                                                                                                \
+    public:                                                                                                                                                                                                                                                                          \
+        HOST explicit TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) ConcreteModuleName(                                                                                                                                                                                            \
+            const RawTuple<FOR_EACH(__MODULE__TENSOR_INDEX_REF_PARAM, FORWARD(const), __MODULE__UNPACK(ParameterTensorDimensionsPack))>& parameterTensorsSizes                                                                                                                       \
+        );                                                                                                                                                                                                                                                                           \
+                                                                                                                                                                                                                                                                                     \
+        HOST virtual TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) void compute() const override;                                                                                                                                                                                  \
+        HOST virtual TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) void backpropagate(AbstractTensorMap<ScalarType>& costPartDerivWRTInput, AbstractTensorMap<ScalarType>& costPartDerivWRTParameter, const AbstractTensorMap<ScalarType>& costPartDerivWRTOutput) const override; \
+                                                                                                                                                                                                                                                                                     \
+        HOST static TEMPLATE_MACROS__INLINE(TemplateParamNamesPack) bool areSizesCorrect(                                                                                                                                                                                            \
+            const RawTuple<FOR_EACH(__MODULE__TENSOR_INDEX_REF_PARAM, FORWARD(const), __MODULE__UNPACK(InputTensorDimensionsPack))>& inputTensorsSizes,                                                                                                                              \
+            const RawTuple<FOR_EACH(__MODULE__TENSOR_INDEX_REF_PARAM, FORWARD(const), __MODULE__UNPACK(ParameterTensorDimensionsPack))>& parameterTensorsSizes,                                                                                                                      \
+            const RawTuple<FOR_EACH(__MODULE__TENSOR_INDEX_REF_PARAM, FORWARD(const), __MODULE__UNPACK(OutputTensorDimensionsPack))>& outputTensorsSizes                                                                                                                             \
+        );                                                                                                                                                                                                                                                                           \
+                                                                                                                                                                                                                                                                                     \
+        FOR_EACH_SEP5(                                                                                                                                                                                                                                                               \
+            __MODULE__DECLARE_COMPUTATION_KERNEL,                                                                                                                                                                                                                                    \
+            FORWARD(),                                                                                                                                                                                                                                                               \
+            FORWARD(ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack),                                                                                        \
+            RANGE(TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NB_VALUES(OutputKeyEnum))                                                                                                                                                                                                       \
+        )                                                                                                                                                                                                                                                                            \
+                                                                                                                                                                                                                                                                                     \
+        FOR_EACH_SEP5(                                                                                                                                                                                                                                                               \
+            __MODULE__DECLARE_INPUT_BACKPROPAGATION_KERNEL,                                                                                                                                                                                                                          \
+            FORWARD(),                                                                                                                                                                                                                                                               \
+            FORWARD(ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack),                                                                                        \
+            RANGE(TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NB_VALUES(InputKeyEnum))                                                                                                                                                                                                        \
+        )                                                                                                                                                                                                                                                                            \
+                                                                                                                                                                                                                                                                                     \
+        FOR_EACH_SEP5(                                                                                                                                                                                                                                                               \
+            __MODULE__DECLARE_PARAM_BACKPROPAGATION_KERNEL,                                                                                                                                                                                                                          \
+            FORWARD(),                                                                                                                                                                                                                                                               \
+            FORWARD(ScalarType, InputKeyEnum, ParameterKeyEnum, OutputKeyEnum, InputTensorDimensionsPack, ParameterTensorDimensionsPack, OutputTensorDimensionsPack, TemplateParamNamesPack),                                                                                        \
+            RANGE(TENSOR_MAP_KEY_ENUM__INTERNAL_ENUM_NB_VALUES(ParameterKeyEnum))                                                                                                                                                                                                    \
+        )                                                                                                                                                                                                                                                                            \
+                                                                                                                                                                                                                                                                                     \
+        DECLARE_RTTI(Module<ScalarType>)                                                                                                                                                                                                                                             \
     };

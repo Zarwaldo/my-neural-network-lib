@@ -11,17 +11,17 @@
 
 using namespace BuildTimeList;
 
-template <typename ValueType>
+template <typename ScalarType>
 struct TemplateProvider
 {
     template <size_t Dimension>
-    using AdditionModuleTemplate = AdditionModule<ValueType, Dimension>;
+    using AdditionModuleTemplate = AdditionModule<ScalarType, Dimension>;
 };
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 using AdditionModuleRtti = Rtti<
-    Module<ValueType>,
-    AdditionModule<ValueType, Dimension>,
+    Module<ScalarType>,
+    AdditionModule<ScalarType, Dimension>,
     TypeList<const RawTuple<const TensorIndex<Dimension>&>&>
 >;
 

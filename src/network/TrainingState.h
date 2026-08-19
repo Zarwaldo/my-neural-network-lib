@@ -1,9 +1,9 @@
 #pragma once
 
-template <typename ValueType>
+template <typename ScalarType>
 struct TrainingState
 {
-    ValueType currentCost;
-    ValueType currentCostOnTestingData;
+    ScalarType currentCost;
+    ScalarType currentCostOnTestingData;
     double timeElapsed;
 };

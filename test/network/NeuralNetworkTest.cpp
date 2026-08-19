@@ -163,11 +163,11 @@ private:
 
 IMPLEMENT_RTTI(SampleOutputReceiver, OutputReceiver<float>, PACK(), PACK())
 
-template <typename ValueType>
-class AddTensorBuilder : public AbstractNetworkBuilder<ValueType>
+template <typename ScalarType>
+class AddTensorBuilder : public AbstractNetworkBuilder<ScalarType>
 {
 public:
-    AddTensorBuilder(NeuralNetwork<ValueType>& network, const AbstractTensorIndex* size)
+    AddTensorBuilder(NeuralNetwork<ScalarType>& network, const AbstractTensorIndex* size)
         : m_networkPartHolder(network)
         , m_size(size)
     {}
@@ -185,19 +185,19 @@ public:
     }
 
 private:
-    NeuralNetworkPartHolder<ValueType> m_networkPartHolder;
+    NeuralNetworkPartHolder<ScalarType> m_networkPartHolder;
     const AbstractTensorIndex* m_size;
 
-    DECLARE_RTTI(AbstractNetworkBuilder<ValueType>)
+    DECLARE_RTTI(AbstractNetworkBuilder<ScalarType>)
 };
 
-IMPLEMENT_RTTI(AddTensorBuilder, AbstractNetworkBuilder<ValueType>, PACK(typename), PACK(ValueType))
+IMPLEMENT_RTTI(AddTensorBuilder, AbstractNetworkBuilder<ScalarType>, PACK(typename), PACK(ScalarType))
 
-template <typename ValueType>
-class AddSingleTensorMapBuilder : public AbstractNetworkBuilder<ValueType>
+template <typename ScalarType>
+class AddSingleTensorMapBuilder : public AbstractNetworkBuilder<ScalarType>
 {
 public:
-    AddSingleTensorMapBuilder(NeuralNetwork<ValueType>& network, AbstractTensor<ValueType>* tensor)
+    AddSingleTensorMapBuilder(NeuralNetwork<ScalarType>& network, AbstractTensor<ScalarType>* tensor)
         : m_networkPartHolder(network)
         , m_tensor(*tensor)
     {}
@@ -207,7 +207,7 @@ public:
 
     std::map<std::string, void*> build() override
     {
-        AbstractTensorMap<ValueType>& tensorMap = m_networkPartHolder.addTensorMap(new TensorMap<ValueType, TensorSingleton>{&m_tensor});
+        AbstractTensorMap<ScalarType>& tensorMap = m_networkPartHolder.addTensorMap(new TensorMap<ScalarType, TensorSingleton>{&m_tensor});
 
         std::map<std::string, void*> result;
         result["added_tensor_map"] = &tensorMap;
@@ -215,19 +215,19 @@ public:
     }
 
 private:
-    NeuralNetworkPartHolder<ValueType> m_networkPartHolder;
-    AbstractTensor<ValueType>& m_tensor;
+    NeuralNetworkPartHolder<ScalarType> m_networkPartHolder;
+    AbstractTensor<ScalarType>& m_tensor;
 
-    DECLARE_RTTI(AbstractNetworkBuilder<ValueType>)
+    DECLARE_RTTI(AbstractNetworkBuilder<ScalarType>)
 };
 
-IMPLEMENT_RTTI(AddSingleTensorMapBuilder, AbstractNetworkBuilder<ValueType>, PACK(typename), PACK(ValueType))
+IMPLEMENT_RTTI(AddSingleTensorMapBuilder, AbstractNetworkBuilder<ScalarType>, PACK(typename), PACK(ScalarType))
 
-template <typename ValueType>
-class AddAdditionModuleBuilder : public AbstractNetworkBuilder<ValueType>
+template <typename ScalarType>
+class AddAdditionModuleBuilder : public AbstractNetworkBuilder<ScalarType>
 {
 public:
-    AddAdditionModuleBuilder(NeuralNetwork<ValueType>& network, AbstractTensorMap<ValueType>* inputTensorMap, AbstractTensorMap<ValueType>* outputTensorMap)
+    AddAdditionModuleBuilder(NeuralNetwork<ScalarType>& network, AbstractTensorMap<ScalarType>* inputTensorMap, AbstractTensorMap<ScalarType>* outputTensorMap)
         : m_networkPartHolder(network)
         , m_inputTensorMap(*inputTensorMap)
         , m_outputTensorMap(*outputTensorMap)
@@ -238,8 +238,8 @@ public:
 
     std::map<std::string, void*> build() override
     {
-        const AbstractRtti<Module<ValueType>>* moduleRtti = AdditionModule<ValueType, 1>::getRtti();
-        NullParamTensorFiller<ValueType> paramTensorFiller;
+        const AbstractRtti<Module<ScalarType>>* moduleRtti = AdditionModule<ScalarType, 1>::getRtti();
+        NullParamTensorFiller<ScalarType> paramTensorFiller;
         Module<float>& module = m_networkPartHolder.addModule(*moduleRtti, Initializer<const RawTuple<const TensorIndex<1>&>&>(makeRawTuple(TensorIndex<1>{5})), m_inputTensorMap, m_outputTensorMap, paramTensorFiller);
 
         std::map<std::string, void*> result;
@@ -248,14 +248,14 @@ public:
     }
 
 private:
-    NeuralNetworkPartHolder<ValueType> m_networkPartHolder;
-    AbstractTensorMap<ValueType>& m_inputTensorMap;
-    AbstractTensorMap<ValueType>& m_outputTensorMap;
+    NeuralNetworkPartHolder<ScalarType> m_networkPartHolder;
+    AbstractTensorMap<ScalarType>& m_inputTensorMap;
+    AbstractTensorMap<ScalarType>& m_outputTensorMap;
 
-    DECLARE_RTTI(AbstractNetworkBuilder<ValueType>)
+    DECLARE_RTTI(AbstractNetworkBuilder<ScalarType>)
 };
 
-IMPLEMENT_RTTI(AddAdditionModuleBuilder, AbstractNetworkBuilder<ValueType>, PACK(typename), PACK(ValueType))
+IMPLEMENT_RTTI(AddAdditionModuleBuilder, AbstractNetworkBuilder<ScalarType>, PACK(typename), PACK(ScalarType))
 
 class NeuralNetworkShould : public ::testing::Test
 {

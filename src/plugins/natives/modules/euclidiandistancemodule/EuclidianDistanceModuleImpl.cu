@@ -6,7 +6,7 @@
 
 IMPLEMENT_MODULE(
     EuclidianDistanceModuleImpl,
-    ValueType,
+    ScalarType,
     TensorPair,
     TensorSingleton,
     TensorSingleton,
@@ -14,25 +14,25 @@ IMPLEMENT_MODULE(
     PACK(0),
     PACK(0),
     PACK(typename, size_t),
-    PACK(ValueType, Dimension)
+    PACK(ScalarType, Dimension)
 )
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
 bool
-EuclidianDistanceModuleImpl<ValueType, Dimension>::areSizesCorrect(const RawTuple<const TensorIndex<Dimension + 1>&, const TensorIndex<Dimension + 1>&>& inputTensorsSizes, const RawTuple<const TensorIndex<0>&>& parameterTensorsSizes, const RawTuple<const TensorIndex<0>&>& outputTensorsSizes)
+EuclidianDistanceModuleImpl<ScalarType, Dimension>::areSizesCorrect(const RawTuple<const TensorIndex<Dimension + 1>&, const TensorIndex<Dimension + 1>&>& inputTensorsSizes, const RawTuple<const TensorIndex<0>&>& parameterTensorsSizes, const RawTuple<const TensorIndex<0>&>& outputTensorsSizes)
 {
     return inputTensorsSizes.template get<0>() == inputTensorsSizes.template get<1>();
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 DEVICE
 void
-EuclidianDistanceModuleImpl<ValueType, Dimension>::computationKernel__SINGLE_TENSOR(RawTensor<ValueType, 0>* output__SINGLE_TENSOR, const RawTensor<ValueType, 0>* param__SINGLE_TENSOR, const RawTensor<ValueType, Dimension + 1>* input__FIRST_TENSOR, const RawTensor<ValueType, Dimension + 1>* input__SECOND_TENSOR)
+EuclidianDistanceModuleImpl<ScalarType, Dimension>::computationKernel__SINGLE_TENSOR(RawTensor<ScalarType, 0>* output__SINGLE_TENSOR, const RawTensor<ScalarType, 0>* param__SINGLE_TENSOR, const RawTensor<ScalarType, Dimension + 1>* input__FIRST_TENSOR, const RawTensor<ScalarType, Dimension + 1>* input__SECOND_TENSOR)
 {
-    ValueType result = {};
+    ScalarType result = {};
 
-    TensorThreadDistributor<ValueType, 0> distributor(*output__SINGLE_TENSOR);
+    TensorThreadDistributor<ScalarType, 0> distributor(*output__SINGLE_TENSOR);
     distributor.iterate([output__SINGLE_TENSOR, input__FIRST_TENSOR, input__SECOND_TENSOR, &result](const RawTensorIndex<0>& outputIndex) {
         if (!(outputIndex < output__SINGLE_TENSOR->sizes()))
             return;
@@ -47,12 +47,12 @@ EuclidianDistanceModuleImpl<ValueType, Dimension>::computationKernel__SINGLE_TEN
     });
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 DEVICE
 void
-EuclidianDistanceModuleImpl<ValueType, Dimension>::inputBackpropagationKernel__FIRST_TENSOR(RawTensor<ValueType, Dimension + 1>* costPartDerivWRTInput__FIRST_TENSOR, const RawTensor<ValueType, 0>* costPartDerivWRTOutput__SINGLE_TENSOR, const RawTensor<ValueType, 0>* output__SINGLE_TENSOR, const RawTensor<ValueType, 0>* param__SINGLE_TENSOR, const RawTensor<ValueType, Dimension + 1>* input__FIRST_TENSOR, const RawTensor<ValueType, Dimension + 1>* input__SECOND_TENSOR)
+EuclidianDistanceModuleImpl<ScalarType, Dimension>::inputBackpropagationKernel__FIRST_TENSOR(RawTensor<ScalarType, Dimension + 1>* costPartDerivWRTInput__FIRST_TENSOR, const RawTensor<ScalarType, 0>* costPartDerivWRTOutput__SINGLE_TENSOR, const RawTensor<ScalarType, 0>* output__SINGLE_TENSOR, const RawTensor<ScalarType, 0>* param__SINGLE_TENSOR, const RawTensor<ScalarType, Dimension + 1>* input__FIRST_TENSOR, const RawTensor<ScalarType, Dimension + 1>* input__SECOND_TENSOR)
 {
-    TensorThreadDistributor<ValueType, Dimension + 1> distributor(*costPartDerivWRTInput__FIRST_TENSOR);
+    TensorThreadDistributor<ScalarType, Dimension + 1> distributor(*costPartDerivWRTInput__FIRST_TENSOR);
     distributor.iterate([costPartDerivWRTInput__FIRST_TENSOR, costPartDerivWRTOutput__SINGLE_TENSOR, input__FIRST_TENSOR, input__SECOND_TENSOR](const RawTensorIndex<Dimension + 1>& index) {
         if (!(index < costPartDerivWRTInput__FIRST_TENSOR->sizes()))
             return;
@@ -61,12 +61,12 @@ EuclidianDistanceModuleImpl<ValueType, Dimension>::inputBackpropagationKernel__F
     });
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 DEVICE
 void
-EuclidianDistanceModuleImpl<ValueType, Dimension>::inputBackpropagationKernel__SECOND_TENSOR(RawTensor<ValueType, Dimension + 1>* costPartDerivWRTInput__SECOND_TENSOR, const RawTensor<ValueType, 0>* costPartDerivWRTOutput__SINGLE_TENSOR, const RawTensor<ValueType, 0>* output__SINGLE_TENSOR, const RawTensor<ValueType, 0>* param__SINGLE_TENSOR, const RawTensor<ValueType, Dimension + 1>* input__FIRST_TENSOR, const RawTensor<ValueType, Dimension + 1>* input__SECOND_TENSOR)
+EuclidianDistanceModuleImpl<ScalarType, Dimension>::inputBackpropagationKernel__SECOND_TENSOR(RawTensor<ScalarType, Dimension + 1>* costPartDerivWRTInput__SECOND_TENSOR, const RawTensor<ScalarType, 0>* costPartDerivWRTOutput__SINGLE_TENSOR, const RawTensor<ScalarType, 0>* output__SINGLE_TENSOR, const RawTensor<ScalarType, 0>* param__SINGLE_TENSOR, const RawTensor<ScalarType, Dimension + 1>* input__FIRST_TENSOR, const RawTensor<ScalarType, Dimension + 1>* input__SECOND_TENSOR)
 {
-    TensorThreadDistributor<ValueType, Dimension + 1> distributor(*costPartDerivWRTInput__SECOND_TENSOR);
+    TensorThreadDistributor<ScalarType, Dimension + 1> distributor(*costPartDerivWRTInput__SECOND_TENSOR);
     distributor.iterate([costPartDerivWRTInput__SECOND_TENSOR, costPartDerivWRTOutput__SINGLE_TENSOR, input__FIRST_TENSOR, input__SECOND_TENSOR](const RawTensorIndex<Dimension + 1>& index) {
         if (!(index < costPartDerivWRTInput__SECOND_TENSOR->sizes()))
             return;
@@ -75,17 +75,17 @@ EuclidianDistanceModuleImpl<ValueType, Dimension>::inputBackpropagationKernel__S
     });
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 DEVICE
 void
-EuclidianDistanceModuleImpl<ValueType, Dimension>::parameterBackpropagationKernel__SINGLE_TENSOR(RawTensor<ValueType, 0>* costPartDerivWRTParam__SINGLE_TENSOR, const RawTensor<ValueType, 0>* costPartDerivWRTOutput__SINGLE_TENSOR, const RawTensor<ValueType, 0>* output__SINGLE_TENSOR, const RawTensor<ValueType, 0>* param__SINGLE_TENSOR, const RawTensor<ValueType, Dimension + 1>* input__FIRST_TENSOR, const RawTensor<ValueType, Dimension + 1>* input__SECOND_TENSOR)
+EuclidianDistanceModuleImpl<ScalarType, Dimension>::parameterBackpropagationKernel__SINGLE_TENSOR(RawTensor<ScalarType, 0>* costPartDerivWRTParam__SINGLE_TENSOR, const RawTensor<ScalarType, 0>* costPartDerivWRTOutput__SINGLE_TENSOR, const RawTensor<ScalarType, 0>* output__SINGLE_TENSOR, const RawTensor<ScalarType, 0>* param__SINGLE_TENSOR, const RawTensor<ScalarType, Dimension + 1>* input__FIRST_TENSOR, const RawTensor<ScalarType, Dimension + 1>* input__SECOND_TENSOR)
 {
-    TensorThreadDistributor<ValueType, 0> distributor(*costPartDerivWRTParam__SINGLE_TENSOR);
+    TensorThreadDistributor<ScalarType, 0> distributor(*costPartDerivWRTParam__SINGLE_TENSOR);
     distributor.iterate([costPartDerivWRTParam__SINGLE_TENSOR](const RawTensorIndex<0>& index) {
         if (!(index < costPartDerivWRTParam__SINGLE_TENSOR->sizes()))
             return;
 
-        (*costPartDerivWRTParam__SINGLE_TENSOR)[index] = ValueType{};
+        (*costPartDerivWRTParam__SINGLE_TENSOR)[index] = ScalarType{};
     });
 }
 

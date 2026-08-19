@@ -6,7 +6,7 @@
 
 DECLARE_MODULE(
     PerceptronModuleImpl,
-    ValueType,
+    ScalarType,
     TensorSingleton,
     PerceptronParamsKeyEnum,
     TensorSingleton,
@@ -14,5 +14,5 @@ DECLARE_MODULE(
     PACK(InputDimension + OutputDimension, OutputDimension),
     PACK(OutputDimension + 1),
     PACK(typename, size_t, size_t),
-    PACK(ValueType, InputDimension, OutputDimension)
+    PACK(ScalarType, InputDimension, OutputDimension)
 )

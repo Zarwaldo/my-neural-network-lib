@@ -3,26 +3,26 @@
 class AbstractInitializer;
 template <typename BaseType>
 class AbstractRtti;
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensor;
 class AbstractTensorIndex;
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensorMap;
-template <typename ValueType>
+template <typename ScalarType>
 class Module;
-template <typename ValueType>
+template <typename ScalarType>
 class ParamTensorFiller;
-template <typename ValueType>
+template <typename ScalarType>
 class NeuralNetwork;
 
-template <typename ValueType>
+template <typename ScalarType>
 class NeuralNetworkPartHolderPimpl;
 
-template <typename ValueType>
+template <typename ScalarType>
 class NeuralNetworkPartHolder
 {
 public:
-    explicit NeuralNetworkPartHolder(NeuralNetwork<ValueType>& network);
+    explicit NeuralNetworkPartHolder(NeuralNetwork<ScalarType>& network);
     NeuralNetworkPartHolder(const NeuralNetworkPartHolder& other) = delete;
     NeuralNetworkPartHolder(NeuralNetworkPartHolder&& other);
 
@@ -31,10 +31,10 @@ public:
     NeuralNetworkPartHolder& operator=(const NeuralNetworkPartHolder& other) = delete;
     NeuralNetworkPartHolder& operator=(NeuralNetworkPartHolder&& other);
 
-    AbstractTensor<ValueType>& addTensor(const AbstractTensorIndex& size, bool addThicknessDimension = true);
-    AbstractTensorMap<ValueType>& addTensorMap(AbstractTensorMap<ValueType>* tensorMap);
-    Module<ValueType>& addModule(const AbstractRtti<Module<ValueType>>& moduleRtti, AbstractInitializer&& modulesCtorParams, AbstractTensorMap<ValueType>& inputMap, AbstractTensorMap<ValueType>& outputMap, const ParamTensorFiller<ValueType>& paramTensorFiller);
+    AbstractTensor<ScalarType>& addTensor(const AbstractTensorIndex& size, bool addThicknessDimension = true);
+    AbstractTensorMap<ScalarType>& addTensorMap(AbstractTensorMap<ScalarType>* tensorMap);
+    Module<ScalarType>& addModule(const AbstractRtti<Module<ScalarType>>& moduleRtti, AbstractInitializer&& modulesCtorParams, AbstractTensorMap<ScalarType>& inputMap, AbstractTensorMap<ScalarType>& outputMap, const ParamTensorFiller<ScalarType>& paramTensorFiller);
 
 private:
-    NeuralNetworkPartHolderPimpl<ValueType>* m_pimpl;
+    NeuralNetworkPartHolderPimpl<ScalarType>* m_pimpl;
 };

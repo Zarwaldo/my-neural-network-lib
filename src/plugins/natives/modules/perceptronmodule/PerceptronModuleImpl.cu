@@ -7,7 +7,7 @@
 
 IMPLEMENT_MODULE(
     PerceptronModuleImpl,
-    ValueType,
+    ScalarType,
     TensorSingleton,
     PerceptronParamsKeyEnum,
     TensorSingleton,
@@ -15,13 +15,13 @@ IMPLEMENT_MODULE(
     PACK(InputDimension + OutputDimension, OutputDimension),
     PACK(OutputDimension + 1),
     PACK(typename, size_t, size_t),
-    PACK(ValueType, InputDimension, OutputDimension)
+    PACK(ScalarType, InputDimension, OutputDimension)
 )
 
-template <typename ValueType, size_t InputDimension, size_t OutputDimension>
+template <typename ScalarType, size_t InputDimension, size_t OutputDimension>
 HOST
 bool
-PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::areSizesCorrect(const RawTuple<const TensorIndex<InputDimension + 1>&>& inputTensorsSizes, const RawTuple<const TensorIndex<InputDimension + OutputDimension>&, const TensorIndex<OutputDimension>&>& parameterTensorsSizes, const RawTuple<const TensorIndex<OutputDimension + 1>&>& outputTensorsSizes)
+PerceptronModuleImpl<ScalarType, InputDimension, OutputDimension>::areSizesCorrect(const RawTuple<const TensorIndex<InputDimension + 1>&>& inputTensorsSizes, const RawTuple<const TensorIndex<InputDimension + OutputDimension>&, const TensorIndex<OutputDimension>&>& parameterTensorsSizes, const RawTuple<const TensorIndex<OutputDimension + 1>&>& outputTensorsSizes)
 {
     const TensorIndex<InputDimension + 1>& inputTensorSize = inputTensorsSizes.template get<0>();
     const TensorIndex<InputDimension + OutputDimension>& weightsTensorSize = parameterTensorsSizes.template get<0>();
@@ -30,21 +30,21 @@ PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::areSizesCorrec
     return weightsTensorSize == (inputTensorSize.template range<1, -1>() * outputTensorSize.template range<1, -1>()) && biasesTensorSize == outputTensorSize.template range<1, -1>();
 }
 
-template <typename ValueType, size_t InputDimension, size_t OutputDimension>
+template <typename ScalarType, size_t InputDimension, size_t OutputDimension>
 DEVICE
 void
-PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::computationKernel__SINGLE_TENSOR(RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
+PerceptronModuleImpl<ScalarType, InputDimension, OutputDimension>::computationKernel__SINGLE_TENSOR(RawTensor<ScalarType, OutputDimension + 1>* output, const RawTensor<ScalarType, InputDimension + OutputDimension>* weights, const RawTensor<ScalarType, OutputDimension>* biases, const RawTensor<ScalarType, InputDimension + 1>* input)
 {
-    ValueType result;
+    ScalarType result;
     RawTensorIndex<InputDimension + OutputDimension> weightIndex;
     RawTensorIndex<OutputDimension> biasIndex;
 
     const size_t zeros[InputDimension + 1] = {};
     RawTensorIndex<InputDimension + 1> inputSubTensorMinIndex(zeros);
     RawTensorIndex<InputDimension + 1> inputSubTensorMaxIndex = input->sizes();
-    RawTensor<ValueType, InputDimension + 1> inputSubTensor = input->subtensor(inputSubTensorMinIndex, inputSubTensorMaxIndex);
+    RawTensor<ScalarType, InputDimension + 1> inputSubTensor = input->subtensor(inputSubTensorMinIndex, inputSubTensorMaxIndex);
 
-    TensorThreadDistributor<ValueType, OutputDimension + 1> distributor(*output);
+    TensorThreadDistributor<ScalarType, OutputDimension + 1> distributor(*output);
     distributor.iterate([output, weights, biases, input, &result, &weightIndex, &biasIndex, &inputSubTensorMinIndex, &inputSubTensorMaxIndex, &inputSubTensor](const RawTensorIndex<OutputDimension + 1>& outputIndex) {
         if (!(outputIndex < output->sizes()))
             return;
@@ -66,20 +66,20 @@ PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::computationKer
     });
 }
 
-template <typename ValueType, size_t InputDimension, size_t OutputDimension>
+template <typename ScalarType, size_t InputDimension, size_t OutputDimension>
 DEVICE
 void
-PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::inputBackpropagationKernel__SINGLE_TENSOR(RawTensor<ValueType, InputDimension + 1>* costPartDerivWRTInput, const RawTensor<ValueType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
+PerceptronModuleImpl<ScalarType, InputDimension, OutputDimension>::inputBackpropagationKernel__SINGLE_TENSOR(RawTensor<ScalarType, InputDimension + 1>* costPartDerivWRTInput, const RawTensor<ScalarType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ScalarType, OutputDimension + 1>* output, const RawTensor<ScalarType, InputDimension + OutputDimension>* weights, const RawTensor<ScalarType, OutputDimension>* biases, const RawTensor<ScalarType, InputDimension + 1>* input)
 {
-    ValueType result;
+    ScalarType result;
     RawTensorIndex<InputDimension + OutputDimension> weightIndex;
 
     const size_t zeros[OutputDimension + 1] = {};
     RawTensorIndex<OutputDimension + 1> costPartDerivWRTOutputSubTensorMinIndex(zeros);
     RawTensorIndex<OutputDimension + 1> costPartDerivWRTOutputSubTensorMaxIndex = costPartDerivWRTOutput->sizes();
-    RawTensor<ValueType, OutputDimension + 1> costPartDerivWRTOutputSubTensor = costPartDerivWRTOutput->subtensor(costPartDerivWRTOutputSubTensorMinIndex, costPartDerivWRTOutputSubTensorMaxIndex);
+    RawTensor<ScalarType, OutputDimension + 1> costPartDerivWRTOutputSubTensor = costPartDerivWRTOutput->subtensor(costPartDerivWRTOutputSubTensorMinIndex, costPartDerivWRTOutputSubTensorMaxIndex);
 
-    TensorThreadDistributor<ValueType, InputDimension + 1> distributor(*costPartDerivWRTInput);
+    TensorThreadDistributor<ScalarType, InputDimension + 1> distributor(*costPartDerivWRTInput);
     distributor.iterate([costPartDerivWRTInput, costPartDerivWRTOutput, weights, &result, &weightIndex, &costPartDerivWRTOutputSubTensorMinIndex, &costPartDerivWRTOutputSubTensorMaxIndex, &costPartDerivWRTOutputSubTensor](const RawTensorIndex<InputDimension + 1>& inputIndex) {
         if (!(inputIndex < costPartDerivWRTInput->sizes()))
             return;
@@ -88,7 +88,7 @@ PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::inputBackpropa
         costPartDerivWRTOutputSubTensorMaxIndex[0] = inputIndex[0] + 1;
         costPartDerivWRTOutputSubTensor = costPartDerivWRTOutput->subtensor(costPartDerivWRTOutputSubTensorMinIndex, costPartDerivWRTOutputSubTensorMaxIndex);
 
-        result = ValueType{};
+        result = ScalarType{};
 
         for (const RawTensorIndex<OutputDimension + 1>& outputIndex : costPartDerivWRTOutputSubTensor)
         {
@@ -100,21 +100,21 @@ PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::inputBackpropa
     });
 }
 
-template <typename ValueType, size_t InputDimension, size_t OutputDimension>
+template <typename ScalarType, size_t InputDimension, size_t OutputDimension>
 DEVICE
 void
-PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::parameterBackpropagationKernel__WEIGHTS(RawTensor<ValueType, InputDimension + OutputDimension>* costPartDerivWRTWeights, const RawTensor<ValueType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
+PerceptronModuleImpl<ScalarType, InputDimension, OutputDimension>::parameterBackpropagationKernel__WEIGHTS(RawTensor<ScalarType, InputDimension + OutputDimension>* costPartDerivWRTWeights, const RawTensor<ScalarType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ScalarType, OutputDimension + 1>* output, const RawTensor<ScalarType, InputDimension + OutputDimension>* weights, const RawTensor<ScalarType, OutputDimension>* biases, const RawTensor<ScalarType, InputDimension + 1>* input)
 {
-    ValueType result;
+    ScalarType result;
     RawTensorIndex<InputDimension + 1> inputIndex;
     RawTensorIndex<OutputDimension + 1> outputIndex;
 
-    TensorThreadDistributor<ValueType, InputDimension + OutputDimension> distributor(*costPartDerivWRTWeights);
+    TensorThreadDistributor<ScalarType, InputDimension + OutputDimension> distributor(*costPartDerivWRTWeights);
     distributor.iterate([costPartDerivWRTWeights, costPartDerivWRTOutput, input, &result, &inputIndex, &outputIndex](const RawTensorIndex<InputDimension + OutputDimension>& weightIndex) {
         if (!(weightIndex < costPartDerivWRTWeights->sizes()))
             return;
 
-        result = ValueType{};
+        result = ScalarType{};
         inputIndex = RawTensorIndex<1>{0} * weightIndex.template range<0, InputDimension>();
         outputIndex = RawTensorIndex<1>{0} * weightIndex.template range<InputDimension, InputDimension + OutputDimension>();
 
@@ -128,20 +128,20 @@ PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::parameterBackp
     });
 }
 
-template <typename ValueType, size_t InputDimension, size_t OutputDimension>
+template <typename ScalarType, size_t InputDimension, size_t OutputDimension>
 DEVICE
 void
-PerceptronModuleImpl<ValueType, InputDimension, OutputDimension>::parameterBackpropagationKernel__BIASES(RawTensor<ValueType, OutputDimension>* costPartDerivWRTBiases, const RawTensor<ValueType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, OutputDimension + 1>* output, const RawTensor<ValueType, InputDimension + OutputDimension>* weights, const RawTensor<ValueType, OutputDimension>* biases, const RawTensor<ValueType, InputDimension + 1>* input)
+PerceptronModuleImpl<ScalarType, InputDimension, OutputDimension>::parameterBackpropagationKernel__BIASES(RawTensor<ScalarType, OutputDimension>* costPartDerivWRTBiases, const RawTensor<ScalarType, OutputDimension + 1>* costPartDerivWRTOutput, const RawTensor<ScalarType, OutputDimension + 1>* output, const RawTensor<ScalarType, InputDimension + OutputDimension>* weights, const RawTensor<ScalarType, OutputDimension>* biases, const RawTensor<ScalarType, InputDimension + 1>* input)
 {
-    ValueType result;
+    ScalarType result;
     RawTensorIndex<OutputDimension + 1> outputIndex;
 
-    TensorThreadDistributor<ValueType, OutputDimension> distributor(*costPartDerivWRTBiases);
+    TensorThreadDistributor<ScalarType, OutputDimension> distributor(*costPartDerivWRTBiases);
     distributor.iterate([costPartDerivWRTBiases, costPartDerivWRTOutput, &result, &outputIndex](const RawTensorIndex<OutputDimension>& biasIndex) {
         if (!(biasIndex < costPartDerivWRTBiases->sizes()))
             return;
 
-        result = ValueType{};
+        result = ScalarType{};
 
         outputIndex = RawTensorIndex<1>{0} * biasIndex;
         for (outputIndex[0] = 0; outputIndex[0] < costPartDerivWRTOutput->sizes()[0]; ++outputIndex[0])

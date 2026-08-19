@@ -6,9 +6,9 @@
 
 #include <stdexcept>
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 HOST
-TensorMap<ValueType, KeyEnum>::TensorMap(AbstractTensor<ValueType>* const tensors[KeyEnum::NbValues])
+TensorMap<ScalarType, KeyEnum>::TensorMap(AbstractTensor<ScalarType>* const tensors[KeyEnum::NbValues])
 {
     for (size_t i = 0; i < KeyEnum::NbValues; ++i)
     {
@@ -16,9 +16,9 @@ TensorMap<ValueType, KeyEnum>::TensorMap(AbstractTensor<ValueType>* const tensor
     }
 }
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 HOST
-TensorMap<ValueType, KeyEnum>::TensorMap(const std::initializer_list<AbstractTensor<ValueType>*>& list)
+TensorMap<ScalarType, KeyEnum>::TensorMap(const std::initializer_list<AbstractTensor<ScalarType>*>& list)
 {
     if (list.size() != KeyEnum::NbValues)
     {
@@ -26,16 +26,16 @@ TensorMap<ValueType, KeyEnum>::TensorMap(const std::initializer_list<AbstractTen
     }
 
     size_t index = 0;
-    for (AbstractTensor<ValueType>* tensor : list)
+    for (AbstractTensor<ScalarType>* tensor : list)
     {
         m_tensors[index] = tensor;
         ++index;
     }
 }
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 HOST
-TensorMap<ValueType, KeyEnum>::TensorMap(const TensorMap& other)
+TensorMap<ScalarType, KeyEnum>::TensorMap(const TensorMap& other)
 {
     for (size_t i = 0; i < KeyEnum::NbValues; ++i)
     {
@@ -43,49 +43,49 @@ TensorMap<ValueType, KeyEnum>::TensorMap(const TensorMap& other)
     }
 }
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 HOST
-TensorMap<ValueType, KeyEnum>::~TensorMap()
+TensorMap<ScalarType, KeyEnum>::~TensorMap()
 {}
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 HOST
 size_t
-TensorMap<ValueType, KeyEnum>::nbTensors() const
+TensorMap<ScalarType, KeyEnum>::nbTensors() const
 {
     return KeyEnum::NbValues;
 }
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 HOST
-const AbstractTensor<ValueType>&
-TensorMap<ValueType, KeyEnum>::get(size_t index) const
+const AbstractTensor<ScalarType>&
+TensorMap<ScalarType, KeyEnum>::get(size_t index) const
 {
     return get(static_cast<KeyEnum>(index));
 }
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 HOST
-AbstractTensor<ValueType>&
-TensorMap<ValueType, KeyEnum>::get(size_t index)
+AbstractTensor<ScalarType>&
+TensorMap<ScalarType, KeyEnum>::get(size_t index)
 {
-    return const_cast<AbstractTensor<ValueType>&>(static_cast<const TensorMap<ValueType, KeyEnum>*>(this)->get(index));
+    return const_cast<AbstractTensor<ScalarType>&>(static_cast<const TensorMap<ScalarType, KeyEnum>*>(this)->get(index));
 }
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 HOST
-const AbstractTensor<ValueType>&
-TensorMap<ValueType, KeyEnum>::get(KeyEnum key) const
+const AbstractTensor<ScalarType>&
+TensorMap<ScalarType, KeyEnum>::get(KeyEnum key) const
 {
     return *m_tensors[static_cast<size_t>(key)];
 }
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 HOST
-AbstractTensor<ValueType>&
-TensorMap<ValueType, KeyEnum>::get(KeyEnum key)
+AbstractTensor<ScalarType>&
+TensorMap<ScalarType, KeyEnum>::get(KeyEnum key)
 {
-    return const_cast<AbstractTensor<ValueType>&>(static_cast<const TensorMap<ValueType, KeyEnum>*>(this)->get(key));
+    return const_cast<AbstractTensor<ScalarType>&>(static_cast<const TensorMap<ScalarType, KeyEnum>*>(this)->get(key));
 }
 
-IMPLEMENT_RTTI(TensorMap, AbstractTensorMap<ValueType>, PACK(typename, typename), PACK(ValueType, KeyEnum))
+IMPLEMENT_RTTI(TensorMap, AbstractTensorMap<ScalarType>, PACK(typename, typename), PACK(ScalarType, KeyEnum))

@@ -4,21 +4,21 @@
 
 #include <type_traits>
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 class RawTensor;
 
 template <size_t Dimension>
 class RawTensorIndex;
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 class TensorThreadDistributor
 {
 public:
-    DEVICE inline TensorThreadDistributor(RawTensor<ValueType, Dimension>& rawTensor);
+    DEVICE inline TensorThreadDistributor(RawTensor<ScalarType, Dimension>& rawTensor);
     DEVICE inline ~TensorThreadDistributor();
 
     HOST static dim3 getNbThreads();
-    HOST static dim3 getNbBlocks(const RawTensor<ValueType, Dimension>& rawTensor);
+    HOST static dim3 getNbBlocks(const RawTensor<ScalarType, Dimension>& rawTensor);
 
     DEVICE inline RawTensorIndex<Dimension> askNewIndex(const RawTensorIndex<Dimension>& previous) const;
 
@@ -39,7 +39,7 @@ public:
     iterate(const FunctionType&& function);
 
 private:
-    RawTensor<ValueType, Dimension>& m_rawTensor;
+    RawTensor<ScalarType, Dimension>& m_rawTensor;
 };
 
 #include <module/TensorThreadDistributor.impl.cuh>

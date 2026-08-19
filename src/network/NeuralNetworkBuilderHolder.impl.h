@@ -4,21 +4,21 @@
 
 #include <network/AbstractNetworkBuilder.h>
 
-template <typename ValueType>
-NeuralNetworkBuilderHolder<ValueType>::NeuralNetworkBuilderHolder()
+template <typename ScalarType>
+NeuralNetworkBuilderHolder<ScalarType>::NeuralNetworkBuilderHolder()
     : m_builders()
 {
 }
 
-template <typename ValueType>
-NeuralNetworkBuilderHolder<ValueType>::NeuralNetworkBuilderHolder(NeuralNetworkBuilderHolder&& other)
+template <typename ScalarType>
+NeuralNetworkBuilderHolder<ScalarType>::NeuralNetworkBuilderHolder(NeuralNetworkBuilderHolder&& other)
     : m_builders(other.m_builders)
 {
     other.m_builders.clear();
 }
 
-template <typename ValueType>
-NeuralNetworkBuilderHolder<ValueType>::~NeuralNetworkBuilderHolder()
+template <typename ScalarType>
+NeuralNetworkBuilderHolder<ScalarType>::~NeuralNetworkBuilderHolder()
 {
     if (m_builders.size() <= 0)
         return;
@@ -29,19 +29,19 @@ NeuralNetworkBuilderHolder<ValueType>::~NeuralNetworkBuilderHolder()
     }
 }
 
-template <typename ValueType>
-NeuralNetworkBuilderHolder<ValueType>&
-NeuralNetworkBuilderHolder<ValueType>::operator=(NeuralNetworkBuilderHolder&& other)
+template <typename ScalarType>
+NeuralNetworkBuilderHolder<ScalarType>&
+NeuralNetworkBuilderHolder<ScalarType>::operator=(NeuralNetworkBuilderHolder&& other)
 {
     std::swap(m_builders, other.m_builders);
     return *this;
 }
 
-template <typename ValueType>
+template <typename ScalarType>
 std::map<std::string, void*>
-NeuralNetworkBuilderHolder<ValueType>::add(const AbstractRtti<AbstractNetworkBuilder<ValueType>>& rtti, AbstractInitializer&& initializer, const AbstractNetworkBuilder<ValueType>** resultBuilder)
+NeuralNetworkBuilderHolder<ScalarType>::add(const AbstractRtti<AbstractNetworkBuilder<ScalarType>>& rtti, AbstractInitializer&& initializer, const AbstractNetworkBuilder<ScalarType>** resultBuilder)
 {
-    AbstractNetworkBuilder<ValueType>* newBuilder = rtti.createInstance(std::move(initializer));
+    AbstractNetworkBuilder<ScalarType>* newBuilder = rtti.createInstance(std::move(initializer));
     m_builders.push_back(newBuilder);
 
     if (resultBuilder != nullptr)
@@ -50,11 +50,11 @@ NeuralNetworkBuilderHolder<ValueType>::add(const AbstractRtti<AbstractNetworkBui
     return newBuilder->build();
 }
 
-template <typename ValueType>
+template <typename ScalarType>
 void
-NeuralNetworkBuilderHolder<ValueType>::remove(const AbstractNetworkBuilder<ValueType>& builder)
+NeuralNetworkBuilderHolder<ScalarType>::remove(const AbstractNetworkBuilder<ScalarType>& builder)
 {
-    const std::vector<AbstractNetworkBuilder<ValueType>*>::iterator builderIt = std::find(m_builders.begin(), m_builders.end(), &builder);
+    const std::vector<AbstractNetworkBuilder<ScalarType>*>::iterator builderIt = std::find(m_builders.begin(), m_builders.end(), &builder);
     if (builderIt == m_builders.end())
     {
         throw std::runtime_error("NeuralNetworkBuilderHolder::remove: The passed builder does not belong to this builder holder.");

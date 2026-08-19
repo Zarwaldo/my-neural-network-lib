@@ -6,14 +6,14 @@
 
 #include <tensor/TensorIndex.h>
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 class AdditionModuleImpl;
 
 DECLARE_MODULE_WRAPPER(
     AdditionModule,
-    ValueType,
+    ScalarType,
     AdditionModuleImpl,
     PACK(RawTuple<const TensorIndex<Dimension>&>),
     PACK(typename, size_t),
-    PACK(ValueType, Dimension)
+    PACK(ScalarType, Dimension)
 )

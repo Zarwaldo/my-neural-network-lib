@@ -6,7 +6,7 @@
 
 DECLARE_MODULE(
     AdditionModuleImpl,
-    ValueType,
+    ScalarType,
     TensorSingleton,
     TensorSingleton,
     TensorSingleton,
@@ -14,5 +14,5 @@ DECLARE_MODULE(
     PACK(Dimension),
     PACK(Dimension + 1),
     PACK(typename, size_t),
-    PACK(ValueType, Dimension)
+    PACK(ScalarType, Dimension)
 )

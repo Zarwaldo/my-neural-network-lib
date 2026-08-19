@@ -2,17 +2,17 @@
 
 #include <network/InputProvider.h>
 
-template <typename ValueType>
-class NullInputProvider : public InputProvider<ValueType>
+template <typename ScalarType>
+class NullInputProvider : public InputProvider<ScalarType>
 {
 public:
     NullInputProvider();
 
     virtual ~NullInputProvider();
 
-    virtual void getNewInput(AbstractTensorMap<ValueType>& inputMap) override;
+    virtual void getNewInput(AbstractTensorMap<ScalarType>& inputMap) override;
 
     virtual bool hasMoreThan(size_t nbInputs) const override;
 
-    DECLARE_RTTI(InputProvider<ValueType>)
+    DECLARE_RTTI(InputProvider<ScalarType>)
 };

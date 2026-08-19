@@ -20,10 +20,10 @@
 
 #include <chrono>
 
-template <typename ValueType>
+template <typename ScalarType>
 struct TrainingNeuralNetworkPimpl
 {
-    TrainingNeuralNetworkPimpl(const AbstractRtti<AbstractNetworkBuilder<ValueType>>& costNetworkBuilderRtti, const LearningMethod<ValueType>& learningMethod, AbstractTensor<ValueType>& costTensor, const AbstractNetworkBuilder<ValueType>* expectedTensorMapNetworkBuilder, AbstractTensorMap<ValueType>* expectedTensorMap, AbstractNetworkBuilder<ValueType>* costNetworkBuilder)
+    TrainingNeuralNetworkPimpl(const AbstractRtti<AbstractNetworkBuilder<ScalarType>>& costNetworkBuilderRtti, const LearningMethod<ScalarType>& learningMethod, AbstractTensor<ScalarType>& costTensor, const AbstractNetworkBuilder<ScalarType>* expectedTensorMapNetworkBuilder, AbstractTensorMap<ScalarType>* expectedTensorMap, AbstractNetworkBuilder<ScalarType>* costNetworkBuilder)
         : m_costNetworkBuilderRtti(costNetworkBuilderRtti)
         , m_learningMethod(learningMethod)
         , m_costTensor(costTensor)
@@ -32,48 +32,48 @@ struct TrainingNeuralNetworkPimpl
         , m_costNetworkBuilder(costNetworkBuilder)
     {}
 
-    const AbstractRtti<AbstractNetworkBuilder<ValueType>>& m_costNetworkBuilderRtti;
-    const LearningMethod<ValueType>& m_learningMethod;
-    AbstractTensor<ValueType>& m_costTensor;
-    const AbstractNetworkBuilder<ValueType>* m_expectedTensorMapNetworkBuilder;
-    AbstractTensorMap<ValueType>* m_expectedTensorMap;
-    const AbstractNetworkBuilder<ValueType>* m_costNetworkBuilder;
+    const AbstractRtti<AbstractNetworkBuilder<ScalarType>>& m_costNetworkBuilderRtti;
+    const LearningMethod<ScalarType>& m_learningMethod;
+    AbstractTensor<ScalarType>& m_costTensor;
+    const AbstractNetworkBuilder<ScalarType>* m_expectedTensorMapNetworkBuilder;
+    AbstractTensorMap<ScalarType>* m_expectedTensorMap;
+    const AbstractNetworkBuilder<ScalarType>* m_costNetworkBuilder;
 };
 
-template <typename ValueType>
-TrainingNeuralNetwork<ValueType>::TrainingNeuralNetwork(size_t thickness, const AbstractRtti<AbstractNetworkBuilder<ValueType>>& costNetworkBuilderRtti, const LearningMethod<ValueType>& learningMethod)
-    : NeuralNetwork<ValueType>(thickness)
-    , m_pimpl(new TrainingNeuralNetworkPimpl<ValueType>(costNetworkBuilderRtti, learningMethod, addTensor(TensorIndex<0>(true), false), nullptr, nullptr, nullptr))
+template <typename ScalarType>
+TrainingNeuralNetwork<ScalarType>::TrainingNeuralNetwork(size_t thickness, const AbstractRtti<AbstractNetworkBuilder<ScalarType>>& costNetworkBuilderRtti, const LearningMethod<ScalarType>& learningMethod)
+    : NeuralNetwork<ScalarType>(thickness)
+    , m_pimpl(new TrainingNeuralNetworkPimpl<ScalarType>(costNetworkBuilderRtti, learningMethod, addTensor(TensorIndex<0>(true), false), nullptr, nullptr, nullptr))
 {}
 
-template <typename ValueType>
-TrainingNeuralNetwork<ValueType>::TrainingNeuralNetwork(TrainingNeuralNetwork&& other)
-    : NeuralNetwork<ValueType>(std::move(other))
+template <typename ScalarType>
+TrainingNeuralNetwork<ScalarType>::TrainingNeuralNetwork(TrainingNeuralNetwork&& other)
+    : NeuralNetwork<ScalarType>(std::move(other))
     , m_pimpl(other.m_pimpl)
 {
     other.m_pimpl = nullptr;
 }
 
-template <typename ValueType>
-TrainingNeuralNetwork<ValueType>::~TrainingNeuralNetwork()
+template <typename ScalarType>
+TrainingNeuralNetwork<ScalarType>::~TrainingNeuralNetwork()
 {
     delete m_pimpl;
 }
 
-template <typename ValueType>
-TrainingNeuralNetwork<ValueType>&
-TrainingNeuralNetwork<ValueType>::operator=(TrainingNeuralNetwork&& other)
+template <typename ScalarType>
+TrainingNeuralNetwork<ScalarType>&
+TrainingNeuralNetwork<ScalarType>::operator=(TrainingNeuralNetwork&& other)
 {
-    NeuralNetwork<ValueType>::operator=(std::move(other));
+    NeuralNetwork<ScalarType>::operator=(std::move(other));
     std::swap(m_pimpl, other.m_pimpl);
     return *this;
 }
 
-template <typename ValueType>
+template <typename ScalarType>
 void
-TrainingNeuralNetwork<ValueType>::setOutput(AbstractTensorMap<ValueType>* map)
+TrainingNeuralNetwork<ScalarType>::setOutput(AbstractTensorMap<ScalarType>* map)
 {
-    NeuralNetwork<ValueType>::setOutput(map);
+    NeuralNetwork<ScalarType>::setOutput(map);
 
     if (m_pimpl->m_costNetworkBuilder != nullptr)
         unbuild(*m_pimpl->m_costNetworkBuilder);
@@ -88,11 +88,11 @@ TrainingNeuralNetwork<ValueType>::setOutput(AbstractTensorMap<ValueType>* map)
         return;
 
     std::map<std::string, void*> expectedTensorMapBuildingResult = build(
-        *DuplicateTensorMapBuilder<ValueType>::getRtti(),
+        *DuplicateTensorMapBuilder<ScalarType>::getRtti(),
         Initializer<
-            NeuralNetwork<ValueType>&,
-            const AbstractTensorMap<ValueType>&,
-            const std::map<const AbstractTensor<ValueType>*, AbstractTensor<ValueType>*>&
+            NeuralNetwork<ScalarType>&,
+            const AbstractTensorMap<ScalarType>&,
+            const std::map<const AbstractTensor<ScalarType>*, AbstractTensor<ScalarType>*>&
         >(
             *this,
             *map,
@@ -100,15 +100,15 @@ TrainingNeuralNetwork<ValueType>::setOutput(AbstractTensorMap<ValueType>* map)
         ),
         &m_pimpl->m_expectedTensorMapNetworkBuilder
     );
-    m_pimpl->m_expectedTensorMap = static_cast<AbstractTensorMap<ValueType>*>(expectedTensorMapBuildingResult[DuplicateTensorMapBuilder<ValueType>::addedTensorMapKey]);
+    m_pimpl->m_expectedTensorMap = static_cast<AbstractTensorMap<ScalarType>*>(expectedTensorMapBuildingResult[DuplicateTensorMapBuilder<ScalarType>::addedTensorMapKey]);
 
     build(
         m_pimpl->m_costNetworkBuilderRtti,
         Initializer<
-            NeuralNetwork<ValueType>&,
-            AbstractTensorMap<ValueType>&,
-            AbstractTensorMap<ValueType>&,
-            AbstractTensor<ValueType>&
+            NeuralNetwork<ScalarType>&,
+            AbstractTensorMap<ScalarType>&,
+            AbstractTensorMap<ScalarType>&,
+            AbstractTensor<ScalarType>&
         >(
             *this,
             *map,
@@ -119,75 +119,75 @@ TrainingNeuralNetwork<ValueType>::setOutput(AbstractTensorMap<ValueType>* map)
     );
 }
 
-template <typename ValueType>
+template <typename ScalarType>
 bool
-TrainingNeuralNetwork<ValueType>::canTrain() const
+TrainingNeuralNetwork<ScalarType>::canTrain() const
 {
     return (m_pimpl->m_expectedTensorMapNetworkBuilder != nullptr) && (m_pimpl->m_costNetworkBuilder != nullptr) && canExecute();
 }
 
-template <typename ValueType>
+template <typename ScalarType>
 void
-TrainingNeuralNetwork<ValueType>::train(TrainingMonitor<ValueType>& monitor, TrainingNotifier<ValueType>& notifier)
+TrainingNeuralNetwork<ScalarType>::train(TrainingMonitor<ScalarType>& monitor, TrainingNotifier<ScalarType>& notifier)
 {
     if (!canTrain())
         throw std::runtime_error("TrainingNeuralNetwork::train: The network cannot yet train.");
 
     // Initialize training data
     const double startingTime = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
-    TrainingState<ValueType> trainingState = { std::numeric_limits<ValueType>::max(), std::numeric_limits<ValueType>::max(), 0.0f};
+    TrainingState<ScalarType> trainingState = { std::numeric_limits<ScalarType>::max(), std::numeric_limits<ScalarType>::max(), 0.0f};
 
     // Allocate backpropagation network
-    NeuralNetwork<ValueType> backPropagationNetwork(0);
+    NeuralNetwork<ScalarType> backPropagationNetwork(0);
 
     // Allocate backpropagation tensors in the backpropagation network
-    std::map<const AbstractTensor<ValueType>*, AbstractTensor<ValueType>*> backpropagationTensors;
-    for (AbstractTensor<ValueType>* tensor : getTensors())
+    std::map<const AbstractTensor<ScalarType>*, AbstractTensor<ScalarType>*> backpropagationTensors;
+    for (AbstractTensor<ScalarType>* tensor : getTensors())
     {
         backpropagationTensors[tensor] = &backPropagationNetwork.addTensor(tensor->sizes(), false);
     }
-    for (Module<ValueType>* module : getModules())
+    for (Module<ScalarType>* module : getModules())
     {
-        for (AbstractTensor<ValueType>& tensor : module->getParameterAbstractTensorMap())
+        for (AbstractTensor<ScalarType>& tensor : module->getParameterAbstractTensorMap())
         {
             backpropagationTensors[&tensor] = &backPropagationNetwork.addTensor(tensor.sizes(), false);
         }
     }
 
     // Allocate backpropagation tensor maps in the backpropagation network
-    std::map<const AbstractTensorMap<ValueType>*, AbstractTensorMap<ValueType>*> backpropagationTensorMaps;
-    for (const AbstractTensorMap<ValueType>* tensorMap : getTensorMaps())
+    std::map<const AbstractTensorMap<ScalarType>*, AbstractTensorMap<ScalarType>*> backpropagationTensorMaps;
+    for (const AbstractTensorMap<ScalarType>* tensorMap : getTensorMaps())
     {
         std::map<std::string, void*> tensorMapDuplicationResult = backPropagationNetwork.build(
-            *DuplicateTensorMapBuilder<ValueType>::getRtti(),
+            *DuplicateTensorMapBuilder<ScalarType>::getRtti(),
             Initializer<
-                NeuralNetwork<ValueType>&,
-                const AbstractTensorMap<ValueType>&,
-                const std::map<const AbstractTensor<ValueType>*, AbstractTensor<ValueType>*>&
+                NeuralNetwork<ScalarType>&,
+                const AbstractTensorMap<ScalarType>&,
+                const std::map<const AbstractTensor<ScalarType>*, AbstractTensor<ScalarType>*>&
             >(
                 backPropagationNetwork,
                 *tensorMap,
                 backpropagationTensors
             )
         );
-        backpropagationTensorMaps[tensorMap] = static_cast<AbstractTensorMap<ValueType>*>(tensorMapDuplicationResult[DuplicateTensorMapBuilder<ValueType>::addedTensorMapKey]);
+        backpropagationTensorMaps[tensorMap] = static_cast<AbstractTensorMap<ScalarType>*>(tensorMapDuplicationResult[DuplicateTensorMapBuilder<ScalarType>::addedTensorMapKey]);
     }
-    for (Module<ValueType>* module : getModules())
+    for (Module<ScalarType>* module : getModules())
     {
-        const AbstractTensorMap<ValueType>& parameterTensorMap = module->getParameterAbstractTensorMap();
+        const AbstractTensorMap<ScalarType>& parameterTensorMap = module->getParameterAbstractTensorMap();
         std::map<std::string, void*> tensorMapDuplicationResult = backPropagationNetwork.build(
-            *DuplicateTensorMapBuilder<ValueType>::getRtti(),
+            *DuplicateTensorMapBuilder<ScalarType>::getRtti(),
             Initializer<
-                NeuralNetwork<ValueType>&,
-                const AbstractTensorMap<ValueType>&,
-                const std::map<const AbstractTensor<ValueType>*, AbstractTensor<ValueType>*>&
+                NeuralNetwork<ScalarType>&,
+                const AbstractTensorMap<ScalarType>&,
+                const std::map<const AbstractTensor<ScalarType>*, AbstractTensor<ScalarType>*>&
             >(
                 backPropagationNetwork,
                 parameterTensorMap,
                 backpropagationTensors
             )
         );
-        backpropagationTensorMaps[&parameterTensorMap] = static_cast<AbstractTensorMap<ValueType>*>(tensorMapDuplicationResult[DuplicateTensorMapBuilder<ValueType>::addedTensorMapKey]);
+        backpropagationTensorMaps[&parameterTensorMap] = static_cast<AbstractTensorMap<ScalarType>*>(tensorMapDuplicationResult[DuplicateTensorMapBuilder<ScalarType>::addedTensorMapKey]);
     }
 
     // Iteration loops
@@ -197,8 +197,8 @@ TrainingNeuralNetwork<ValueType>::train(TrainingMonitor<ValueType>& monitor, Tra
         TrainingIterationStatus iterationStatus = monitor.trainingIteration(thickness(), *getInput(), *m_pimpl->m_expectedTensorMap);
 
         // Compute iteration
-        NullInputProvider<ValueType> inputProvider;
-        NullOutputReceiver<ValueType> outputReceiver;
+        NullInputProvider<ScalarType> inputProvider;
+        NullOutputReceiver<ScalarType> outputReceiver;
         execute(inputProvider, outputReceiver);
 
         // Update training data
@@ -224,14 +224,14 @@ TrainingNeuralNetwork<ValueType>::train(TrainingMonitor<ValueType>& monitor, Tra
         if (iterationStatus == TRAINING)
         {
             // Partial derivative of the cost with respect to itself is always one (initial value for backpropagation)
-            Tensor<ValueType, 0>& costBackpropagationTensor = static_cast<Tensor<ValueType, 0>&>(*backpropagationTensors[&m_pimpl->m_costTensor]);
-            costBackpropagationTensor[TensorIndex<0>(true)] = static_cast<ValueType>(1.0f);
+            Tensor<ScalarType, 0>& costBackpropagationTensor = static_cast<Tensor<ScalarType, 0>&>(*backpropagationTensors[&m_pimpl->m_costTensor]);
+            costBackpropagationTensor[TensorIndex<0>(true)] = static_cast<ScalarType>(1.0f);
 
             // Backpropagate all modules to compute all cost's partial derivatives
-            const std::vector<Module<ValueType>*>& modules = getModules();
+            const std::vector<Module<ScalarType>*>& modules = getModules();
             for (long long int moduleIndex = modules.size() - 1; moduleIndex >= 0; moduleIndex--)
             {
-                Module<ValueType>* module = modules[moduleIndex];
+                Module<ScalarType>* module = modules[moduleIndex];
 
                 module->backpropagate(
                     *backpropagationTensorMaps[module->getInputAbstractTensorMap()],
@@ -241,10 +241,10 @@ TrainingNeuralNetwork<ValueType>::train(TrainingMonitor<ValueType>& monitor, Tra
             }
 
             // Learn: adapt all modules' parameters according to the cost's partial derivatives
-            for (Module<ValueType>* module : getModules())
+            for (Module<ScalarType>* module : getModules())
             {
-                AbstractTensorMap<ValueType>& parameterTensorMap = module->getParameterAbstractTensorMap();
-                for (AbstractTensor<ValueType>& parameterTensor : parameterTensorMap)
+                AbstractTensorMap<ScalarType>& parameterTensorMap = module->getParameterAbstractTensorMap();
+                for (AbstractTensor<ScalarType>& parameterTensor : parameterTensorMap)
                 {
                     m_pimpl->m_learningMethod.learn(parameterTensor, *backpropagationTensors[&parameterTensor]);
                 }

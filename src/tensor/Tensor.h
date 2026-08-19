@@ -8,7 +8,7 @@
 #include <tensor/RawTensor.h>
 #include <tensor/TensorIndex.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensor : public TensorBase
 {
 public:
@@ -21,15 +21,15 @@ public:
     HOST virtual size_t nbElements() const = 0;
     HOST virtual size_t memorySize() const = 0;
 
-    HOST virtual const ValueType& operator*() const = 0;
-    HOST virtual ValueType& operator*() = 0;
+    HOST virtual const ScalarType& operator*() const = 0;
+    HOST virtual ScalarType& operator*() = 0;
 
-    HOST virtual const ValueType& operator[](const AbstractTensorIndex& index) const = 0;
-    HOST virtual ValueType& operator[](const AbstractTensorIndex& index) = 0;
+    HOST virtual const ScalarType& operator[](const AbstractTensorIndex& index) const = 0;
+    HOST virtual ScalarType& operator[](const AbstractTensorIndex& index) = 0;
 };
 
-template <typename ValueType, size_t Dimension>
-class Tensor : public AbstractTensor<ValueType>
+template <typename ScalarType, size_t Dimension>
+class Tensor : public AbstractTensor<ScalarType>
 {
 public:
     HOST Tensor(const Tensor& other);
@@ -41,9 +41,9 @@ public:
     HOST virtual Tensor& operator=(const Tensor& other);
     HOST virtual Tensor& operator=(Tensor&& other);
 
-    HOST const RawTensor<ValueType, Dimension>& getRawTensor() const;
+    HOST const RawTensor<ScalarType, Dimension>& getRawTensor() const;
 
-    HOST RawTensor<ValueType, Dimension>& getRawTensor();
+    HOST RawTensor<ScalarType, Dimension>& getRawTensor();
 
     HOST virtual size_t dim() const override;
 
@@ -52,26 +52,26 @@ public:
     HOST virtual size_t nbElements() const override;
     HOST virtual size_t memorySize() const override;
 
-    HOST virtual const ValueType& operator*() const override;
-    HOST virtual ValueType& operator*() override;
+    HOST virtual const ScalarType& operator*() const override;
+    HOST virtual ScalarType& operator*() override;
 
     HOST const Tensor subtensor(const TensorIndex<Dimension>& minIndex, const TensorIndex<Dimension>& maxIndex) const;
     HOST Tensor subtensor(const TensorIndex<Dimension>& minIndex, const TensorIndex<Dimension>& maxIndex);
 
-    HOST virtual const ValueType& operator[](const AbstractTensorIndex& index) const override;
-    HOST virtual ValueType& operator[](const AbstractTensorIndex& index) override;
+    HOST virtual const ScalarType& operator[](const AbstractTensorIndex& index) const override;
+    HOST virtual ScalarType& operator[](const AbstractTensorIndex& index) override;
 
-    HOST typename RawTensor<ValueType, Dimension>::Iterator iterator(const TensorIndex<Dimension>& index) const;
+    HOST typename RawTensor<ScalarType, Dimension>::Iterator iterator(const TensorIndex<Dimension>& index) const;
 
-    HOST typename RawTensor<ValueType, Dimension>::Iterator begin() const;
-    HOST typename RawTensor<ValueType, Dimension>::Iterator end() const;
+    HOST typename RawTensor<ScalarType, Dimension>::Iterator begin() const;
+    HOST typename RawTensor<ScalarType, Dimension>::Iterator end() const;
 
 private:
-    HOST Tensor(ManagedMemorySharedPtr<ValueType>& data, const RawTensor<ValueType, Dimension>& rawTensor);
-    HOST Tensor(ManagedMemorySharedPtr<ValueType>&& data, const RawTensor<ValueType, Dimension>& rawTensor);
+    HOST Tensor(ManagedMemorySharedPtr<ScalarType>& data, const RawTensor<ScalarType, Dimension>& rawTensor);
+    HOST Tensor(ManagedMemorySharedPtr<ScalarType>&& data, const RawTensor<ScalarType, Dimension>& rawTensor);
 
-    ManagedMemorySharedPtr<ValueType> m_data;
-    RawTensor<ValueType, Dimension> m_rawTensor;
+    ManagedMemorySharedPtr<ScalarType> m_data;
+    RawTensor<ScalarType, Dimension> m_rawTensor;
     TensorIndex<Dimension> m_sizes;
 
     DECLARE_RTTI(TensorBase)

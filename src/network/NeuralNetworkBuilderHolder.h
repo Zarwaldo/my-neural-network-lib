@@ -5,14 +5,14 @@
 #include <string>
 
 class AbstractInitializer;
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractNetworkBuilder;
 template <typename BaseType>
 class AbstractRtti;
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensor;
 
-template <typename ValueType>
+template <typename ScalarType>
 class NeuralNetworkBuilderHolder
 {
 public:
@@ -25,9 +25,9 @@ public:
     NeuralNetworkBuilderHolder& operator=(const NeuralNetworkBuilderHolder& other) = delete;
     NeuralNetworkBuilderHolder& operator=(NeuralNetworkBuilderHolder&& other);
 
-    std::map<std::string, void*> add(const AbstractRtti<AbstractNetworkBuilder<ValueType>>& rtti, AbstractInitializer&& initializer, const AbstractNetworkBuilder<ValueType>** resultBuilder = nullptr);
-    void remove(const AbstractNetworkBuilder<ValueType>& builder);
+    std::map<std::string, void*> add(const AbstractRtti<AbstractNetworkBuilder<ScalarType>>& rtti, AbstractInitializer&& initializer, const AbstractNetworkBuilder<ScalarType>** resultBuilder = nullptr);
+    void remove(const AbstractNetworkBuilder<ScalarType>& builder);
 
 private:
-    std::vector<AbstractNetworkBuilder<ValueType>*> m_builders;
+    std::vector<AbstractNetworkBuilder<ScalarType>*> m_builders;
 };

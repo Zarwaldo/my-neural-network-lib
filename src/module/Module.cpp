@@ -2,9 +2,9 @@
 
 #include <module/api.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 HOST
-Module<ValueType>::~Module()
+Module<ScalarType>::~Module()
 {}
 
 template class MY_NEURAL_NETWORK_LIB__MODULE__API Module<float>;

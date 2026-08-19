@@ -12,19 +12,19 @@
 
 using namespace BuildTimeList;
 
-template <typename ValueType>
+template <typename ScalarType>
 struct TemplateProvider
 {
     template <TypenameArgId KeyEnumId>
-    using TensorMapTemplate = TensorMap<ValueType, TypeFromTypenameArgId<KeyEnumId>>;
+    using TensorMapTemplate = TensorMap<ScalarType, TypeFromTypenameArgId<KeyEnumId>>;
 };
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 using TensorMapRtti = Rtti<
-    AbstractTensorMap<ValueType>,
-    TensorMap<ValueType, KeyEnum>,
-    TypeList<AbstractTensor<ValueType>* const *>,
-    TypeList<const std::initializer_list<AbstractTensor<ValueType>*>&>
+    AbstractTensorMap<ScalarType>,
+    TensorMap<ScalarType, KeyEnum>,
+    TypeList<AbstractTensor<ScalarType>* const *>,
+    TypeList<const std::initializer_list<AbstractTensor<ScalarType>*>&>
 >;
 
 void

@@ -11,22 +11,22 @@
 
 using namespace BuildTimeList;
 
-template <typename ValueType>
+template <typename ScalarType>
 struct TemplateProvider
 {
     template <size_t Dimension>
-    using EuclidianDistanceCostBuilderTemplate = EuclidianDistanceCostBuilder<ValueType, Dimension>;
+    using EuclidianDistanceCostBuilderTemplate = EuclidianDistanceCostBuilder<ScalarType, Dimension>;
 };
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 using EuclidianDistanceCostBuilderRtti = Rtti<
-    AbstractNetworkBuilder<ValueType>,
-    EuclidianDistanceCostBuilder<ValueType, Dimension>,
+    AbstractNetworkBuilder<ScalarType>,
+    EuclidianDistanceCostBuilder<ScalarType, Dimension>,
     TypeList<
-        NeuralNetwork<ValueType>&,
-        AbstractTensorMap<ValueType>&,
-        AbstractTensorMap<ValueType>&,
-        AbstractTensor<ValueType>&
+        NeuralNetwork<ScalarType>&,
+        AbstractTensorMap<ScalarType>&,
+        AbstractTensorMap<ScalarType>&,
+        AbstractTensor<ScalarType>&
     >
 >;
 

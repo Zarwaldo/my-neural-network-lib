@@ -2,23 +2,23 @@
 
 #include <network/NeuralNetwork.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractNetworkBuilder;
-template <typename ValueType>
+template <typename ScalarType>
 class LearningMethod;
-template <typename ValueType>
+template <typename ScalarType>
 class TrainingMonitor;
-template <typename ValueType>
+template <typename ScalarType>
 class TrainingNotifier;
 
-template <typename ValueType>
+template <typename ScalarType>
 struct TrainingNeuralNetworkPimpl;
 
-template <typename ValueType>
-class TrainingNeuralNetwork : public NeuralNetwork<ValueType>
+template <typename ScalarType>
+class TrainingNeuralNetwork : public NeuralNetwork<ScalarType>
 {
 public:
-    TrainingNeuralNetwork(size_t thickness, const AbstractRtti<AbstractNetworkBuilder<ValueType>>& costNetworkBuilderRtti, const LearningMethod<ValueType>& learningMethod);
+    TrainingNeuralNetwork(size_t thickness, const AbstractRtti<AbstractNetworkBuilder<ScalarType>>& costNetworkBuilderRtti, const LearningMethod<ScalarType>& learningMethod);
     TrainingNeuralNetwork(const TrainingNeuralNetwork& other) = delete;
     TrainingNeuralNetwork(TrainingNeuralNetwork&& other);
 
@@ -27,11 +27,11 @@ public:
     TrainingNeuralNetwork& operator=(const TrainingNeuralNetwork& other) = delete;
     TrainingNeuralNetwork& operator=(TrainingNeuralNetwork&& other);
 
-    virtual void setOutput(AbstractTensorMap<ValueType>* map) override;
+    virtual void setOutput(AbstractTensorMap<ScalarType>* map) override;
 
     bool canTrain() const;
-    void train(TrainingMonitor<ValueType>& monitor, TrainingNotifier<ValueType>& notifier);
+    void train(TrainingMonitor<ScalarType>& monitor, TrainingNotifier<ScalarType>& notifier);
 
 private:
-    TrainingNeuralNetworkPimpl<ValueType>* m_pimpl;
+    TrainingNeuralNetworkPimpl<ScalarType>* m_pimpl;
 };

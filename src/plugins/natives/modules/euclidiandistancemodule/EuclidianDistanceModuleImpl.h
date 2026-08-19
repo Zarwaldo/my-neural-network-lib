@@ -6,7 +6,7 @@
 
 DECLARE_MODULE(
     EuclidianDistanceModuleImpl,
-    ValueType,
+    ScalarType,
     TensorPair,
     TensorSingleton,
     TensorSingleton,
@@ -14,5 +14,5 @@ DECLARE_MODULE(
     PACK(0),
     PACK(0),
     PACK(typename, size_t),
-    PACK(ValueType, Dimension)
+    PACK(ScalarType, Dimension)
 )

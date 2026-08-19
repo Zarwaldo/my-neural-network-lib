@@ -7,11 +7,11 @@
 
 IMPLEMENT_MODULE_WRAPPER(
     EuclidianDistanceModule,
-    ValueType,
+    ScalarType,
     EuclidianDistanceModuleImpl,
     PACK(RawTuple<const TensorIndex<0>&>),
     PACK(typename, size_t),
-    PACK(ValueType, Dimension)
+    PACK(ScalarType, Dimension)
 )
 
 extern template class MY_NEURAL_NETWORK_LIB__MODULE__API Module<float>;

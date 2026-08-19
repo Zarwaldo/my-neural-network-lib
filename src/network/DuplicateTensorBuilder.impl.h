@@ -8,53 +8,53 @@
 
 #include <tensor/Tensor.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 struct DuplicateTensorBuilderPimpl
 {
-    DuplicateTensorBuilderPimpl(NeuralNetwork<ValueType>& network, const AbstractTensor<ValueType>& originalTensor)
-        : networkPartHolder(NeuralNetworkPartHolder<ValueType>(network))
+    DuplicateTensorBuilderPimpl(NeuralNetwork<ScalarType>& network, const AbstractTensor<ScalarType>& originalTensor)
+        : networkPartHolder(NeuralNetworkPartHolder<ScalarType>(network))
         , originalTensor(originalTensor)
     {}
 
-    NeuralNetworkPartHolder<ValueType> networkPartHolder;
-    const AbstractTensor<ValueType>& originalTensor;
+    NeuralNetworkPartHolder<ScalarType> networkPartHolder;
+    const AbstractTensor<ScalarType>& originalTensor;
 };
 
-template <typename ValueType>
-DuplicateTensorBuilder<ValueType>::DuplicateTensorBuilder(NeuralNetwork<ValueType>& network, const AbstractTensor<ValueType>& tensor)
-    : m_pimpl(new DuplicateTensorBuilderPimpl<ValueType>(network, tensor))
+template <typename ScalarType>
+DuplicateTensorBuilder<ScalarType>::DuplicateTensorBuilder(NeuralNetwork<ScalarType>& network, const AbstractTensor<ScalarType>& tensor)
+    : m_pimpl(new DuplicateTensorBuilderPimpl<ScalarType>(network, tensor))
 {}
 
-template <typename ValueType>
-DuplicateTensorBuilder<ValueType>::DuplicateTensorBuilder(DuplicateTensorBuilder&& other)
+template <typename ScalarType>
+DuplicateTensorBuilder<ScalarType>::DuplicateTensorBuilder(DuplicateTensorBuilder&& other)
     : m_pimpl(other.m_pimpl)
 {
     other.m_pimpl = nullptr;
 }
 
-template <typename ValueType>
-DuplicateTensorBuilder<ValueType>::~DuplicateTensorBuilder()
+template <typename ScalarType>
+DuplicateTensorBuilder<ScalarType>::~DuplicateTensorBuilder()
 {
     delete m_pimpl;
 }
 
-template <typename ValueType>
-DuplicateTensorBuilder<ValueType>&
-DuplicateTensorBuilder<ValueType>::operator=(DuplicateTensorBuilder&& other)
+template <typename ScalarType>
+DuplicateTensorBuilder<ScalarType>&
+DuplicateTensorBuilder<ScalarType>::operator=(DuplicateTensorBuilder&& other)
 {
     std::swap(m_pimpl, other.m_pimpl);
     return *this;
 }
 
-template <typename ValueType>
+template <typename ScalarType>
 std::map<std::string, void*>
-DuplicateTensorBuilder<ValueType>::build()
+DuplicateTensorBuilder<ScalarType>::build()
 {
-    AbstractTensor<ValueType>& tensor = m_pimpl->networkPartHolder.addTensor(m_pimpl->originalTensor.sizes(), false);
+    AbstractTensor<ScalarType>& tensor = m_pimpl->networkPartHolder.addTensor(m_pimpl->originalTensor.sizes(), false);
 
     std::map<std::string, void*> result;
     result[addedTensorKey] = &tensor;
     return result;
 }
 
-IMPLEMENT_RTTI(DuplicateTensorBuilder, AbstractNetworkBuilder<ValueType>, PACK(typename), PACK(ValueType))
+IMPLEMENT_RTTI(DuplicateTensorBuilder, AbstractNetworkBuilder<ScalarType>, PACK(typename), PACK(ScalarType))

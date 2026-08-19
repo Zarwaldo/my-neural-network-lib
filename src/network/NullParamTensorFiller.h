@@ -2,15 +2,15 @@
 
 #include <network/ParamTensorFiller.h>
 
-template <typename ValueType>
-class NullParamTensorFiller : public ParamTensorFiller<ValueType>
+template <typename ScalarType>
+class NullParamTensorFiller : public ParamTensorFiller<ScalarType>
 {
 public:
     NullParamTensorFiller();
 
     virtual ~NullParamTensorFiller();
 
-    virtual void fill(AbstractTensorMap<ValueType>& tensorMap) const override;
+    virtual void fill(AbstractTensorMap<ScalarType>& tensorMap) const override;
 
-    DECLARE_RTTI(ParamTensorFiller<ValueType>)
+    DECLARE_RTTI(ParamTensorFiller<ScalarType>)
 };

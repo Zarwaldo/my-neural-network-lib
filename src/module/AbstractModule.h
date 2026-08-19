@@ -5,20 +5,20 @@
 #include <helpers/BuildTimeList.h>
 #include <helpers/RawTuple.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensorMap;
 
-template <typename ValueType, typename KeyEnum>
+template <typename ScalarType, typename KeyEnum>
 class TensorMap;
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 class Tensor;
 
 template <size_t Dimension>
 class TensorIndex;
 
 #define ABSTRACT_MODULE_TEMPLATE_PARAMS     \
-    typename ValueType,                     \
+    typename ScalarType,                    \
     typename InputKeyEnum,                  \
     typename ParameterKeyEnum,              \
     typename OutputKeyEnum,                 \
@@ -34,7 +34,7 @@ class AbstractModule
 {};
 
 #define ABSTRACT_MODULE_SPECIALIZATION_PARAMS \
-    typename ValueType,                       \
+    typename ScalarType,                      \
     typename InputKeyEnum,                    \
     typename ParameterKeyEnum,                \
     typename OutputKeyEnum,                   \
@@ -43,7 +43,7 @@ class AbstractModule
     size_t... OutputTensorDimensions
 
 #define ABSTRACT_MODULE_SPECIALIZATION_ARGS                   \
-    ValueType,                                                \
+    ScalarType,                                               \
     InputKeyEnum,                                             \
     ParameterKeyEnum,                                         \
     OutputKeyEnum,                                            \
@@ -52,12 +52,12 @@ class AbstractModule
     BuildTimeList::IntegerList<OutputTensorDimensions...>
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
-class AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS> : public Module<ValueType>
+class AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS> : public Module<ScalarType>
 {
 public:
-    using InputTensorMapType = TensorMap<ValueType, InputKeyEnum>;
-    using ParameterTensorMapType = TensorMap<ValueType, ParameterKeyEnum>;
-    using OutputTensorMapType = TensorMap<ValueType, OutputKeyEnum>;
+    using InputTensorMapType = TensorMap<ScalarType, InputKeyEnum>;
+    using ParameterTensorMapType = TensorMap<ScalarType, ParameterKeyEnum>;
+    using OutputTensorMapType = TensorMap<ScalarType, OutputKeyEnum>;
 
     HOST AbstractModule(const RawTuple<const TensorIndex<ParameterTensorDimensions>&...>& parameterTensorsSizes);
     HOST AbstractModule(const AbstractModule& other) = delete;
@@ -68,19 +68,19 @@ public:
     HOST AbstractModule& operator=(const AbstractModule& other) = delete;
     HOST AbstractModule& operator=(AbstractModule&& other);
 
-    HOST virtual AbstractTensorMap<ValueType>* getInputAbstractTensorMap() const override;
+    HOST virtual AbstractTensorMap<ScalarType>* getInputAbstractTensorMap() const override;
     HOST virtual InputTensorMapType* getInputTensorMap() const;
 
-    HOST virtual const AbstractTensorMap<ValueType>& getParameterAbstractTensorMap() const override;
+    HOST virtual const AbstractTensorMap<ScalarType>& getParameterAbstractTensorMap() const override;
     HOST virtual const ParameterTensorMapType& getParameterTensorMap() const;
-    HOST virtual AbstractTensorMap<ValueType>& getParameterAbstractTensorMap() override;
+    HOST virtual AbstractTensorMap<ScalarType>& getParameterAbstractTensorMap() override;
     HOST virtual ParameterTensorMapType& getParameterTensorMap();
 
-    HOST virtual AbstractTensorMap<ValueType>* getOutputAbstractTensorMap() const override;
+    HOST virtual AbstractTensorMap<ScalarType>* getOutputAbstractTensorMap() const override;
     HOST virtual OutputTensorMapType* getOutputTensorMap() const;
 
-    HOST virtual void setInputTensorMap(AbstractTensorMap<ValueType>* map) override;
-    HOST virtual void setOutputTensorMap(AbstractTensorMap<ValueType>* map) override;
+    HOST virtual void setInputTensorMap(AbstractTensorMap<ScalarType>* map) override;
+    HOST virtual void setOutputTensorMap(AbstractTensorMap<ScalarType>* map) override;
 
     HOST virtual RawTuple<const TensorIndex<InputTensorDimensions>&...> getInputTensorSizes() const;
     HOST virtual RawTuple<const TensorIndex<ParameterTensorDimensions>&...> getParameterTensorSizes() const;
@@ -88,7 +88,7 @@ public:
 
     HOST virtual void compute() const = 0;
 
-    HOST virtual void backpropagate(AbstractTensorMap<ValueType>& costPartDerivWRTInput, AbstractTensorMap<ValueType>& costPartDerivWRTParameter, const AbstractTensorMap<ValueType>& costPartDerivWRTOutput) const = 0;
+    HOST virtual void backpropagate(AbstractTensorMap<ScalarType>& costPartDerivWRTInput, AbstractTensorMap<ScalarType>& costPartDerivWRTParameter, const AbstractTensorMap<ScalarType>& costPartDerivWRTOutput) const = 0;
 
 protected:
     HOST virtual void* getComputationMemory() const;

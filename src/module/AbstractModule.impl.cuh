@@ -7,7 +7,7 @@
 #include <tensor/TensorMap.h>
 #include <tensor/Tensor.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 struct AllocateTensorsFromSizes
 {
     template <typename TensorIndexType>
@@ -17,9 +17,9 @@ struct AllocateTensorsFromSizes
     template <size_t Dimension>
     struct MapFunction<TensorIndex<Dimension>>
     {
-        static Tensor<ValueType, Dimension>* doIt(const TensorIndex<Dimension>& sizes)
+        static Tensor<ScalarType, Dimension>* doIt(const TensorIndex<Dimension>& sizes)
         {
-            return Tensor<ValueType, Dimension>::create(sizes);
+            return Tensor<ScalarType, Dimension>::create(sizes);
         }
     };
 };
@@ -39,15 +39,15 @@ public:
     static constexpr size_t NbOutputTensors = sizeof...(OutputTensorDimensions);
     static_assert((NbOutputTensors == OutputKeyEnum::NbValues), "AbstractModule: Wrong number of output dimensions");
 
-    using InputTensorMapType = TensorMap<ValueType, InputKeyEnum>;
-    using ParameterTensorMapType = TensorMap<ValueType, ParameterKeyEnum>;
-    using OutputTensorMapType = TensorMap<ValueType, OutputKeyEnum>;
+    using InputTensorMapType = TensorMap<ScalarType, InputKeyEnum>;
+    using ParameterTensorMapType = TensorMap<ScalarType, ParameterKeyEnum>;
+    using OutputTensorMapType = TensorMap<ScalarType, OutputKeyEnum>;
 
     HOST AbstractModulePimpl(const RawTuple<const TensorIndex<ParameterTensorDimensions>&...>& parameterTensorsSizes)
-        : m_parameterTensors(parameterTensorsSizes.template hostMap<AllocateTensorsFromSizes<ValueType>::MapFunction>())
+        : m_parameterTensors(parameterTensorsSizes.template hostMap<AllocateTensorsFromSizes<ScalarType>::MapFunction>())
         , m_inputMap(nullptr)
         , m_parameterMap(
-            m_parameterTensors.hostApply([](Tensor<ValueType, ParameterTensorDimensions>*&... tensors) {
+            m_parameterTensors.hostApply([](Tensor<ScalarType, ParameterTensorDimensions>*&... tensors) {
                 return ParameterTensorMapType{ tensors... };
             })
         )
@@ -57,9 +57,9 @@ public:
         , m_inputBackpropagationMemory(nullptr)
         , m_parameterBackpropagationMemory(nullptr)
     {
-        static constexpr size_t sizeofInputRawTensors = (0 + ... + sizeof(RawTensor<ValueType, InputTensorDimensions>));
-        static constexpr size_t sizeofParameterRawTensors = (0 + ... + sizeof(RawTensor<ValueType, ParameterTensorDimensions>));
-        static constexpr size_t sizeofOutputRawTensors = (0 + ... + sizeof(RawTensor<ValueType, OutputTensorDimensions>));
+        static constexpr size_t sizeofInputRawTensors = (0 + ... + sizeof(RawTensor<ScalarType, InputTensorDimensions>));
+        static constexpr size_t sizeofParameterRawTensors = (0 + ... + sizeof(RawTensor<ScalarType, ParameterTensorDimensions>));
+        static constexpr size_t sizeofOutputRawTensors = (0 + ... + sizeof(RawTensor<ScalarType, OutputTensorDimensions>));
 
         cudaMallocManaged(&m_managedMemory, (
             // Memory space used for computation
@@ -99,12 +99,12 @@ public:
     {
         cudaFree(m_managedMemory);
 
-        m_parameterTensors.hostApply([](Tensor<ValueType, ParameterTensorDimensions>*&... tensors) {
+        m_parameterTensors.hostApply([](Tensor<ScalarType, ParameterTensorDimensions>*&... tensors) {
             (delete tensors, ...);
         });
     }
 
-    RawTuple<Tensor<ValueType, ParameterTensorDimensions>*...> m_parameterTensors;
+    RawTuple<Tensor<ScalarType, ParameterTensorDimensions>*...> m_parameterTensors;
 
     InputTensorMapType* m_inputMap;
     ParameterTensorMapType m_parameterMap;
@@ -148,15 +148,15 @@ AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::operator=(AbstractModule&& 
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
-AbstractTensorMap<ValueType>*
+AbstractTensorMap<ScalarType>*
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getInputAbstractTensorMap() const
 {
-    return dynamic_cast<AbstractTensorMap<ValueType>*>(getInputTensorMap());
+    return dynamic_cast<AbstractTensorMap<ScalarType>*>(getInputTensorMap());
 }
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
-TensorMap<ValueType, InputKeyEnum>*
+TensorMap<ScalarType, InputKeyEnum>*
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getInputTensorMap() const
 {
     return m_p->m_inputMap;
@@ -164,15 +164,15 @@ AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getInputTensorMap() const
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
-const AbstractTensorMap<ValueType>&
+const AbstractTensorMap<ScalarType>&
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getParameterAbstractTensorMap() const
 {
-    return dynamic_cast<const AbstractTensorMap<ValueType>&>(getParameterTensorMap());
+    return dynamic_cast<const AbstractTensorMap<ScalarType>&>(getParameterTensorMap());
 }
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
-const TensorMap<ValueType, ParameterKeyEnum>&
+const TensorMap<ScalarType, ParameterKeyEnum>&
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getParameterTensorMap() const
 {
     return m_p->m_parameterMap;
@@ -180,31 +180,31 @@ AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getParameterTensorMap() con
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
-AbstractTensorMap<ValueType>&
+AbstractTensorMap<ScalarType>&
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getParameterAbstractTensorMap()
 {
-    return dynamic_cast<AbstractTensorMap<ValueType>&>(getParameterTensorMap());
+    return dynamic_cast<AbstractTensorMap<ScalarType>&>(getParameterTensorMap());
 }
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
-TensorMap<ValueType, ParameterKeyEnum>&
+TensorMap<ScalarType, ParameterKeyEnum>&
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getParameterTensorMap()
 {
-    return const_cast<TensorMap<ValueType, ParameterKeyEnum>&>(static_cast<const AbstractModule*>(this)->getParameterTensorMap());
+    return const_cast<TensorMap<ScalarType, ParameterKeyEnum>&>(static_cast<const AbstractModule*>(this)->getParameterTensorMap());
 }
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
-AbstractTensorMap<ValueType>*
+AbstractTensorMap<ScalarType>*
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getOutputAbstractTensorMap() const
 {
-    return dynamic_cast<AbstractTensorMap<ValueType>*>(getOutputTensorMap());
+    return dynamic_cast<AbstractTensorMap<ScalarType>*>(getOutputTensorMap());
 }
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
-TensorMap<ValueType, OutputKeyEnum>*
+TensorMap<ScalarType, OutputKeyEnum>*
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getOutputTensorMap() const
 {
     return m_p->m_outputMap;
@@ -213,17 +213,17 @@ AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getOutputTensorMap() const
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
 void
-AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::setInputTensorMap(AbstractTensorMap<ValueType>* map)
+AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::setInputTensorMap(AbstractTensorMap<ScalarType>* map)
 {
-    m_p->m_inputMap = dynamic_cast<TensorMap<ValueType, InputKeyEnum>*>(map);
+    m_p->m_inputMap = dynamic_cast<TensorMap<ScalarType, InputKeyEnum>*>(map);
 }
 
 template <ABSTRACT_MODULE_SPECIALIZATION_PARAMS>
 HOST
 void
-AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::setOutputTensorMap(AbstractTensorMap<ValueType>* map)
+AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::setOutputTensorMap(AbstractTensorMap<ScalarType>* map)
 {
-    m_p->m_outputMap = dynamic_cast<TensorMap<ValueType, OutputKeyEnum>*>(map);
+    m_p->m_outputMap = dynamic_cast<TensorMap<ScalarType, OutputKeyEnum>*>(map);
 }
 
 template <typename KeyEnum, size_t Dimension>
@@ -234,7 +234,7 @@ HOST
 RawTuple<const TensorIndex<InputTensorDimensions>&...>
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getInputTensorSizes() const
 {
-    const TensorMap<ValueType, InputKeyEnum>* inputMap = getInputTensorMap();
+    const TensorMap<ScalarType, InputKeyEnum>* inputMap = getInputTensorMap();
     if (inputMap == nullptr)
     {
         throw std::runtime_error("AbstractModule: input map not set");
@@ -250,7 +250,7 @@ HOST
 RawTuple<const TensorIndex<ParameterTensorDimensions>&...>
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getParameterTensorSizes() const
 {
-    const TensorMap<ValueType, ParameterKeyEnum>& parameterMap = getParameterTensorMap();
+    const TensorMap<ScalarType, ParameterKeyEnum>& parameterMap = getParameterTensorMap();
 
     return ParameterKeyEnum::getValuesTuple().hostApply([&parameterMap](GetKeyEnum<ParameterKeyEnum, ParameterTensorDimensions>... keys) {
         return makeRawTuple<const TensorIndex<ParameterTensorDimensions>&...>(parameterMap.get(keys).sizes()...);
@@ -262,7 +262,7 @@ HOST
 RawTuple<const TensorIndex<OutputTensorDimensions>&...>
 AbstractModule<ABSTRACT_MODULE_SPECIALIZATION_ARGS>::getOutputTensorSizes() const
 {
-    const TensorMap<ValueType, OutputKeyEnum>* outputMap = getOutputTensorMap();
+    const TensorMap<ScalarType, OutputKeyEnum>* outputMap = getOutputTensorMap();
     if (outputMap == nullptr)
     {
         throw std::runtime_error("AbstractModule: output map not set");

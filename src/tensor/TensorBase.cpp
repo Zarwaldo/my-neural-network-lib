@@ -16,13 +16,13 @@ TensorBase::~TensorBase()
 {
 }
 
-template <TypenameArgId ValueTypeId, size_t Dimension>
-using NTTPTensorTemplate = Tensor<TypeFromTypenameArgId<ValueTypeId>, Dimension>;
+template <TypenameArgId ScalarTypeId, size_t Dimension>
+using NTTPTensorTemplate = Tensor<TypeFromTypenameArgId<ScalarTypeId>, Dimension>;
 
 namespace
 {
-    template <typename ValueType, size_t Dimension>
-    Tensor<ValueType, Dimension>* createTensor(const AbstractTensorIndex& sizes)
+    template <typename ScalarType, size_t Dimension>
+    Tensor<ScalarType, Dimension>* createTensor(const AbstractTensorIndex& sizes)
     {
         const TensorIndex<Dimension>* concreteSizes = dynamic_cast<const TensorIndex<Dimension>*>(&sizes);
         if (concreteSizes == nullptr)
@@ -30,15 +30,15 @@ namespace
             return nullptr;
         }
 
-        return Tensor<ValueType, Dimension>::create(*concreteSizes);
+        return Tensor<ScalarType, Dimension>::create(*concreteSizes);
     }
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 using TensorRtti = Rtti<
     TensorBase,
-    Tensor<ValueType, Dimension>,
-    BuildTimeFunctionPointer<createTensor<ValueType, Dimension>>
+    Tensor<ScalarType, Dimension>,
+    BuildTimeFunctionPointer<createTensor<ScalarType, Dimension>>
 >;
 
 static const StaticRttiHolder<TensorBase> tensorStaticRttiHolder([](RttiHolderToken<TensorBase>& token) {

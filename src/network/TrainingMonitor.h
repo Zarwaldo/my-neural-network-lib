@@ -2,9 +2,9 @@
 
 #include <rtti/Rtti.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 class OneInputProvider;
-template <typename ValueType>
+template <typename ScalarType>
 struct TrainingState;
 
 enum TrainingIterationStatus
@@ -14,14 +14,14 @@ enum TrainingIterationStatus
     INVALID
 };
 
-template <typename ValueType>
+template <typename ScalarType>
 class TrainingMonitor
 {
 public:
     virtual ~TrainingMonitor() = default;
 
-    virtual bool isTrainingOver(const TrainingState<ValueType>& state) const = 0;
-    virtual TrainingIterationStatus trainingIteration(size_t thickness, AbstractTensorMap<ValueType>& input, AbstractTensorMap<ValueType>& expected) = 0;
+    virtual bool isTrainingOver(const TrainingState<ScalarType>& state) const = 0;
+    virtual TrainingIterationStatus trainingIteration(size_t thickness, AbstractTensorMap<ScalarType>& input, AbstractTensorMap<ScalarType>& expected) = 0;
 
-    DECLARE_AS_RTTI_BASE_TYPE(TrainingMonitor<ValueType>)
+    DECLARE_AS_RTTI_BASE_TYPE(TrainingMonitor<ScalarType>)
 };

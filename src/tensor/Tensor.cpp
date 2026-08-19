@@ -6,47 +6,47 @@
 
 #include <stdexcept>
 
-template <typename ValueType>
+template <typename ScalarType>
 HOST
-AbstractTensor<ValueType>::~AbstractTensor()
+AbstractTensor<ScalarType>::~AbstractTensor()
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-Tensor<ValueType, Dimension>::Tensor(ManagedMemorySharedPtr<ValueType>& data, const RawTensor<ValueType, Dimension>& rawTensor)
+Tensor<ScalarType, Dimension>::Tensor(ManagedMemorySharedPtr<ScalarType>& data, const RawTensor<ScalarType, Dimension>& rawTensor)
     : m_data(data)
     , m_rawTensor(rawTensor)
     , m_sizes(TensorIndex<Dimension>(m_rawTensor.m_sizes))
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-Tensor<ValueType, Dimension>::Tensor(ManagedMemorySharedPtr<ValueType>&& data, const RawTensor<ValueType, Dimension>& rawTensor)
+Tensor<ScalarType, Dimension>::Tensor(ManagedMemorySharedPtr<ScalarType>&& data, const RawTensor<ScalarType, Dimension>& rawTensor)
     : m_data(std::move(data))
     , m_rawTensor(rawTensor)
     , m_sizes(TensorIndex<Dimension>(m_rawTensor.m_sizes))
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-Tensor<ValueType, Dimension>::Tensor(const Tensor<ValueType, Dimension>& other)
+Tensor<ScalarType, Dimension>::Tensor(const Tensor<ScalarType, Dimension>& other)
     : m_data(other.m_data)
     , m_rawTensor(other.m_rawTensor)
     , m_sizes(other.m_sizes)
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-Tensor<ValueType, Dimension>::Tensor(Tensor<ValueType, Dimension>&& other)
+Tensor<ScalarType, Dimension>::Tensor(Tensor<ScalarType, Dimension>&& other)
     : m_data(std::move(other.m_data))
     , m_rawTensor(other.m_rawTensor)
     , m_sizes(other.m_sizes)
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-Tensor<ValueType, Dimension>*
-Tensor<ValueType, Dimension>::create(const TensorIndex<Dimension>& sizes)
+Tensor<ScalarType, Dimension>*
+Tensor<ScalarType, Dimension>::create(const TensorIndex<Dimension>& sizes)
 {
     size_t strides[Max<Dimension, 1>];
     if constexpr (Dimension > 0)
@@ -58,21 +58,21 @@ Tensor<ValueType, Dimension>::create(const TensorIndex<Dimension>& sizes)
         }
     }
 
-    ManagedMemorySharedPtr<ValueType> data(sizes.nbInferiorIndices());
+    ManagedMemorySharedPtr<ScalarType> data(sizes.nbInferiorIndices());
 
-    RawTensor<ValueType, Dimension> rawTensor(sizes.getRawTensorIndex(), RawTensorIndex<Dimension>(strides), data.getPtr());
-    return new Tensor<ValueType, Dimension>(std::move(data), rawTensor);
+    RawTensor<ScalarType, Dimension> rawTensor(sizes.getRawTensorIndex(), RawTensorIndex<Dimension>(strides), data.getPtr());
+    return new Tensor<ScalarType, Dimension>(std::move(data), rawTensor);
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-Tensor<ValueType, Dimension>::~Tensor()
+Tensor<ScalarType, Dimension>::~Tensor()
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-Tensor<ValueType, Dimension>&
-Tensor<ValueType, Dimension>::operator=(const Tensor<ValueType, Dimension>& other)
+Tensor<ScalarType, Dimension>&
+Tensor<ScalarType, Dimension>::operator=(const Tensor<ScalarType, Dimension>& other)
 {
     m_data = other.m_data;
     m_rawTensor = other.m_rawTensor;
@@ -81,10 +81,10 @@ Tensor<ValueType, Dimension>::operator=(const Tensor<ValueType, Dimension>& othe
     return *this;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-Tensor<ValueType, Dimension>&
-Tensor<ValueType, Dimension>::operator=(Tensor<ValueType, Dimension>&& other)
+Tensor<ScalarType, Dimension>&
+Tensor<ScalarType, Dimension>::operator=(Tensor<ScalarType, Dimension>&& other)
 {
     m_data = std::move(other.m_data);
     m_rawTensor = std::move(other.m_rawTensor);
@@ -93,127 +93,127 @@ Tensor<ValueType, Dimension>::operator=(Tensor<ValueType, Dimension>&& other)
     return *this;
 }
 
-template <typename ValueType, size_t Dimension>
-const RawTensor<ValueType, Dimension>&
-Tensor<ValueType, Dimension>::getRawTensor() const
+template <typename ScalarType, size_t Dimension>
+const RawTensor<ScalarType, Dimension>&
+Tensor<ScalarType, Dimension>::getRawTensor() const
 {
     return m_rawTensor;
 }
 
-template <typename ValueType, size_t Dimension>
-RawTensor<ValueType, Dimension>&
-Tensor<ValueType, Dimension>::getRawTensor()
+template <typename ScalarType, size_t Dimension>
+RawTensor<ScalarType, Dimension>&
+Tensor<ScalarType, Dimension>::getRawTensor()
 {
-    return const_cast<RawTensor<ValueType, Dimension>&>(static_cast<const Tensor<ValueType, Dimension>*>(this)->getRawTensor());
+    return const_cast<RawTensor<ScalarType, Dimension>&>(static_cast<const Tensor<ScalarType, Dimension>*>(this)->getRawTensor());
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
 size_t
-Tensor<ValueType, Dimension>::dim() const
+Tensor<ScalarType, Dimension>::dim() const
 {
     return m_rawTensor.dim();
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
 const AbstractTensorIndex&
-Tensor<ValueType, Dimension>::sizes() const
+Tensor<ScalarType, Dimension>::sizes() const
 {
     return m_sizes;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
 size_t
-Tensor<ValueType, Dimension>::nbElements() const
+Tensor<ScalarType, Dimension>::nbElements() const
 {
     return m_rawTensor.nbElements();
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
 size_t
-Tensor<ValueType, Dimension>::memorySize() const
+Tensor<ScalarType, Dimension>::memorySize() const
 {
     return m_rawTensor.memorySize();
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-const ValueType&
-Tensor<ValueType, Dimension>::operator*() const
+const ScalarType&
+Tensor<ScalarType, Dimension>::operator*() const
 {
     return *m_rawTensor;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-ValueType&
-Tensor<ValueType, Dimension>::operator*()
+ScalarType&
+Tensor<ScalarType, Dimension>::operator*()
 {
-    return const_cast<ValueType&>(*static_cast<const Tensor<ValueType, Dimension>&>(*this));
+    return const_cast<ScalarType&>(*static_cast<const Tensor<ScalarType, Dimension>&>(*this));
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-const Tensor<ValueType, Dimension>
-Tensor<ValueType, Dimension>::subtensor(const TensorIndex<Dimension>& minIndex, const TensorIndex<Dimension>& maxIndex) const
+const Tensor<ScalarType, Dimension>
+Tensor<ScalarType, Dimension>::subtensor(const TensorIndex<Dimension>& minIndex, const TensorIndex<Dimension>& maxIndex) const
 {
     const RawTensorIndex<Dimension>& rawMinIndex = static_cast<const TensorIndex<Dimension>&>(minIndex).getRawTensorIndex();
     const RawTensorIndex<Dimension>& rawMaxIndex = static_cast<const TensorIndex<Dimension>&>(maxIndex).getRawTensorIndex();
-    return Tensor<ValueType, Dimension>(const_cast<ManagedMemorySharedPtr<ValueType>&>(m_data), m_rawTensor.subtensor(rawMinIndex, rawMaxIndex));
+    return Tensor<ScalarType, Dimension>(const_cast<ManagedMemorySharedPtr<ScalarType>&>(m_data), m_rawTensor.subtensor(rawMinIndex, rawMaxIndex));
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-Tensor<ValueType, Dimension>
-Tensor<ValueType, Dimension>::subtensor(const TensorIndex<Dimension>& minIndex, const TensorIndex<Dimension>& maxIndex)
+Tensor<ScalarType, Dimension>
+Tensor<ScalarType, Dimension>::subtensor(const TensorIndex<Dimension>& minIndex, const TensorIndex<Dimension>& maxIndex)
 {
-    return static_cast<const Tensor<ValueType, Dimension>*>(this)->subtensor(minIndex, maxIndex);
+    return static_cast<const Tensor<ScalarType, Dimension>*>(this)->subtensor(minIndex, maxIndex);
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-const ValueType&
-Tensor<ValueType, Dimension>::operator[](const AbstractTensorIndex& index) const
+const ScalarType&
+Tensor<ScalarType, Dimension>::operator[](const AbstractTensorIndex& index) const
 {
     return m_rawTensor[static_cast<const TensorIndex<Dimension>&>(index).getRawTensorIndex()];
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-ValueType&
-Tensor<ValueType, Dimension>::operator[](const AbstractTensorIndex& index)
+ScalarType&
+Tensor<ScalarType, Dimension>::operator[](const AbstractTensorIndex& index)
 {
-    return const_cast<ValueType&>(static_cast<const Tensor<ValueType, Dimension>&>(*this)[index]);
+    return const_cast<ScalarType&>(static_cast<const Tensor<ScalarType, Dimension>&>(*this)[index]);
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-typename RawTensor<ValueType, Dimension>::Iterator
-Tensor<ValueType, Dimension>::iterator(const TensorIndex<Dimension>& index) const
+typename RawTensor<ScalarType, Dimension>::Iterator
+Tensor<ScalarType, Dimension>::iterator(const TensorIndex<Dimension>& index) const
 {
     return m_rawTensor.iterator(static_cast<const TensorIndex<Dimension>&>(index).getRawTensorIndex());
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-typename RawTensor<ValueType, Dimension>::Iterator
-Tensor<ValueType, Dimension>::begin() const
+typename RawTensor<ScalarType, Dimension>::Iterator
+Tensor<ScalarType, Dimension>::begin() const
 {
     return m_rawTensor.begin();
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
-typename RawTensor<ValueType, Dimension>::Iterator
-Tensor<ValueType, Dimension>::end() const
+typename RawTensor<ScalarType, Dimension>::Iterator
+Tensor<ScalarType, Dimension>::end() const
 {
     return m_rawTensor.end();
 }
 
-IMPLEMENT_RTTI(Tensor, TensorBase, PACK(typename, size_t), PACK(ValueType, Dimension))
+IMPLEMENT_RTTI(Tensor, TensorBase, PACK(typename, size_t), PACK(ScalarType, Dimension))
 
 template class MY_NEURAL_NETWORK_LIB__TENSOR__API Tensor<float, 0>;
 template class MY_NEURAL_NETWORK_LIB__TENSOR__API Tensor<float, 1>;

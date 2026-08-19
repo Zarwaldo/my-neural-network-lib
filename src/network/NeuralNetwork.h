@@ -10,28 +10,28 @@
 class AbstractInitializer;
 template <typename BaseType>
 class AbstractRtti;
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractNetworkBuilder;
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensor;
 class AbstractTensorIndex;
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensorMap;
-template <typename ValueType>
+template <typename ScalarType>
 class InputProvider;
-template <typename ValueType>
+template <typename ScalarType>
 class Module;
-template <typename ValueType>
+template <typename ScalarType>
 class OutputReceiver;
-template <typename ValueType>
+template <typename ScalarType>
 class ParamTensorFiller;
 template <typename BaseType>
 class RttiHolder;
 
-template <typename ValueType>
+template <typename ScalarType>
 class NeuralNetworkPimpl;
 
-template <typename ValueType>
+template <typename ScalarType>
 class NeuralNetwork
 {
 public:
@@ -41,37 +41,37 @@ public:
 
     virtual ~NeuralNetwork();
 
-    NeuralNetwork<ValueType>& operator=(const NeuralNetwork<ValueType>& other) = delete;
-    NeuralNetwork<ValueType>& operator=(NeuralNetwork<ValueType>&& other);
+    NeuralNetwork<ScalarType>& operator=(const NeuralNetwork<ScalarType>& other) = delete;
+    NeuralNetwork<ScalarType>& operator=(NeuralNetwork<ScalarType>&& other);
 
-    AbstractTensor<ValueType>& addTensor(const AbstractTensorIndex& size, bool addThicknessDimension = true);
-    AbstractTensorMap<ValueType>& addTensorMap(AbstractTensorMap<ValueType>* tensorMap);
-    Module<ValueType>& addModule(const AbstractRtti<Module<ValueType>>& moduleRtti, AbstractInitializer&& modulesCtorParams, AbstractTensorMap<ValueType>& inputMap, AbstractTensorMap<ValueType>& outputMap, const ParamTensorFiller<ValueType>& paramTensorFiller);
-    std::map<std::string, void*> build(const AbstractRtti<AbstractNetworkBuilder<ValueType>>& builderRtti, AbstractInitializer&& initializer, const AbstractNetworkBuilder<ValueType>** resultBuilder = nullptr);
+    AbstractTensor<ScalarType>& addTensor(const AbstractTensorIndex& size, bool addThicknessDimension = true);
+    AbstractTensorMap<ScalarType>& addTensorMap(AbstractTensorMap<ScalarType>* tensorMap);
+    Module<ScalarType>& addModule(const AbstractRtti<Module<ScalarType>>& moduleRtti, AbstractInitializer&& modulesCtorParams, AbstractTensorMap<ScalarType>& inputMap, AbstractTensorMap<ScalarType>& outputMap, const ParamTensorFiller<ScalarType>& paramTensorFiller);
+    std::map<std::string, void*> build(const AbstractRtti<AbstractNetworkBuilder<ScalarType>>& builderRtti, AbstractInitializer&& initializer, const AbstractNetworkBuilder<ScalarType>** resultBuilder = nullptr);
 
-    void removeTensor(const AbstractTensor<ValueType>& tensor);
-    void removeTensorMap(const AbstractTensorMap<ValueType>& tensorMap);
-    void removeModule(const Module<ValueType>& module);
-    void unbuild(const AbstractNetworkBuilder<ValueType>& builder);
+    void removeTensor(const AbstractTensor<ScalarType>& tensor);
+    void removeTensorMap(const AbstractTensorMap<ScalarType>& tensorMap);
+    void removeModule(const Module<ScalarType>& module);
+    void unbuild(const AbstractNetworkBuilder<ScalarType>& builder);
 
-    virtual void setInput(AbstractTensorMap<ValueType>* map);
-    virtual void setOutput(AbstractTensorMap<ValueType>* map);
+    virtual void setInput(AbstractTensorMap<ScalarType>* map);
+    virtual void setOutput(AbstractTensorMap<ScalarType>* map);
 
-    const std::vector<AbstractTensor<ValueType>*>& getTensors() const;
-    const std::vector<AbstractTensorMap<ValueType>*>& getTensorMaps() const;
-    const std::vector<Module<ValueType>*>& getModules() const;
+    const std::vector<AbstractTensor<ScalarType>*>& getTensors() const;
+    const std::vector<AbstractTensorMap<ScalarType>*>& getTensorMaps() const;
+    const std::vector<Module<ScalarType>*>& getModules() const;
 
-    const AbstractTensorMap<ValueType>* getInput() const;
-    AbstractTensorMap<ValueType>* getInput();
-    const AbstractTensorMap<ValueType>* getOutput() const;
-    AbstractTensorMap<ValueType>* getOutput();
+    const AbstractTensorMap<ScalarType>* getInput() const;
+    AbstractTensorMap<ScalarType>* getInput();
+    const AbstractTensorMap<ScalarType>* getOutput() const;
+    AbstractTensorMap<ScalarType>* getOutput();
 
     bool canExecute() const;
-    void execute(InputProvider<ValueType>& inputProvider, OutputReceiver<ValueType>& outputReceiver) const;
-    void executeAll(InputProvider<ValueType>& inputProvider, OutputReceiver<ValueType>& outputReceiver) const;
+    void execute(InputProvider<ScalarType>& inputProvider, OutputReceiver<ScalarType>& outputReceiver) const;
+    void executeAll(InputProvider<ScalarType>& inputProvider, OutputReceiver<ScalarType>& outputReceiver) const;
 
     size_t thickness() const;
 
 private:
-    NeuralNetworkPimpl<ValueType>* m_pimpl;
+    NeuralNetworkPimpl<ScalarType>* m_pimpl;
 };

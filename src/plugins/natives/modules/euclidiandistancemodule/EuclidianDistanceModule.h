@@ -6,14 +6,14 @@
 
 #include <tensor/TensorIndex.h>
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 class EuclidianDistanceModuleImpl;
 
 DECLARE_MODULE_WRAPPER(
     EuclidianDistanceModule,
-    ValueType,
+    ScalarType,
     EuclidianDistanceModuleImpl,
     PACK(RawTuple<const TensorIndex<0>&>),
     PACK(typename, size_t),
-    PACK(ValueType, Dimension)
+    PACK(ScalarType, Dimension)
 )

@@ -2,17 +2,17 @@
 
 #include <network/NullOutputReceiver.h>
 
-template <typename ValueType>
-NullOutputReceiver<ValueType>::NullOutputReceiver()
+template <typename ScalarType>
+NullOutputReceiver<ScalarType>::NullOutputReceiver()
 {}
 
-template <typename ValueType>
-NullOutputReceiver<ValueType>::~NullOutputReceiver()
+template <typename ScalarType>
+NullOutputReceiver<ScalarType>::~NullOutputReceiver()
 {}
 
-template <typename ValueType>
+template <typename ScalarType>
 void
-NullOutputReceiver<ValueType>::sendOutput(const AbstractTensorMap<ValueType>& outputMap)
+NullOutputReceiver<ScalarType>::sendOutput(const AbstractTensorMap<ScalarType>& outputMap)
 {}
 
-IMPLEMENT_RTTI(NullOutputReceiver, OutputReceiver<ValueType>, PACK(typename), PACK(ValueType))
+IMPLEMENT_RTTI(NullOutputReceiver, OutputReceiver<ScalarType>, PACK(typename), PACK(ScalarType))

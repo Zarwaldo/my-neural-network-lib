@@ -11,10 +11,10 @@
 
 #include <vector>
 
-template <typename ValueType>
+template <typename ScalarType>
 struct DuplicateTensorMapBuilderPimpl
 {
-    DuplicateTensorMapBuilderPimpl(NeuralNetwork<ValueType>& network, const AbstractTensorMap<ValueType>& originalTensorMap, const std::map<const AbstractTensor<ValueType>*, AbstractTensor<ValueType>*>& correspondingTensors, NeuralNetworkPartHolder<ValueType>* networkPartHolder, std::vector<DuplicateTensorBuilder<ValueType>>* subBuilders)
+    DuplicateTensorMapBuilderPimpl(NeuralNetwork<ScalarType>& network, const AbstractTensorMap<ScalarType>& originalTensorMap, const std::map<const AbstractTensor<ScalarType>*, AbstractTensor<ScalarType>*>& correspondingTensors, NeuralNetworkPartHolder<ScalarType>* networkPartHolder, std::vector<DuplicateTensorBuilder<ScalarType>>* subBuilders)
         : network(network)
         , originalTensorMap(originalTensorMap)
         , correspondingTensors(correspondingTensors)
@@ -22,76 +22,76 @@ struct DuplicateTensorMapBuilderPimpl
         , subBuilders(subBuilders)
     {}
 
-    NeuralNetwork<ValueType>& network;
-    const AbstractTensorMap<ValueType>& originalTensorMap;
-    const std::map<const AbstractTensor<ValueType>*, AbstractTensor<ValueType>*>& correspondingTensors;
-    NeuralNetworkPartHolder<ValueType>* networkPartHolder;
-    std::vector<DuplicateTensorBuilder<ValueType>>* subBuilders;
+    NeuralNetwork<ScalarType>& network;
+    const AbstractTensorMap<ScalarType>& originalTensorMap;
+    const std::map<const AbstractTensor<ScalarType>*, AbstractTensor<ScalarType>*>& correspondingTensors;
+    NeuralNetworkPartHolder<ScalarType>* networkPartHolder;
+    std::vector<DuplicateTensorBuilder<ScalarType>>* subBuilders;
 };
 
-template <typename ValueType>
-DuplicateTensorMapBuilder<ValueType>::DuplicateTensorMapBuilder(NeuralNetwork<ValueType>& network, const AbstractTensorMap<ValueType>& tensorMap, const std::map<const AbstractTensor<ValueType>*, AbstractTensor<ValueType>*>& correspondingTensors)
+template <typename ScalarType>
+DuplicateTensorMapBuilder<ScalarType>::DuplicateTensorMapBuilder(NeuralNetwork<ScalarType>& network, const AbstractTensorMap<ScalarType>& tensorMap, const std::map<const AbstractTensor<ScalarType>*, AbstractTensor<ScalarType>*>& correspondingTensors)
     : m_pimpl(
-        new DuplicateTensorMapBuilderPimpl<ValueType>(
+        new DuplicateTensorMapBuilderPimpl<ScalarType>(
             network,
             tensorMap,
             correspondingTensors,
-            new NeuralNetworkPartHolder<ValueType>(network),
-            new std::vector<DuplicateTensorBuilder<ValueType>>{}
+            new NeuralNetworkPartHolder<ScalarType>(network),
+            new std::vector<DuplicateTensorBuilder<ScalarType>>{}
         )
     )
 {
-    for (std::pair<const AbstractTensor<ValueType>*, AbstractTensor<ValueType>*> entry : m_pimpl->correspondingTensors)
+    for (std::pair<const AbstractTensor<ScalarType>*, AbstractTensor<ScalarType>*> entry : m_pimpl->correspondingTensors)
     {
         if (entry.first->sizes() != entry.second->sizes())
         {
-            throw std::runtime_error("DuplicateTensorMapBuilder<ValueType>::DuplicateTensorMapBuilder: The correspondingTensors map associates tensors of different sizes.");
+            throw std::runtime_error("DuplicateTensorMapBuilder<ScalarType>::DuplicateTensorMapBuilder: The correspondingTensors map associates tensors of different sizes.");
         }
     }
 }
 
-template <typename ValueType>
-DuplicateTensorMapBuilder<ValueType>::DuplicateTensorMapBuilder(DuplicateTensorMapBuilder&& other)
+template <typename ScalarType>
+DuplicateTensorMapBuilder<ScalarType>::DuplicateTensorMapBuilder(DuplicateTensorMapBuilder&& other)
     : m_pimpl(other.m_pimpl)
 {
     other.m_pimpl = nullptr;
 }
 
-template <typename ValueType>
-DuplicateTensorMapBuilder<ValueType>::~DuplicateTensorMapBuilder()
+template <typename ScalarType>
+DuplicateTensorMapBuilder<ScalarType>::~DuplicateTensorMapBuilder()
 {
     delete m_pimpl->networkPartHolder;
     delete m_pimpl->subBuilders;
     delete m_pimpl;
 }
 
-template <typename ValueType>
-DuplicateTensorMapBuilder<ValueType>&
-DuplicateTensorMapBuilder<ValueType>::operator=(DuplicateTensorMapBuilder&& other)
+template <typename ScalarType>
+DuplicateTensorMapBuilder<ScalarType>&
+DuplicateTensorMapBuilder<ScalarType>::operator=(DuplicateTensorMapBuilder&& other)
 {
     std::swap(m_pimpl, other.m_pimpl);
     return *this;
 }
 
-template <typename ValueType>
+template <typename ScalarType>
 std::map<std::string, void*>
-DuplicateTensorMapBuilder<ValueType>::build()
+DuplicateTensorMapBuilder<ScalarType>::build()
 {
     if (!m_pimpl->subBuilders->empty())
-        throw std::runtime_error("DuplicateTensorMapBuilder<ValueType>::build: This builder was already used.");
+        throw std::runtime_error("DuplicateTensorMapBuilder<ScalarType>::build: This builder was already used.");
 
     const size_t nbTensors = m_pimpl->originalTensorMap.nbTensors();
-    AbstractTensor<ValueType>** duplicatedTensorsArray = new AbstractTensor<ValueType>*[nbTensors];
+    AbstractTensor<ScalarType>** duplicatedTensorsArray = new AbstractTensor<ScalarType>*[nbTensors];
 
     for (size_t tensorIndex = 0; tensorIndex < nbTensors; ++tensorIndex)
     {
-        const AbstractTensor<ValueType>& tensor = m_pimpl->originalTensorMap.get(tensorIndex);
-        const std::map<const AbstractTensor<ValueType>*, AbstractTensor<ValueType>*>::const_iterator correspondingTensorsIt = m_pimpl->correspondingTensors.find(&tensor);
+        const AbstractTensor<ScalarType>& tensor = m_pimpl->originalTensorMap.get(tensorIndex);
+        const std::map<const AbstractTensor<ScalarType>*, AbstractTensor<ScalarType>*>::const_iterator correspondingTensorsIt = m_pimpl->correspondingTensors.find(&tensor);
         if (correspondingTensorsIt == m_pimpl->correspondingTensors.cend())
         {
-            m_pimpl->subBuilders->push_back(DuplicateTensorBuilder<ValueType>(m_pimpl->network, tensor));
+            m_pimpl->subBuilders->push_back(DuplicateTensorBuilder<ScalarType>(m_pimpl->network, tensor));
             std::map<std::string, void*> buildingResult = m_pimpl->subBuilders->back().build();
-            duplicatedTensorsArray[tensorIndex] = static_cast<AbstractTensor<ValueType>*>(buildingResult[DuplicateTensorBuilder<ValueType>::addedTensorKey]);
+            duplicatedTensorsArray[tensorIndex] = static_cast<AbstractTensor<ScalarType>*>(buildingResult[DuplicateTensorBuilder<ScalarType>::addedTensorKey]);
         }
         else
         {
@@ -99,8 +99,8 @@ DuplicateTensorMapBuilder<ValueType>::build()
         }
     }
 
-    const AbstractRtti<AbstractTensorMap<ValueType>>* tensorMapRtti = m_pimpl->originalTensorMap.getClassRtti();
-    AbstractTensorMap<ValueType>& duplicatedTensorMap = m_pimpl->networkPartHolder->addTensorMap(tensorMapRtti->createInstance(Initializer<AbstractTensor<ValueType>* const *>(static_cast<AbstractTensor<ValueType>* const *>(duplicatedTensorsArray))));
+    const AbstractRtti<AbstractTensorMap<ScalarType>>* tensorMapRtti = m_pimpl->originalTensorMap.getClassRtti();
+    AbstractTensorMap<ScalarType>& duplicatedTensorMap = m_pimpl->networkPartHolder->addTensorMap(tensorMapRtti->createInstance(Initializer<AbstractTensor<ScalarType>* const *>(static_cast<AbstractTensor<ScalarType>* const *>(duplicatedTensorsArray))));
 
     delete[] duplicatedTensorsArray;
 
@@ -109,4 +109,4 @@ DuplicateTensorMapBuilder<ValueType>::build()
     return result;
 }
 
-IMPLEMENT_RTTI(DuplicateTensorMapBuilder, AbstractNetworkBuilder<ValueType>, PACK(typename), PACK(ValueType))
+IMPLEMENT_RTTI(DuplicateTensorMapBuilder, AbstractNetworkBuilder<ScalarType>, PACK(typename), PACK(ScalarType))

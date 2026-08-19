@@ -6,7 +6,7 @@
 
 IMPLEMENT_MODULE(
     AdditionModuleImpl,
-    ValueType,
+    ScalarType,
     TensorSingleton,
     TensorSingleton,
     TensorSingleton,
@@ -14,13 +14,13 @@ IMPLEMENT_MODULE(
     PACK(Dimension),
     PACK(Dimension + 1),
     PACK(typename, size_t),
-    PACK(ValueType, Dimension)
+    PACK(ScalarType, Dimension)
 )
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST
 bool
-AdditionModuleImpl<ValueType, Dimension>::areSizesCorrect(const RawTuple<const TensorIndex<Dimension + 1>&>& inputTensorsSizes, const RawTuple<const TensorIndex<Dimension>&>& parameterTensorsSizes, const RawTuple<const TensorIndex<Dimension + 1>&>& outputTensorsSizes)
+AdditionModuleImpl<ScalarType, Dimension>::areSizesCorrect(const RawTuple<const TensorIndex<Dimension + 1>&>& inputTensorsSizes, const RawTuple<const TensorIndex<Dimension>&>& parameterTensorsSizes, const RawTuple<const TensorIndex<Dimension + 1>&>& outputTensorsSizes)
 {
     const TensorIndex<Dimension + 1>& inputTensorSizesIndex = inputTensorsSizes.template get<0>();
     const TensorIndex<Dimension>& paramTensorSizesIndex = parameterTensorsSizes.template get<0>();
@@ -29,12 +29,12 @@ AdditionModuleImpl<ValueType, Dimension>::areSizesCorrect(const RawTuple<const T
     return inputTensorSizesIndex == outputTensorSizesIndex && paramTensorSizesIndex == inputTensorSizesIndex.template range<1, -1>();
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 DEVICE
 void
-AdditionModuleImpl<ValueType, Dimension>::computationKernel__SINGLE_TENSOR(RawTensor<ValueType, Dimension + 1>* output, const RawTensor<ValueType, Dimension>* parameter, const RawTensor<ValueType, Dimension + 1>* input)
+AdditionModuleImpl<ScalarType, Dimension>::computationKernel__SINGLE_TENSOR(RawTensor<ScalarType, Dimension + 1>* output, const RawTensor<ScalarType, Dimension>* parameter, const RawTensor<ScalarType, Dimension + 1>* input)
 {
-    TensorThreadDistributor<ValueType, Dimension + 1> distributor(*output);
+    TensorThreadDistributor<ScalarType, Dimension + 1> distributor(*output);
     distributor.iterate([output, parameter, input](const RawTensorIndex<Dimension + 1>& index) {
         if (!(index < output->sizes()))
             return;
@@ -43,12 +43,12 @@ AdditionModuleImpl<ValueType, Dimension>::computationKernel__SINGLE_TENSOR(RawTe
     });
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 DEVICE
 void
-AdditionModuleImpl<ValueType, Dimension>::inputBackpropagationKernel__SINGLE_TENSOR(RawTensor<ValueType, Dimension + 1>* costPartDerivWRTInput, const RawTensor<ValueType, Dimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, Dimension + 1>* output, const RawTensor<ValueType, Dimension>* parameter, const RawTensor<ValueType, Dimension + 1>* input)
+AdditionModuleImpl<ScalarType, Dimension>::inputBackpropagationKernel__SINGLE_TENSOR(RawTensor<ScalarType, Dimension + 1>* costPartDerivWRTInput, const RawTensor<ScalarType, Dimension + 1>* costPartDerivWRTOutput, const RawTensor<ScalarType, Dimension + 1>* output, const RawTensor<ScalarType, Dimension>* parameter, const RawTensor<ScalarType, Dimension + 1>* input)
 {
-    TensorThreadDistributor<ValueType, Dimension + 1> distributor(*costPartDerivWRTInput);
+    TensorThreadDistributor<ScalarType, Dimension + 1> distributor(*costPartDerivWRTInput);
     distributor.iterate([costPartDerivWRTInput, costPartDerivWRTOutput](const RawTensorIndex<Dimension + 1>& index) {
         if (!(index < costPartDerivWRTInput->sizes()))
             return;
@@ -57,15 +57,15 @@ AdditionModuleImpl<ValueType, Dimension>::inputBackpropagationKernel__SINGLE_TEN
     });
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 DEVICE
 void
-AdditionModuleImpl<ValueType, Dimension>::parameterBackpropagationKernel__SINGLE_TENSOR(RawTensor<ValueType, Dimension>* costPartDerivWRTParameter, const RawTensor<ValueType, Dimension + 1>* costPartDerivWRTOutput, const RawTensor<ValueType, Dimension + 1>* output, const RawTensor<ValueType, Dimension>* parameter, const RawTensor<ValueType, Dimension + 1>* input)
+AdditionModuleImpl<ScalarType, Dimension>::parameterBackpropagationKernel__SINGLE_TENSOR(RawTensor<ScalarType, Dimension>* costPartDerivWRTParameter, const RawTensor<ScalarType, Dimension + 1>* costPartDerivWRTOutput, const RawTensor<ScalarType, Dimension + 1>* output, const RawTensor<ScalarType, Dimension>* parameter, const RawTensor<ScalarType, Dimension + 1>* input)
 {
-    ValueType value;
+    ScalarType value;
     RawTensorIndex<Dimension + 1> outputIndex;
 
-    TensorThreadDistributor<ValueType, Dimension> distributor(*costPartDerivWRTParameter);
+    TensorThreadDistributor<ScalarType, Dimension> distributor(*costPartDerivWRTParameter);
     distributor.iterate([costPartDerivWRTParameter, costPartDerivWRTOutput, &value, &outputIndex](const RawTensorIndex<Dimension>& index) {
         if (!(index < costPartDerivWRTParameter->sizes()))
             return;

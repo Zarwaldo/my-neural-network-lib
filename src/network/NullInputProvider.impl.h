@@ -2,24 +2,24 @@
 
 #include <network/NullInputProvider.h>
 
-template <typename ValueType>
-NullInputProvider<ValueType>::NullInputProvider()
+template <typename ScalarType>
+NullInputProvider<ScalarType>::NullInputProvider()
 {}
 
-template <typename ValueType>
-NullInputProvider<ValueType>::~NullInputProvider()
+template <typename ScalarType>
+NullInputProvider<ScalarType>::~NullInputProvider()
 {}
 
-template <typename ValueType>
+template <typename ScalarType>
 void
-NullInputProvider<ValueType>::getNewInput(AbstractTensorMap<ValueType>& inputMap)
+NullInputProvider<ScalarType>::getNewInput(AbstractTensorMap<ScalarType>& inputMap)
 {}
 
-template <typename ValueType>
+template <typename ScalarType>
 bool
-NullInputProvider<ValueType>::hasMoreThan(size_t nbInputs) const
+NullInputProvider<ScalarType>::hasMoreThan(size_t nbInputs) const
 {
     return true;
 }
 
-IMPLEMENT_RTTI(NullInputProvider, InputProvider<ValueType>, PACK(typename), PACK(ValueType))
+IMPLEMENT_RTTI(NullInputProvider, InputProvider<ScalarType>, PACK(typename), PACK(ScalarType))

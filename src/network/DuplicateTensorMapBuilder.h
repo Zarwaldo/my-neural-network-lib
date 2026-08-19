@@ -5,19 +5,19 @@
 #include <map>
 #include <string>
 
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensorMap;
-template <typename ValueType>
+template <typename ScalarType>
 class NeuralNetwork;
 
-template <typename ValueType>
+template <typename ScalarType>
 struct DuplicateTensorMapBuilderPimpl;
 
-template <typename ValueType>
-class DuplicateTensorMapBuilder : public AbstractNetworkBuilder<ValueType>
+template <typename ScalarType>
+class DuplicateTensorMapBuilder : public AbstractNetworkBuilder<ScalarType>
 {
 public:
-    DuplicateTensorMapBuilder(NeuralNetwork<ValueType>& network, const AbstractTensorMap<ValueType>& tensorMap, const std::map<const AbstractTensor<ValueType>*, AbstractTensor<ValueType>*>& correspondingTensors = {});
+    DuplicateTensorMapBuilder(NeuralNetwork<ScalarType>& network, const AbstractTensorMap<ScalarType>& tensorMap, const std::map<const AbstractTensor<ScalarType>*, AbstractTensor<ScalarType>*>& correspondingTensors = {});
     DuplicateTensorMapBuilder(const DuplicateTensorMapBuilder& other) = delete;
     DuplicateTensorMapBuilder(DuplicateTensorMapBuilder&& other);
 
@@ -31,7 +31,7 @@ public:
     static inline const std::string addedTensorMapKey = "added_tensor_map";
 
 private:
-    DuplicateTensorMapBuilderPimpl<ValueType>* m_pimpl;
+    DuplicateTensorMapBuilderPimpl<ScalarType>* m_pimpl;
 
-    DECLARE_RTTI(AbstractNetworkBuilder<ValueType>)
+    DECLARE_RTTI(AbstractNetworkBuilder<ScalarType>)
 };

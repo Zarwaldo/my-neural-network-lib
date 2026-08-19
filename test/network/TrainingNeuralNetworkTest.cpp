@@ -23,11 +23,11 @@
 #include <cmath>
 #include <filesystem>
 
-template <typename ValueType, size_t Dimension>
-class SampleTrainingMonitor : public TrainingMonitor<ValueType>
+template <typename ScalarType, size_t Dimension>
+class SampleTrainingMonitor : public TrainingMonitor<ScalarType>
 {
 public:
-    SampleTrainingMonitor(ValueType factor, ValueType offset)
+    SampleTrainingMonitor(ScalarType factor, ScalarType offset)
         : m_factor(factor)
         , m_offset(offset)
         , m_step(0)
@@ -36,16 +36,16 @@ public:
     virtual ~SampleTrainingMonitor()
     {}
 
-    virtual bool isTrainingOver(const TrainingState<ValueType>& state) const override
+    virtual bool isTrainingOver(const TrainingState<ScalarType>& state) const override
     {
         // Give the training 30s to reach a training cost of 10^-5
-        return state.currentCostOnTestingData < static_cast<ValueType>(1.0E-5f) || state.timeElapsed > 30.0f;
+        return state.currentCostOnTestingData < static_cast<ScalarType>(1.0E-5f) || state.timeElapsed > 30.0f;
     }
 
-    virtual TrainingIterationStatus trainingIteration(size_t thickness, AbstractTensorMap<ValueType>& input, AbstractTensorMap<ValueType>& expected) override
+    virtual TrainingIterationStatus trainingIteration(size_t thickness, AbstractTensorMap<ScalarType>& input, AbstractTensorMap<ScalarType>& expected) override
     {
-        Tensor<ValueType, Dimension>& inputTensor = dynamic_cast<Tensor<ValueType, Dimension>&>(input.get(0));
-        Tensor<ValueType, Dimension>& expectedTensor = dynamic_cast<Tensor<ValueType, Dimension>&>(expected.get(0));
+        Tensor<ScalarType, Dimension>& inputTensor = dynamic_cast<Tensor<ScalarType, Dimension>&>(input.get(0));
+        Tensor<ScalarType, Dimension>& expectedTensor = dynamic_cast<Tensor<ScalarType, Dimension>&>(expected.get(0));
 
         for (const RawTensorIndex<Dimension>& index : inputTensor)
         {
@@ -61,17 +61,17 @@ public:
     }
 
 private:
-    ValueType m_factor;
-    ValueType m_offset;
+    ScalarType m_factor;
+    ScalarType m_offset;
     size_t m_step;
 
-    DECLARE_RTTI(TrainingMonitor<ValueType>)
+    DECLARE_RTTI(TrainingMonitor<ScalarType>)
 };
 
-IMPLEMENT_RTTI(SampleTrainingMonitor, TrainingMonitor<ValueType>, PACK(typename, size_t), PACK(ValueType, Dimension))
+IMPLEMENT_RTTI(SampleTrainingMonitor, TrainingMonitor<ScalarType>, PACK(typename, size_t), PACK(ScalarType, Dimension))
 
-template <typename ValueType>
-class SampleTrainingNotifier : public TrainingNotifier<ValueType>
+template <typename ScalarType>
+class SampleTrainingNotifier : public TrainingNotifier<ScalarType>
 {
 public:
     SampleTrainingNotifier()
@@ -80,31 +80,31 @@ public:
     virtual ~SampleTrainingNotifier()
     {}
 
-    virtual void notify(const TrainingState<ValueType>& state) override
+    virtual void notify(const TrainingState<ScalarType>& state) override
     {
         m_lastTrainingState = state;
     }
 
-    const TrainingState<ValueType>& getLastTrainingState() const
+    const TrainingState<ScalarType>& getLastTrainingState() const
     {
         return m_lastTrainingState;
     }
 
-    TrainingState<ValueType> m_lastTrainingState;
+    TrainingState<ScalarType> m_lastTrainingState;
 
-    DECLARE_RTTI(TrainingNotifier<ValueType>)
+    DECLARE_RTTI(TrainingNotifier<ScalarType>)
 };
 
-IMPLEMENT_RTTI(SampleTrainingNotifier, TrainingNotifier<ValueType>, PACK(typename), PACK(ValueType))
+IMPLEMENT_RTTI(SampleTrainingNotifier, TrainingNotifier<ScalarType>, PACK(typename), PACK(ScalarType))
 
-template <typename ValueType, size_t Dimension>
-class SampleLearningMethod : public LearningMethod<ValueType>
+template <typename ScalarType, size_t Dimension>
+class SampleLearningMethod : public LearningMethod<ScalarType>
 {
 public:
-    SampleLearningMethod(ValueType learningRate)
+    SampleLearningMethod(ScalarType learningRate)
         : m_learningRate(-learningRate)
     {
-        if (learningRate < ValueType{})
+        if (learningRate < ScalarType{})
         {
             throw std::runtime_error("SampleLearningMethod: The learning rate must be non-negative.");
         }
@@ -113,15 +113,15 @@ public:
     virtual ~SampleLearningMethod()
     {}
 
-    virtual void learn(AbstractTensor<ValueType>& parameterTensor, const AbstractTensor<ValueType>& costPartDerivWRTParamTensor) const override
+    virtual void learn(AbstractTensor<ScalarType>& parameterTensor, const AbstractTensor<ScalarType>& costPartDerivWRTParamTensor) const override
     {
         if (parameterTensor.sizes() != costPartDerivWRTParamTensor.sizes())
         {
             throw std::runtime_error("SampleLearningMethod::learn: Both input tensors must have the same size.");
         }
 
-        RawTensor<ValueType, Dimension>& concreteParameterTensor = dynamic_cast<Tensor<ValueType, Dimension>&>(parameterTensor).getRawTensor();
-        const RawTensor<ValueType, Dimension>& concreteCostPartDerivWRTParamTensor = dynamic_cast<const Tensor<ValueType, Dimension>&>(costPartDerivWRTParamTensor).getRawTensor();
+        RawTensor<ScalarType, Dimension>& concreteParameterTensor = dynamic_cast<Tensor<ScalarType, Dimension>&>(parameterTensor).getRawTensor();
+        const RawTensor<ScalarType, Dimension>& concreteCostPartDerivWRTParamTensor = dynamic_cast<const Tensor<ScalarType, Dimension>&>(costPartDerivWRTParamTensor).getRawTensor();
         for (const RawTensorIndex<Dimension>& index : concreteParameterTensor)
         {
             concreteParameterTensor[index] += m_learningRate * concreteCostPartDerivWRTParamTensor[index];
@@ -129,12 +129,12 @@ public:
     }
 
 private:
-    ValueType m_learningRate;
+    ScalarType m_learningRate;
 
-    DECLARE_RTTI(LearningMethod<ValueType>)
+    DECLARE_RTTI(LearningMethod<ScalarType>)
 };
 
-IMPLEMENT_RTTI(SampleLearningMethod, LearningMethod<ValueType>, PACK(typename, size_t), PACK(ValueType, Dimension))
+IMPLEMENT_RTTI(SampleLearningMethod, LearningMethod<ScalarType>, PACK(typename, size_t), PACK(ScalarType, Dimension))
 
 class TrainingNeuralNetworkShould : public ::testing::Test
 {

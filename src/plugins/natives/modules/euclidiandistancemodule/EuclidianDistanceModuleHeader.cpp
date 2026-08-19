@@ -11,17 +11,17 @@
 
 using namespace BuildTimeList;
 
-template <typename ValueType>
+template <typename ScalarType>
 struct TemplateProvider
 {
     template <size_t Dimension>
-    using EuclidianDistanceModuleTemplate = EuclidianDistanceModule<ValueType, Dimension>;
+    using EuclidianDistanceModuleTemplate = EuclidianDistanceModule<ScalarType, Dimension>;
 };
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 using EuclidianDistanceModuleRtti = Rtti<
-    Module<ValueType>,
-    EuclidianDistanceModule<ValueType, Dimension>,
+    Module<ScalarType>,
+    EuclidianDistanceModule<ScalarType, Dimension>,
     TypeList<const RawTuple<const TensorIndex<0>&>&>
 >;
 

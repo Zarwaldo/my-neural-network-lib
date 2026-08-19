@@ -2,16 +2,16 @@
 
 #include <rtti/Rtti.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 struct TrainingState;
 
-template <typename ValueType>
+template <typename ScalarType>
 class TrainingNotifier
 {
 public:
     virtual ~TrainingNotifier() = default;
 
-    virtual void notify(const TrainingState<ValueType>& state) = 0;
+    virtual void notify(const TrainingState<ScalarType>& state) = 0;
 
-    DECLARE_AS_RTTI_BASE_TYPE(TrainingNotifier<ValueType>)
+    DECLARE_AS_RTTI_BASE_TYPE(TrainingNotifier<ScalarType>)
 };

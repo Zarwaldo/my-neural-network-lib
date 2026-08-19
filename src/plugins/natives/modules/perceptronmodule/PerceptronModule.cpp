@@ -7,11 +7,11 @@
 
 IMPLEMENT_MODULE_WRAPPER(
     PerceptronModule,
-    ValueType,
+    ScalarType,
     PerceptronModuleImpl,
     PACK(RawTuple<const TensorIndex<InputDimension + OutputDimension>&, const TensorIndex<OutputDimension>&>),
     PACK(typename, size_t, size_t),
-    PACK(ValueType, InputDimension, OutputDimension)
+    PACK(ScalarType, InputDimension, OutputDimension)
 )
 
 extern template class MY_NEURAL_NETWORK_LIB__MODULE__API Module<float>;

@@ -2,17 +2,17 @@
 
 #include <network/NullParamTensorFiller.h>
 
-template <typename ValueType>
-NullParamTensorFiller<ValueType>::NullParamTensorFiller()
+template <typename ScalarType>
+NullParamTensorFiller<ScalarType>::NullParamTensorFiller()
 {}
 
-template <typename ValueType>
-NullParamTensorFiller<ValueType>::~NullParamTensorFiller()
+template <typename ScalarType>
+NullParamTensorFiller<ScalarType>::~NullParamTensorFiller()
 {}
 
-template <typename ValueType>
+template <typename ScalarType>
 void
-NullParamTensorFiller<ValueType>::fill(AbstractTensorMap<ValueType>& tensorMap) const
+NullParamTensorFiller<ScalarType>::fill(AbstractTensorMap<ScalarType>& tensorMap) const
 {}
 
-IMPLEMENT_RTTI(NullParamTensorFiller, ParamTensorFiller<ValueType>, PACK(typename), PACK(ValueType))
+IMPLEMENT_RTTI(NullParamTensorFiller, ParamTensorFiller<ScalarType>, PACK(typename), PACK(ScalarType))

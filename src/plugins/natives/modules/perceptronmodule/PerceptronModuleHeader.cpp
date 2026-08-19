@@ -11,17 +11,17 @@
 
 using namespace BuildTimeList;
 
-template <typename ValueType>
+template <typename ScalarType>
 struct TemplateProvider
 {
     template <size_t InputDimension, size_t OutputDimension>
-    using PerceptronModuleTemplate = PerceptronModule<ValueType, InputDimension, OutputDimension>;
+    using PerceptronModuleTemplate = PerceptronModule<ScalarType, InputDimension, OutputDimension>;
 };
 
-template <typename ValueType, size_t InputDimension, size_t OutputDimension>
+template <typename ScalarType, size_t InputDimension, size_t OutputDimension>
 using PerceptronModuleRtti = Rtti<
-    Module<ValueType>,
-    PerceptronModule<ValueType, InputDimension, OutputDimension>,
+    Module<ScalarType>,
+    PerceptronModule<ScalarType, InputDimension, OutputDimension>,
     TypeList<const RawTuple<const TensorIndex<InputDimension + OutputDimension>&, const TensorIndex<OutputDimension>&>&>
 >;
 

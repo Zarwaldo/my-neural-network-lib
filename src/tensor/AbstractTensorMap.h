@@ -2,10 +2,10 @@
 
 #include <rtti/Rtti.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensor;
 
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensorMap
 {
 public:
@@ -13,26 +13,26 @@ public:
 
     HOST virtual size_t nbTensors() const = 0;
 
-    HOST virtual const AbstractTensor<ValueType>& get(size_t index) const = 0;
-    HOST virtual AbstractTensor<ValueType>& get(size_t index) = 0;
+    HOST virtual const AbstractTensor<ScalarType>& get(size_t index) const = 0;
+    HOST virtual AbstractTensor<ScalarType>& get(size_t index) = 0;
 
-#define __TENSOR_MAP__ITERATOR_DECLARATION(IteratorName, constQualifier)                    \
-    class IteratorName                                                                      \
-    {                                                                                       \
-    public:                                                                                 \
-        IteratorName(constQualifier AbstractTensorMap<ValueType>& tensorMap, size_t index); \
-                                                                                            \
-        bool operator==(const IteratorName& other) const;                                   \
-        bool operator!=(const IteratorName& other) const;                                   \
-                                                                                            \
-        IteratorName& operator++();                                                         \
-                                                                                            \
-        const AbstractTensor<ValueType>& operator*() const;                                 \
-        constQualifier AbstractTensor<ValueType>& operator*();                              \
-                                                                                            \
-    private:                                                                                \
-        constQualifier AbstractTensorMap<ValueType>& m_tensorMap;                           \
-        size_t m_index;                                                                     \
+#define __TENSOR_MAP__ITERATOR_DECLARATION(IteratorName, constQualifier)                     \
+    class IteratorName                                                                       \
+    {                                                                                        \
+    public:                                                                                  \
+        IteratorName(constQualifier AbstractTensorMap<ScalarType>& tensorMap, size_t index); \
+                                                                                             \
+        bool operator==(const IteratorName& other) const;                                    \
+        bool operator!=(const IteratorName& other) const;                                    \
+                                                                                             \
+        IteratorName& operator++();                                                          \
+                                                                                             \
+        const AbstractTensor<ScalarType>& operator*() const;                                 \
+        constQualifier AbstractTensor<ScalarType>& operator*();                              \
+                                                                                             \
+    private:                                                                                 \
+        constQualifier AbstractTensorMap<ScalarType>& m_tensorMap;                           \
+        size_t m_index;                                                                      \
     };
 
     __TENSOR_MAP__ITERATOR_DECLARATION(IteratorConst, const)
@@ -44,7 +44,7 @@ public:
     HOST IteratorConst end() const;
     HOST Iterator end();
 
-    DECLARE_AS_RTTI_BASE_TYPE(AbstractTensorMap<ValueType>)
+    DECLARE_AS_RTTI_BASE_TYPE(AbstractTensorMap<ScalarType>)
 };
 
 #include <tensor/AbstractTensorMap.impl.h>

@@ -2,31 +2,31 @@
 
 #include <tensor/RawTensor.h>
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-RawTensor<ValueType, Dimension>::RawTensor(const RawTensorIndex<Dimension>& sizes, const RawTensorIndex<Dimension>& strides, ValueType* const data)
+RawTensor<ScalarType, Dimension>::RawTensor(const RawTensorIndex<Dimension>& sizes, const RawTensorIndex<Dimension>& strides, ScalarType* const data)
     : m_sizes(sizes)
     , m_strides(strides)
     , m_data(data)
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-RawTensor<ValueType, Dimension>::RawTensor(const RawTensor<ValueType, Dimension>& other)
+RawTensor<ScalarType, Dimension>::RawTensor(const RawTensor<ScalarType, Dimension>& other)
     : m_sizes(other.m_sizes)
     , m_strides(other.m_strides)
     , m_data(other.m_data)
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-RawTensor<ValueType, Dimension>::~RawTensor()
+RawTensor<ScalarType, Dimension>::~RawTensor()
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-RawTensor<ValueType, Dimension>&
-RawTensor<ValueType, Dimension>::operator=(const RawTensor<ValueType, Dimension>& other)
+RawTensor<ScalarType, Dimension>&
+RawTensor<ScalarType, Dimension>::operator=(const RawTensor<ScalarType, Dimension>& other)
 {
     m_sizes = other.m_sizes;
     m_strides = other.m_strides;
@@ -35,110 +35,110 @@ RawTensor<ValueType, Dimension>::operator=(const RawTensor<ValueType, Dimension>
     return *this;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
 size_t
-RawTensor<ValueType, Dimension>::dim() const
+RawTensor<ScalarType, Dimension>::dim() const
 {
     return Dimension;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
 const RawTensorIndex<Dimension>&
-RawTensor<ValueType, Dimension>::sizes() const
+RawTensor<ScalarType, Dimension>::sizes() const
 {
     return m_sizes;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
 size_t
-RawTensor<ValueType, Dimension>::nbElements() const
+RawTensor<ScalarType, Dimension>::nbElements() const
 {
     return m_sizes.nbInferiorIndices();
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
 size_t
-RawTensor<ValueType, Dimension>::memorySize() const
+RawTensor<ScalarType, Dimension>::memorySize() const
 {
-    return sizeof(ValueType) * nbElements();
+    return sizeof(ScalarType) * nbElements();
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-const ValueType&
-RawTensor<ValueType, Dimension>::operator*() const
+const ScalarType&
+RawTensor<ScalarType, Dimension>::operator*() const
 {
     return *m_data;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-ValueType&
-RawTensor<ValueType, Dimension>::operator*()
+ScalarType&
+RawTensor<ScalarType, Dimension>::operator*()
 {
-    return const_cast<ValueType&>(*static_cast<const Tensor<ValueType, Dimension>&>(*this));
+    return const_cast<ScalarType&>(*static_cast<const Tensor<ScalarType, Dimension>&>(*this));
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-const RawTensor<ValueType, Dimension>
-RawTensor<ValueType, Dimension>::subtensor(const RawTensorIndex<Dimension>& minIndex, const RawTensorIndex<Dimension>& maxIndex) const
+const RawTensor<ScalarType, Dimension>
+RawTensor<ScalarType, Dimension>::subtensor(const RawTensorIndex<Dimension>& minIndex, const RawTensorIndex<Dimension>& maxIndex) const
 {
-    return RawTensor<ValueType, Dimension>(maxIndex - minIndex, m_strides, ptrAtIndex(minIndex));
+    return RawTensor<ScalarType, Dimension>(maxIndex - minIndex, m_strides, ptrAtIndex(minIndex));
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-RawTensor<ValueType, Dimension>
-RawTensor<ValueType, Dimension>::subtensor(const RawTensorIndex<Dimension>& minIndex, const RawTensorIndex<Dimension>& maxIndex)
+RawTensor<ScalarType, Dimension>
+RawTensor<ScalarType, Dimension>::subtensor(const RawTensorIndex<Dimension>& minIndex, const RawTensorIndex<Dimension>& maxIndex)
 {
-    return static_cast<const RawTensor<ValueType, Dimension>*>(this)->subtensor(minIndex, maxIndex);
+    return static_cast<const RawTensor<ScalarType, Dimension>*>(this)->subtensor(minIndex, maxIndex);
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-const ValueType&
-RawTensor<ValueType, Dimension>::operator[](const RawTensorIndex<Dimension>& index) const
+const ScalarType&
+RawTensor<ScalarType, Dimension>::operator[](const RawTensorIndex<Dimension>& index) const
 {
     return *ptrAtIndex(index);
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-ValueType&
-RawTensor<ValueType, Dimension>::operator[](const RawTensorIndex<Dimension>& index)
+ScalarType&
+RawTensor<ScalarType, Dimension>::operator[](const RawTensorIndex<Dimension>& index)
 {
-    return const_cast<ValueType&>(static_cast<const RawTensor<ValueType, Dimension>&>(*this)[index]);
+    return const_cast<ScalarType&>(static_cast<const RawTensor<ScalarType, Dimension>&>(*this)[index]);
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-RawTensor<ValueType, Dimension>::Iterator::Iterator(const RawTensorIndex<Dimension>& index, const RawTensorIndex<Dimension>& sizes)
+RawTensor<ScalarType, Dimension>::Iterator::Iterator(const RawTensorIndex<Dimension>& index, const RawTensorIndex<Dimension>& sizes)
     : m_index(index)
     , m_sizes(sizes)
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-RawTensor<ValueType, Dimension>::Iterator::~Iterator()
+RawTensor<ScalarType, Dimension>::Iterator::~Iterator()
 {}
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
 const RawTensorIndex<Dimension>&
-RawTensor<ValueType, Dimension>::Iterator::operator*() const
+RawTensor<ScalarType, Dimension>::Iterator::operator*() const
 {
     return m_index;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-typename RawTensor<ValueType, Dimension>::Iterator&
-RawTensor<ValueType, Dimension>::Iterator::operator++()
+typename RawTensor<ScalarType, Dimension>::Iterator&
+RawTensor<ScalarType, Dimension>::Iterator::operator++()
 {
     for (size_t dim = Dimension - 1; dim != static_cast<size_t>(-1); --dim)
     {
@@ -155,34 +155,34 @@ RawTensor<ValueType, Dimension>::Iterator::operator++()
     return *this;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
 bool
-RawTensor<ValueType, Dimension>::Iterator::operator==(const RawTensor<ValueType, Dimension>::Iterator& other) const
+RawTensor<ScalarType, Dimension>::Iterator::operator==(const RawTensor<ScalarType, Dimension>::Iterator& other) const
 {
     return (m_index == other.m_index) && (m_sizes == other.m_sizes);
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
 bool
-RawTensor<ValueType, Dimension>::Iterator::operator!=(const RawTensor<ValueType, Dimension>::Iterator& other) const
+RawTensor<ScalarType, Dimension>::Iterator::operator!=(const RawTensor<ScalarType, Dimension>::Iterator& other) const
 {
     return !(*this == other);
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-typename RawTensor<ValueType, Dimension>::Iterator
-RawTensor<ValueType, Dimension>::iterator(const RawTensorIndex<Dimension>& index) const
+typename RawTensor<ScalarType, Dimension>::Iterator
+RawTensor<ScalarType, Dimension>::iterator(const RawTensorIndex<Dimension>& index) const
 {
-    return RawTensor<ValueType, Dimension>::Iterator(index, m_sizes);
+    return RawTensor<ScalarType, Dimension>::Iterator(index, m_sizes);
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-typename RawTensor<ValueType, Dimension>::Iterator
-RawTensor<ValueType, Dimension>::begin() const
+typename RawTensor<ScalarType, Dimension>::Iterator
+RawTensor<ScalarType, Dimension>::begin() const
 {
     if (nbElements() == 0)
         return end();
@@ -194,34 +194,34 @@ RawTensor<ValueType, Dimension>::begin() const
     return iterator(RawTensorIndex<Dimension>(array));
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-typename RawTensor<ValueType, Dimension>::Iterator
-RawTensor<ValueType, Dimension>::end() const
+typename RawTensor<ScalarType, Dimension>::Iterator
+RawTensor<ScalarType, Dimension>::end() const
 {
     return iterator(RawTensorIndex<Dimension>());
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-const ValueType*
-RawTensor<ValueType, Dimension>::getDataPtr() const
+const ScalarType*
+RawTensor<ScalarType, Dimension>::getDataPtr() const
 {
     return m_data;
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-ValueType*
-RawTensor<ValueType, Dimension>::getDataPtr()
+ScalarType*
+RawTensor<ScalarType, Dimension>::getDataPtr()
 {
-    return const_cast<ValueType*>(static_cast<const RawTensor<ValueType, Dimension>*>(this)->getDataPtr());
+    return const_cast<ScalarType*>(static_cast<const RawTensor<ScalarType, Dimension>*>(this)->getDataPtr());
 }
 
-template <typename ValueType, size_t Dimension>
+template <typename ScalarType, size_t Dimension>
 HOST DEVICE
-ValueType*
-RawTensor<ValueType, Dimension>::ptrAtIndex(const RawTensorIndex<Dimension>& index) const
+ScalarType*
+RawTensor<ScalarType, Dimension>::ptrAtIndex(const RawTensorIndex<Dimension>& index) const
 {
     return m_data + index.dot(m_strides);
 }

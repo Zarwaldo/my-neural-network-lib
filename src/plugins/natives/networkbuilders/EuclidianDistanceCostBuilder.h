@@ -2,21 +2,21 @@
 
 #include <network/AbstractNetworkBuilder.h>
 
-template <typename ValueType>
+template <typename ScalarType>
 class NeuralNetwork;
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensor;
-template <typename ValueType>
+template <typename ScalarType>
 class AbstractTensorMap;
 
-template <typename ValueType>
+template <typename ScalarType>
 struct EuclidianDistanceCostBuilderPimpl;
 
-template <typename ValueType, size_t Dimension>
-class EuclidianDistanceCostBuilder : public AbstractNetworkBuilder<ValueType>
+template <typename ScalarType, size_t Dimension>
+class EuclidianDistanceCostBuilder : public AbstractNetworkBuilder<ScalarType>
 {
 public:
-    EuclidianDistanceCostBuilder(NeuralNetwork<ValueType>& network, AbstractTensorMap<ValueType>& outputTensorMap, AbstractTensorMap<ValueType>& expectedTensorMap, AbstractTensor<ValueType>& costTensor);
+    EuclidianDistanceCostBuilder(NeuralNetwork<ScalarType>& network, AbstractTensorMap<ScalarType>& outputTensorMap, AbstractTensorMap<ScalarType>& expectedTensorMap, AbstractTensor<ScalarType>& costTensor);
     EuclidianDistanceCostBuilder(const EuclidianDistanceCostBuilder& other) = delete;
     EuclidianDistanceCostBuilder(EuclidianDistanceCostBuilder&& other);
 
@@ -28,7 +28,7 @@ public:
     virtual std::map<std::string, void*> build() override;
 
 private:
-    EuclidianDistanceCostBuilderPimpl<ValueType>* m_pimpl;
+    EuclidianDistanceCostBuilderPimpl<ScalarType>* m_pimpl;
 
-    DECLARE_RTTI(AbstractNetworkBuilder<ValueType>)
+    DECLARE_RTTI(AbstractNetworkBuilder<ScalarType>)
 };
